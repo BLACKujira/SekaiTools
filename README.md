@@ -1,3 +1,2 @@
-# SekaiTools
-PJSK的资源下载器及对话统计器
-需要CubismSdkForUnity和MessagePack.Unity
+#SekaiTools
+用于Project Sekai二次创作的工具箱
