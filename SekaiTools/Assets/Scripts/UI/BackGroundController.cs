@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace SekaiTools
 {
+    /// <summary>
+    /// 背景控制器
+    /// </summary>
     public class BackGroundController : MonoBehaviour
     {
         public BackGroundPart defaultBackGroundPrefab;
