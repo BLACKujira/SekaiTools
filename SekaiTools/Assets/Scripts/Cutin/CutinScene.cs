@@ -17,6 +17,20 @@ namespace SekaiTools.Cutin
         public TalkData talkData_First = new TalkData();
         public TalkData talkData_Second = new TalkData();
 
+        public CutinScene(int charFirstID, int charSecondID, int dataID)
+        {
+            this.charFirstID = charFirstID;
+            this.charSecondID = charSecondID;
+            this.dataID = dataID;
+        }
+
+        public CutinScene(CutinSceneData.CutinSceneInfoBase cutinSceneInfo)
+        {
+            this.charFirstID = cutinSceneInfo.charFirstID;
+            this.charSecondID = cutinSceneInfo.charSecondID;
+            this.dataID = cutinSceneInfo.dataID;
+        }
+
         [System.Serializable]
         public class TalkData
         {
@@ -27,6 +41,28 @@ namespace SekaiTools.Cutin
             public string talkVoice;
             public string talkText;
             public string talkText_Translate;
+        }
+
+        public bool IsConversationOf(int charAID, int charBID, bool mergeVirtualSinger = false)
+        {
+            if (mergeVirtualSinger)
+            {
+                if (ConstData.MergeVirtualSinger(charAID) == ConstData.MergeVirtualSinger(charFirstID)
+                    && ConstData.MergeVirtualSinger(charBID) == ConstData.MergeVirtualSinger(charSecondID)) return true;
+                if (ConstData.MergeVirtualSinger(charAID) == ConstData.MergeVirtualSinger(charSecondID)
+                    && ConstData.MergeVirtualSinger(charBID) == ConstData.MergeVirtualSinger(charFirstID)) return true;
+            }
+            else
+            {
+                if (charAID == charFirstID && charBID == charSecondID) return true;
+                if (charAID == charSecondID && charBID == charFirstID) return true;
+            }
+            return false;
+        }
+
+        public CutinSceneData.CutinSceneInfoBase GetInfo()
+        {
+            return new CutinSceneData.CutinSceneInfoBase(charFirstID, charSecondID, dataID);
         }
     }
 }

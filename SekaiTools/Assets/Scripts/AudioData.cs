@@ -7,27 +7,73 @@ using System.IO;
 
 namespace SekaiTools
 {
+    public interface ISaveData
+    {
+        string savePath { get; set; }
+        void SaveData();
+    }
+    public interface IData<T> : ISaveData
+    {
+        T[] valueArray { get; }
+        T GetValue(string name);
+        bool RemoveValue(string name);
+        bool RemoveValue(T value);
+        bool AppendValue(T value, string savePath = null);
+        string GetSavePath(T value);
+        IEnumerator LoadData(string serializedData);
+    }
+
     /// <summary>
     /// 声音资料
     /// </summary>
     [System.Serializable]
-    public class AudioData
+    public class AudioData : IData<AudioClip>
     {
-        public string savePath;
-        public List<AudioClip> audioClipList = new List<AudioClip>();
-        public Dictionary<string, AudioClip> audioClips;
-        Dictionary<string,string> paths;
+        public string savePath { get; set; }
+
+        public AudioData(string savePath)
+        {
+            this.savePath = savePath;
+        }
+        public AudioData()
+        {
+            this.savePath = null;
+        }
+        public AudioData(IData<AudioClip> data)
+        {
+            savePath = data.savePath;
+            AudioClip[] valueArray = data.valueArray;
+            foreach (var value in valueArray)
+            {
+                AppendValue(value, data.GetSavePath(value));
+            }
+        }
+
+        public AudioClip[] valueArray
+        {
+            get
+            {
+                if (this.audioClips == null) return null;
+                List<AudioClip> audioClips = new List<AudioClip>();
+                foreach (var keyValuePair in this.audioClips)
+                {
+                    audioClips.Add(keyValuePair.Value);
+                }
+                return audioClips.ToArray();
+            }
+        }
+        Dictionary<string, AudioClip> audioClips = new Dictionary<string, AudioClip>();
+        Dictionary<AudioClip,string> paths = new Dictionary<AudioClip, string>();
 
         /// <summary>
         /// 从声音资料存档中读取声音资料
         /// </summary>
         /// <param name="serializedAudioData"></param>
         /// <returns></returns>
-        public IEnumerator LoadAudioData(string serializedAudioData)
+        public IEnumerator LoadData(string serializedData)
         {
-            SerializedAudioData data = JsonUtility.FromJson<SerializedAudioData>(File.ReadAllText(serializedAudioData));
-            savePath = serializedAudioData;
-            yield return LoadDatas(data.paths.ToArray());
+            SerializedAudioData data = JsonUtility.FromJson<SerializedAudioData>(serializedData);
+            yield return LoadFile(data);
         }
 
         /// <summary>
@@ -35,17 +81,18 @@ namespace SekaiTools
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        public IEnumerator LoadDatas(string[] files)
+        public IEnumerator LoadFile(string[] files)
         {
-            paths = new Dictionary<string, string>();
             for (int i = 0; i < files.Length; i++)
             {
-                yield return LoadData(files[i]);
+                yield return LoadFile(files[i]);
             }
-            audioClips = new Dictionary<string, AudioClip>();
-            foreach (var audioClip in audioClipList)
+        }
+        public IEnumerator LoadFile(SerializedAudioData serializedAudioData)
+        {
+            for (int i = 0; i < serializedAudioData.items.Count; i++)
             {
-                audioClips[audioClip.name] = audioClip;
+                yield return LoadFile(serializedAudioData.items[i]);
             }
         }
 
@@ -54,7 +101,7 @@ namespace SekaiTools
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
-        public IEnumerator LoadData(string file)
+        IEnumerator LoadFile(string file,string name = null)
         {
             string extension = Path.GetExtension(file);
             extension = extension.ToLower();
@@ -81,10 +128,14 @@ namespace SekaiTools
                     yield break;
                 }
                 AudioClip audioClip = DownloadHandlerAudioClip.GetContent(webRequest);
-                audioClip.name = Path.GetFileNameWithoutExtension(file);
-                audioClipList.Add(audioClip);
-                paths[audioClip.name] = file;
+                audioClip.name = string.IsNullOrEmpty(name)? Path.GetFileNameWithoutExtension(file):name;
+                audioClips[audioClip.name] = audioClip;
+                paths[audioClip] = file;
             }
+        }
+        IEnumerator LoadFile(SerializedAudioData.DataItem audioDataItem)
+        {
+            yield return LoadFile(audioDataItem.path, audioDataItem.name);
         }
 
         /// <summary>
@@ -92,10 +143,26 @@ namespace SekaiTools
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public AudioClip GetAudioClip(string name)
+        public AudioClip GetValue(string name)
         {
             if (string.IsNullOrEmpty(name)||!audioClips.ContainsKey(name)) return null;
             return audioClips[name];
+        }
+
+        public bool RemoveValue(string name)
+        {
+            if (!audioClips.ContainsKey(name)) return false;
+            paths.Remove(audioClips[name]);
+            audioClips.Remove(name);
+            return true;
+        }
+
+        public bool RemoveValue(AudioClip value)
+        {
+            if (!audioClips.ContainsValue(value)) return false;
+            audioClips.Remove(value.name);
+            paths.Remove(value);
+            return true;
         }
 
         /// <summary>
@@ -104,15 +171,37 @@ namespace SekaiTools
         [System.Serializable]
         public class SerializedAudioData
         {
-            public List<string> paths;
-
-            public SerializedAudioData(Dictionary<string, string> paths)
+            [System.Serializable]
+            public class DataItem
             {
-                this.paths = new List<string>();
-                foreach (var keyValuePair in paths)
+                public string name;
+                public string path;
+
+                public DataItem(KeyValuePair<AudioClip, string> keyValuePair)
                 {
-                    this.paths.Add(keyValuePair.Value);
+                    this.name = keyValuePair.Key.name;
+                    this.path = keyValuePair.Value;
                 }
+
+                public DataItem(string name, string path)
+                {
+                    this.name = name;
+                    this.path = path;
+                }
+            }
+            public List<DataItem> items = new List<DataItem>();
+
+            public SerializedAudioData(Dictionary<AudioClip, string> items)
+            {
+                this.items = new List<DataItem>();
+                foreach (var keyValuePair in items)
+                {
+                    this.items.Add(new DataItem(keyValuePair));
+                }
+            }
+
+            public SerializedAudioData()
+            {
             }
         }
 
@@ -120,12 +209,92 @@ namespace SekaiTools
         /// 保存音频资料存档到path
         /// </summary>
         /// <param name="path"></param>
-        public void SaveData(string path)
+        public void SaveData()
         {
             SerializedAudioData serializedAudioData = new SerializedAudioData(paths);
             string json = JsonUtility.ToJson(serializedAudioData,true);
-            File.WriteAllText(path, json);
+            File.WriteAllText(savePath, json);
+        }
+
+        public bool AppendValue(AudioClip value, string savePath = null)
+        {
+            if (audioClips.ContainsKey(value.name)) return false;
+            audioClips[value.name] = value;
+            paths[value] = savePath;
+            return true;
+        }
+
+        public string GetSavePath(AudioClip value)
+        {
+            if (!paths.ContainsKey(value)) return null;
+            return paths[value];
+        }
+
+        public void Append(IData<AudioClip> data)
+        {
+            AudioClip[] valueArray = data.valueArray;
+            foreach (var value in valueArray)
+            {
+                AppendValue(value,data.GetSavePath(value));
+            }
+        }
+
+        public static SerializedAudioData DeSerializeSaveData(string serializedData)
+        {
+            return JsonUtility.FromJson<SerializedAudioData>(serializedData);
+        }
+
+        public static string ReSerializeSaveData(SerializedAudioData serializedAudioData)
+        {
+            return JsonUtility.ToJson(serializedAudioData);
+        }
+
+        [Serializable]
+        public class NameDuplicateException : System.Exception
+        {
+            public NameDuplicateException() { }
+            public NameDuplicateException(string message) : base(message) { }
+            public NameDuplicateException(string message, System.Exception inner) : base(message, inner) { }
+            protected NameDuplicateException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
         }
     }
-    
+
+    [System.Serializable]
+    public class SerializedData<T> where T:UnityEngine.Object
+    {
+        [System.Serializable]
+        public class DataItem
+        {
+            public string name;
+            public string path;
+
+            public DataItem(KeyValuePair<T, string> keyValuePair)
+            {
+                this.name = keyValuePair.Key.name;
+                this.path = keyValuePair.Value;
+            }
+
+            public DataItem(string name, string path)
+            {
+                this.name = name;
+                this.path = path;
+            }
+        }
+        public List<DataItem> items = new List<DataItem>();
+
+        public SerializedData(Dictionary<T, string> items)
+        {
+            this.items = new List<DataItem>();
+            foreach (var keyValuePair in items)
+            {
+                this.items.Add(new DataItem(keyValuePair));
+            }
+        }
+
+        public SerializedData()
+        {
+        }
+    }
 }

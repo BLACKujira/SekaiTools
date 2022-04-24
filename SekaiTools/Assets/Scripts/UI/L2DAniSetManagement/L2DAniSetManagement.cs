@@ -64,9 +64,16 @@ namespace SekaiTools.UI.L2DAniSetManagement
                     string folderName = Path.GetFileName(path);
                     if (item.animationSet.name.Equals(folderName))
                     {
-                        ImageData imageData = new ImageData();
-                        yield return imageData.LoadImages(path);
-                        item.animationSet.previewSet = new L2DAnimationPreviewSet(path, imageData.spriteList);
+                        List<string> selectedFiles = new List<string>();
+                        string[] files = Directory.GetFiles(path);
+                        foreach (var file in files)
+                        {
+                            if (item.animationSet.GetAnimation(Path.GetFileNameWithoutExtension(file)))
+                                selectedFiles.Add(file);
+                        }
+                        ImageData imageData = new ImageData(path);
+                        yield return imageData.LoadFile(selectedFiles.ToArray());
+                        item.animationSet.previewSet = imageData;
                         item.RefreshInfo();
                         break;
                     }

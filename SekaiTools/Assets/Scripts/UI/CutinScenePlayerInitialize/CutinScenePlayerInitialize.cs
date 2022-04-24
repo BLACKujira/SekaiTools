@@ -25,7 +25,6 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
         public Window openWindow;
 
         [NonSerialized] public CutinSceneData cutinSceneData = null;
-        [NonSerialized] public string cutinSceneDataPath = null;
 
         OpenFileDialog openFileDialog;
         FolderBrowserDialog folderBrowserDialog;
@@ -33,15 +32,9 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
 
         private void Awake()
         {
-            openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = "选择互动场景存档";
-            openFileDialog.Filter = "JSON (*.json)|*.json|Others (*.*)|*.*";
-            openFileDialog.RestoreDirectory = true;
+            openFileDialog = FileDialogFactory.GetOpenFileDialog_CutinSceneData();
 
-            saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Title = "保存场景资料和语音资料";
-            saveFileDialog.Filter = "JSON (*.json)|*.json|Others (*.*)|*.*";
-            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog = FileDialogFactory.GetSaveFileDialog_CutinSceneData();
 
             folderBrowserDialog = new FolderBrowserDialog();
 
@@ -52,7 +45,7 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
         {
             modelArea.Initialize(cutinSceneData?.CountAppearCharacters());
             audioArea.Initialize(cutinSceneData);
-            inputFieldSaveData.text = string.IsNullOrEmpty(cutinSceneDataPath) ? "请读取或创建存档" : cutinSceneDataPath;
+            inputFieldSaveData.text = cutinSceneData == null? "请读取或创建存档" : cutinSceneData.savePath;
 
             if (cutinSceneData != null) audioArea.UnlockButtons();
             else audioArea.LockButtons();
@@ -79,20 +72,24 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
             if (dialogResult2 != DialogResult.OK) return;
             string savePath = saveFileDialog.FileName;
 
-            string audioDataSavePath = Path.Combine( 
-                Path.GetDirectoryName(savePath) , 
-                Path.GetFileNameWithoutExtension(savePath) + 
-                ".AudioData" + 
-                Path.GetExtension(savePath));
+            string audioDataSavePath = Path.ChangeExtension(savePath, ".aud");
+
+            string[] files = Directory.GetFiles(audioPath);
+            List<CutinSceneData.CutinSceneInfo> cutinSceneInfos = new List<CutinSceneData.CutinSceneInfo>();
+            foreach (var file in files)
+            {
+                CutinSceneData.CutinSceneInfo cutinSceneInfo = CutinSceneData.IsCutinVoice(Path.GetFileName(file));
+                if (cutinSceneInfo != null) cutinSceneInfos.Add(cutinSceneInfo);
+            }
+            cutinSceneData = new CutinSceneData(cutinSceneInfos.ToArray());
+            cutinSceneData.savePath = savePath;
+            cutinSceneData.SaveData();
 
             audioArea.NewData(() => 
             {
-                cutinSceneDataPath = savePath;
-                cutinSceneData = new CutinSceneData(audioArea.audioData);
-                string json = JsonUtility.ToJson(cutinSceneData,true);
-                File.WriteAllText(savePath, json);
+                cutinSceneData.StandardizeAudioData(audioArea.audioData);
                 Refresh();
-            },audioPath,audioDataSavePath);
+            }, audioPath, audioDataSavePath);
         }
 
         public void LoadData()
@@ -100,17 +97,13 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
             DialogResult dialogResult = openFileDialog.ShowDialog();
             if (dialogResult != DialogResult.OK) return;
             string fileName = openFileDialog.FileName;
-            cutinSceneDataPath = fileName;
 
             CutinSceneData cutinSceneData = JsonUtility.FromJson<CutinSceneData>(File.ReadAllText(fileName));
             this.cutinSceneData = cutinSceneData;
+            cutinSceneData.savePath = fileName;
             audioArea.audioData = null;
 
-            string audioDatafileName = Path.Combine(
-                Path.GetDirectoryName(fileName),
-                Path.GetFileNameWithoutExtension(fileName) +
-                ".AudioData" +
-                Path.GetExtension(fileName));
+            string audioDatafileName = Path.ChangeExtension(fileName, ".aud");
 
             if (File.Exists(audioDatafileName))
             {
@@ -140,7 +133,6 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
                 cutinSceneEditorSettings.audioData = audioArea.audioData;
                 cutinSceneEditorSettings.cutinSceneData = cutinSceneData;
                 cutinSceneEditorSettings.sekaiLive2DModels = modelArea.sekaiLive2DModels;
-                cutinSceneEditorSettings.cutinSceneDataPath = cutinSceneDataPath;
 
                 CutinSceneEditor.CutinSceneEditor cutinSceneEditor = window.OpenWindow<CutinSceneEditor.CutinSceneEditor>(openWindow);
                 cutinSceneEditor.Initialize(cutinSceneEditorSettings);

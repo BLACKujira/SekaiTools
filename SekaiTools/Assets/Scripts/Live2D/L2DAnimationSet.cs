@@ -13,7 +13,7 @@ namespace SekaiTools.Live2D
     public class L2DAnimationSet : ScriptableObject
     {
         public CubismFadeMotionList fadeMotionList;
-        public L2DAnimationPreviewSet previewSet = null;
+        public ImageData previewSet = null;
 
         public List<AnimationClip> motionPack;
         public List<AnimationClip> facialPack;
@@ -146,7 +146,7 @@ namespace SekaiTools.Live2D
         public Sprite GetPreview(string name)
         {
             if (previewSet == null) return null;
-            return previewSet.GetPreview(name);
+            return previewSet.GetValue(name);
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace SekaiTools.Live2D
             int count = 0;
             foreach (var keyValuePair in animations)            
             {
-                if (previewSet.previews.ContainsKey(keyValuePair.Key)) count++;
+                if (previewSet.GetValue(keyValuePair.Key)) count++;
             }
             return count;
         }

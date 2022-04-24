@@ -11,8 +11,10 @@ namespace SekaiTools
     {
         public static readonly string WebRequestLocalFileHead = @"file:///";
         public static Characters characters = new Characters();
+        public static Units units = new Units();
         public static readonly int layerLive2D = 8;
         public static readonly int layerBackGround = 9;
+        public static readonly string defaultSpineAnimation = "pose_default";
 
         public class Characters
         {
@@ -56,6 +58,37 @@ namespace SekaiTools
                 new CharacterInfo(29,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27)),
                 new CharacterInfo(30,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27)),
                 new CharacterInfo(31,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27)),
+
+                new CharacterInfo(32,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27)),
+                new CharacterInfo(33,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27)),
+                new CharacterInfo(34,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27)),
+                new CharacterInfo(35,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27)),
+                new CharacterInfo(36,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27)),
+
+                new CharacterInfo(37,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27)),
+                new CharacterInfo(38,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27)),
+                new CharacterInfo(39,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27)),
+                new CharacterInfo(40,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27)),
+                new CharacterInfo(41,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27)),
+
+                new CharacterInfo(42,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30)),
+                new CharacterInfo(43,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30)),
+                new CharacterInfo(44,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30)),
+                new CharacterInfo(45,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30)),
+                new CharacterInfo(46,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30)),
+
+                new CharacterInfo(47,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5)),
+                new CharacterInfo(48,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5)),
+                new CharacterInfo(49,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5)),
+                new CharacterInfo(50,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5)),
+                new CharacterInfo(51,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5)),
+
+                new CharacterInfo(52,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17)),
+                new CharacterInfo(53,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17)),
+                new CharacterInfo(54,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17)),
+                new CharacterInfo(55,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17)),
+                new CharacterInfo(56,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17)),
+
             };
 
             public CharacterInfo this[Character character]
@@ -96,6 +129,44 @@ namespace SekaiTools
             kanade,mafuyu,ena,mizuki,
             miku,rin,len,luka,meiko,kaito
         }
+
+        public class Units
+        {
+            UnitInfo[] unitInfos =
+            {
+                null,
+                new UnitInfo(1,@"バーチャル・シンガー",new Color32(0xFF,0xFF,0xFF,255)),
+                new UnitInfo(2,@"Leo/need",new Color32(0x44,0x55,0xDD,255)),
+                new UnitInfo(3,@"MORE MORE JUMP！",new Color32(0x88,0xDD,0x44,255)),
+                new UnitInfo(4,@"Vivid BAD SQUAD",new Color32(0xEE,0x11,0x66,255)),
+                new UnitInfo(5,@"ワンダーランズ×ショウタイム",new Color32(0xFF,0x99,0x00,255)),
+                new UnitInfo(6,@"25時、ナイトコードで。",new Color32(0x88,0x44,0x99,255)),
+            };
+
+            public UnitInfo this[Unit unit]
+            {
+                get => unitInfos[(int)unit];
+            }
+            public UnitInfo this[int unitID]
+            {
+                get => unitInfos[unitID];
+            }
+
+        }
+        public class UnitInfo
+        {
+            public readonly int id;
+            public readonly string name;
+
+            public readonly Color32 color;
+
+            public UnitInfo(int id, string name, Color32 color)
+            {
+                this.id = id;
+                this.name = name;
+                this.color = color;
+            }
+        }
         public enum Unit
         {
             none,
@@ -104,10 +175,10 @@ namespace SekaiTools
             MOREMOREJUMP,
             VividBADSQUAD,
             WonderlandsShowtime,
-            _25jiNightCordde
+            NightCord
         }
 
-        public static int IsModelOfCharacter(string name)
+        public static int IsLive2DModelOfCharacter(string name)
         {
             for (int i = 1; i < 27; i++)
             {
@@ -118,6 +189,97 @@ namespace SekaiTools
                 }
             }
             return 0;
+        }
+
+        public static int IsSpineModelOfCharacter(string name,bool mergeVirtualSinger = false)
+        {
+            for (int i = 1; i < 27; i++)
+            {
+                string value = "sd_" + i.ToString("00") + ((Character)i).ToString();
+                if (name.StartsWith(value))
+                {
+                    if(mergeVirtualSinger)
+                        return i;
+                    else
+                    {
+                        if (i >= 21 && i <= 26)
+                        {
+                            string[] array = name.Split('_');
+                            if (array.Length < 3) return i;
+                            else
+                            {
+                                int[] ids = SeparateVirtualSinger(i);
+                                if (array[2].StartsWith("band")) return ids[1];
+                                else if (array[2].StartsWith("idol")) return ids[2];
+                                else if (array[2].StartsWith("street")) return ids[3];
+                                else if (array[2].StartsWith("wonder")) return ids[4];
+                                else if (array[2].StartsWith("night")) return ids[5];
+                                else return i;
+                            }
+                        }
+                        else
+                            return i;
+                    }
+                }
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// 将5个SEKAI的VS的ID合并到原始VS上
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static int MergeVirtualSinger(int id)
+        {
+            if (id >= 27 && id <= 56)
+            {
+                return (id - 27) / 5 + 21;
+            }
+            else
+                return id;
+        }
+
+        public static int[] SeparateVirtualSinger(int id)
+        {
+            if (id >= 21 && id <= 56)
+            {
+                id = MergeVirtualSinger(id);
+                int[] vsIDs = new int[6];
+                vsIDs[0] = id;
+                int startID = (id - 21) * 5 + 27;
+                for (int i = 0; i < 5; i++)
+                {
+                    vsIDs[i+1] = startID + i;
+                }
+                return vsIDs;
+            }
+            else
+                return new int[] { id };
+        }
+
+        public static Unit InUnit(int id)
+        {
+            if (id <= 0) return Unit.none;
+            else if (id <= 4) return Unit.Leoneed;
+            else if (id <= 8) return Unit.MOREMOREJUMP;
+            else if (id <= 12) return Unit.VividBADSQUAD;
+            else if (id <= 16) return Unit.WonderlandsShowtime;
+            else if (id <= 20) return Unit.NightCord;
+            else if (id <= 26) return Unit.VirtualSinger;
+            else if(id<=56)
+            {
+                switch ((id-27)%5)
+                {
+                    case 0:return Unit.Leoneed;
+                    case 1:return Unit.MOREMOREJUMP;
+                    case 2:return Unit.VividBADSQUAD;
+                    case 3:return Unit.WonderlandsShowtime;
+                    case 4:return Unit.NightCord;
+                    default:return Unit.none;
+                }
+            }
+            return Unit.none;
         }
     }
 }

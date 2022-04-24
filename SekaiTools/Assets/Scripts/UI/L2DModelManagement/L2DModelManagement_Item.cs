@@ -58,7 +58,7 @@ namespace SekaiTools.UI.L2DModelManagement
         public void RefreshInfo()
         {
             textAniSet.text = model.AnimationSet == null ? "无动画集" : model.AnimationSet.name;
-            int id = ConstData.IsModelOfCharacter(model.name);
+            int id = ConstData.IsLive2DModelOfCharacter(model.name);
             characterIcon.sprite = iconSet.icons[id];
         }
     }

@@ -11,6 +11,6 @@ namespace SekaiTools.UI
     public class IconSet : ScriptableObject
     {
         public Sprite[] icons = new Sprite[32];
-
+        
     }
 }

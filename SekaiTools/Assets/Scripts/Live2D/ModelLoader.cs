@@ -28,7 +28,7 @@ namespace SekaiTools.Live2D
             cubismViewer.OnNewModel += (CubismViewer sender, CubismModel model) =>{
                 SekaiLive2DModel sekaiLive2DModel = model.gameObject.AddComponent<SekaiLive2DModel>();
                 sekaiLive2DModel.Initialize();
-                int id = ConstData.IsModelOfCharacter(model.name);
+                int id = ConstData.IsLive2DModelOfCharacter(model.name);
                 if (id == 0) sekaiLive2DModel.AnimationSet = null;
                 else sekaiLive2DModel.AnimationSet = inbuiltAnimationSet.l2DAnimationSets[id];
             };

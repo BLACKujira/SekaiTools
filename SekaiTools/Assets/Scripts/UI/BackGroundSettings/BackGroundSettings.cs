@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using SekaiTools.UI.BackGround;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,49 +13,24 @@ namespace SekaiTools.UI.BackGroundSettings
     {
         public Window window;
         [Header("Components")]
-        public ButtonGenerator decorationsButtonGenerator;
-        public ValueEditButton xValueEditButton;
-        public ValueEditButton yValueEditButton;
-        public ValueEditButton scaleValueEditButton;
+        public UniversalGenerator decorationsButtonGenerator;
+        public BackGroundSettings_PartSetting partSetting;
         [Header("Settings")]
         public float deltaBGOffsetX;
         public float deltaBGOffsetY;
         public float deltaBGScale;
-        public BackGroundPartSet decorationSet;
-        public BackGroundPartSet bGPrefabSet;
         [Header("Prefabs")]
         public Button addDecorationButton;
         public Window decorationSelector;
         public Window nowLoadingWindow;
 
         BackGroundController backGroundController;
-        OpenFileDialog fileDialog = new OpenFileDialog();
+        OpenFileDialog openFileDialog_BGImage;
+        OpenFileDialog openFileDialog_SaveData;
+        SaveFileDialog saveFileDialog_SaveData;
 
-
-        float bGOffsetX 
-        {
-            get => BackGroundController.BackGround.transform.position.x;
-            set
-            {
-                BackGroundController.BackGround.transform.position = new Vector2(value, bGOffsetY);
-            }
-        }
-        float bGOffsetY
-        {
-            get => BackGroundController.BackGround.transform.position.y;
-            set
-            {
-                BackGroundController.BackGround.transform.position = new Vector2(bGOffsetX, value);
-            }
-        }
-        float bGScale
-        {
-            get => BackGroundController.BackGround.transform.localScale.x;
-            set
-            {
-                BackGroundController.BackGround.transform.localScale = new Vector3(value, value, 1);
-            }
-        }
+        public BackGroundPartSet decorationSet => BackGroundController.decorationSet;
+        public BackGroundPrefabSet bGPrefabSet => backGroundController.bGPrefabSet;
 
         public BackGroundController BackGroundController
         {
@@ -66,141 +43,160 @@ namespace SekaiTools.UI.BackGroundSettings
 
         private void Awake()
         {
-            fileDialog.Title = "选择图片";
-            fileDialog.Filter = "Image |*.png;*.jpg|Others (*.*)|*.*";
-            fileDialog.FilterIndex = 1;
-            fileDialog.RestoreDirectory = true;
+            openFileDialog_BGImage = FileDialogFactory.GetOpenFileDialog_Image();
+            openFileDialog_SaveData = FileDialogFactory.GetOpenFileDialog_BGSettings();
+            saveFileDialog_SaveData = FileDialogFactory.GetSaveFileDialog_BGSettings();
 
-            InitializeValueEditButton();
             InitializeButtonGenerator();
-        }
-
-        private void InitializeValueEditButton()
-        {
-            xValueEditButton.Initialize(() =>
-            {
-                bGOffsetX -= deltaBGOffsetX;
-            },
-            () =>
-            {
-                bGOffsetX += deltaBGOffsetX;
-            },
-            () =>
-            {
-                bGOffsetX = 0;
-            },
-            () =>
-            {
-                return bGOffsetX.ToString("0.00");
-            }
-            );
-
-            yValueEditButton.Initialize(() =>
-            {
-                bGOffsetY -= deltaBGOffsetY;
-            },
-            () =>
-            {
-                bGOffsetY += deltaBGOffsetY;
-            },
-            () =>
-            {
-                bGOffsetY = 0;
-            },
-            () =>
-            {
-                return bGOffsetY.ToString("0.00");
-            }
-            );
-
-            scaleValueEditButton.Initialize(() =>
-            {
-                bGScale -= deltaBGScale;
-            },
-            () =>
-            {
-                bGScale += deltaBGScale;
-            },
-            () =>
-            {
-                bGScale = 1;
-            },
-            () =>
-            {
-                return bGScale.ToString("0.00");
-            }
-            );
         }
 
         private void InitializeButtonGenerator()
         {
-            decorationsButtonGenerator.ClearButtons();
+            decorationsButtonGenerator.ClearItems();
             decorationsButtonGenerator.Generate(BackGroundController.Decorations.Count,
-                (Button button,int id) =>
+                (GameObject gameObject, int id) =>
                 {
-                    ButtonWithIconAndText buttonWithIconAndText = button.GetComponent<ButtonWithIconAndText>();
-                    buttonWithIconAndText.Label = BackGroundController.Decorations[id].name;
-                    buttonWithIconAndText.Icon = BackGroundController.Decorations[id].preview;
-                },
-                (int id)=>
-                {
-                    BackGroundController.RemoveDecoration(id);
-                    InitializeButtonGenerator();
+                    BackGroundSettings_PartItem item = gameObject.GetComponent<BackGroundSettings_PartItem>();
+                    item.Label = BackGroundController.Decorations[id].itemName;
+                    item.Icon = BackGroundController.Decorations[id].preview;
+
+                    if (BackGroundController.Decorations[id].disableRemove)
+                    {
+                        item.buttonRemove.interactable = false;
+                    }
+                    else
+                    {
+                        item.buttonRemove.onClick.AddListener(() =>
+                        {
+                            BackGroundController.RemoveDecoration(id);
+                            InitializeButtonGenerator();
+                            BackGroundController.SetSortingLayers();
+                        });
+                    }
+
+                    item.buttonConfig.onClick.AddListener(() =>
+                    {
+                        partSetting.SetPart(BackGroundController.Decorations[id]);
+                    });
+
+                    if(id!=0)
+                    {
+                        item.buttonMoveLeft.onClick.AddListener(() =>
+                        {
+                            BackGroundPart backGroundPart = BackGroundController.Decorations[id];
+                            BackGroundController.Decorations[id] = BackGroundController.Decorations[id - 1];
+                            BackGroundController.Decorations[id - 1] = backGroundPart;
+                            InitializeButtonGenerator();
+                            BackGroundController.SetSortingLayers();
+                        });
+                    }
+                    else
+                    {
+                        item.buttonMoveLeft.interactable = false;
+                    }
+
+                    if (id != BackGroundController.Decorations.Count-1)
+                    {
+                        item.buttonMoveRight.onClick.AddListener(() =>
+                        {
+                            BackGroundPart backGroundPart = BackGroundController.Decorations[id];
+                            BackGroundController.Decorations[id] = BackGroundController.Decorations[id + 1];
+                            BackGroundController.Decorations[id + 1] = backGroundPart;
+                            InitializeButtonGenerator();
+                            BackGroundController.SetSortingLayers();
+                        });
+                    }
+                    else
+                    {
+                        item.buttonMoveRight.interactable = false;
+                    }
+
+                    if (BackGroundController.Decorations[id].isPartOfBGPrefab)
+                        item.ChangeStyle(BackGroundSettings_PartItem.Style.BGPart);
                 });
-            decorationsButtonGenerator.AddButton(addDecorationButton,null,()=>
+            decorationsButtonGenerator.AddItem(addDecorationButton.gameObject,(GameObject gameObject)=>
             {
-                UniversalSelector universalSelector = window.OpenWindow<UniversalSelector>(decorationSelector);
-                universalSelector.Title = "添加背景装饰";
-                universalSelector.Generate(decorationSet.backGroundParts.Count,(Button button,int id)=>
+                gameObject.GetComponent<Button>().onClick.AddListener(
+                () =>
                 {
-                    ButtonWithIconAndText buttonWithIconAndText = button.GetComponent<ButtonWithIconAndText>();
-                    buttonWithIconAndText.Label = decorationSet.backGroundParts[id].name;
-                    buttonWithIconAndText.Icon = decorationSet.backGroundParts[id].preview;
-                },
-                (int id)=>
-                {
-                    backGroundController.AddDecoration(decorationSet.backGroundParts[id]);
-                    InitializeButtonGenerator();
+                    UniversalSelector universalSelector = window.OpenWindow<UniversalSelector>(decorationSelector);
+                    universalSelector.Title = "添加背景装饰";
+                    universalSelector.Generate(decorationSet.backGroundParts.Count, (Button button, int id) =>
+                     {
+                         ButtonWithIconAndText buttonWithIconAndText = button.GetComponent<ButtonWithIconAndText>();
+                         buttonWithIconAndText.Label = decorationSet.backGroundParts[id].itemName;
+                         buttonWithIconAndText.Icon = decorationSet.backGroundParts[id].preview;
+                     },
+                    (int id) =>
+                    {
+                        backGroundController.AddDecoration(decorationSet.backGroundParts[id]);
+                        InitializeButtonGenerator();
+                    });
                 });
             });
-        }
-
-        public void ResetBGTransform()
-        {
-            bGOffsetX = 0;
-            bGOffsetY = 0;
-            bGScale = 1;
-            xValueEditButton.LoadValue();
-            yValueEditButton.LoadValue();
-            scaleValueEditButton.LoadValue();
         }
 
         public void SelectBGPrefab()
         {
             UniversalSelector universalSelector = window.OpenWindow<UniversalSelector>(decorationSelector);
             universalSelector.Title = "选择背景预制件";
-            universalSelector.Generate(bGPrefabSet.backGroundParts.Count, (Button button, int id) =>
+            universalSelector.Generate(bGPrefabSet.backGrounds.Count, (Button button, int id) =>
             {
                 ButtonWithIconAndText buttonWithIconAndText = button.GetComponent<ButtonWithIconAndText>();
-                buttonWithIconAndText.Label = bGPrefabSet.backGroundParts[id].name;
-                buttonWithIconAndText.Icon = bGPrefabSet.backGroundParts[id].preview;
+                buttonWithIconAndText.Label = bGPrefabSet.backGrounds[id].mainPart.itemName;
+                buttonWithIconAndText.Icon = bGPrefabSet.backGrounds[id].mainPart.preview;
             },
             (int id) =>
             {
-                backGroundController.ChangeBackGround(bGPrefabSet.backGroundParts[id]);
+                backGroundController.ChangeBackGround(bGPrefabSet.backGrounds[id]);
                 InitializeButtonGenerator();
-                ResetBGTransform();
             });
         }
 
         public void OpenImage()
         {
-            DialogResult dialogResult = fileDialog.ShowDialog();
+            DialogResult dialogResult = openFileDialog_BGImage.ShowDialog();
             if (dialogResult != DialogResult.OK) return;
-            ImageData imageData = new ImageData();
+            ImageData imageData = new ImageData(openFileDialog_BGImage.FileName);
             NowLoadingTypeA nowLoadingTypeA = window.OpenWindow<NowLoadingTypeA>(nowLoadingWindow);
-            nowLoadingTypeA.OnFinish += () => { BackGroundController.backGroundController.ChangeBackGround(imageData.spriteList[0], fileDialog.FileName);ResetBGTransform(); };
-            nowLoadingTypeA.StartProcess(imageData.LoadImage(fileDialog.FileName));
+            nowLoadingTypeA.OnFinish += () => { BackGroundController.backGroundController.ChangeBackGround(imageData.valueArray[0], openFileDialog_BGImage.FileName); };
+            nowLoadingTypeA.StartProcess(imageData.LoadFile(openFileDialog_BGImage.FileName));
+        }
+
+        public void ModifyBackGround()
+        {
+            partSetting.SetPart(BackGroundController.backGroundController.BackGround.mainPart);
+        }
+
+        public void Save()
+        {
+            DialogResult dialogResult = saveFileDialog_SaveData.ShowDialog();
+            if (dialogResult != DialogResult.OK) return;
+
+            string fileName = saveFileDialog_SaveData.FileName;
+            string json = JsonUtility.ToJson(new BackGroundController.BackGroundSaveData(BackGroundController),true);
+            File.WriteAllText(fileName, json);
+        }
+
+        public void Load()
+        {
+            DialogResult dialogResult = openFileDialog_SaveData.ShowDialog();
+            if (dialogResult != DialogResult.OK) return;
+
+            string fileName = openFileDialog_SaveData.FileName;
+            BackGroundController.BackGroundSaveData saveData = JsonUtility.FromJson<BackGroundController.BackGroundSaveData>(File.ReadAllText(fileName));
+
+            BackGroundController.ClearAndReset();
+
+            string[] log = BackGroundController.Load(saveData);
+
+            //显示Log
+            if(log.Length!=0)
+            {
+                window.ShowLogWindow("出现异常", string.Join("\n", log));
+            }
+
+            InitializeButtonGenerator();
         }
     }
 }

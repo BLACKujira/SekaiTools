@@ -24,7 +24,7 @@ namespace SekaiTools.UI
              {
                  ButtonWithIconAndText buttonWithIconAndText = button.GetComponent<ButtonWithIconAndText>();
                  buttonWithIconAndText.Label = ModelLoader.models[id].name;
-                 int charID = ConstData.IsModelOfCharacter(ModelLoader.models[id].name);
+                 int charID = ConstData.IsLive2DModelOfCharacter(ModelLoader.models[id].name);
                  buttonWithIconAndText.Icon = iconSet.icons[charID];
              },
             (int id) =>

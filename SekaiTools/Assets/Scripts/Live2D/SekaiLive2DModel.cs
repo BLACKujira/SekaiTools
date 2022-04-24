@@ -24,14 +24,20 @@ namespace SekaiTools.Live2D
         CubismFadeController _fadeController;
 
         //同时设置CubismFadeMotionList
-        public L2DAnimationSet AnimationSet { 
-            get => _animationSet;
-            set 
-            { 
+        public L2DAnimationSet AnimationSet
+        {
+            get
+            {
+                if (!_animationSet) throw new Exception.AnimationSetNotSetException(name);
+                return _animationSet;
+            }
+
+            set
+            {
                 _animationSet = value;
                 if (value != null) FadeController.CubismFadeMotionList = _animationSet.fadeMotionList;
                 else FadeController.enabled = false;
-            } 
+            }
         }
         public CubismFadeController FadeController
         {
@@ -132,7 +138,19 @@ namespace SekaiTools.Live2D
         }
         public void PlayAnimation(string motion, string facial, float speed = 1)
         {
-            PlayAnimation(AnimationSet.GetAnimation(motion),AnimationSet.GetAnimation(facial), speed);
+            AnimationClip motionAnimation = AnimationSet.GetAnimation(motion);
+            AnimationClip facialAnimation = AnimationSet.GetAnimation(facial);
+            PlayAnimation(motionAnimation, facialAnimation, speed);
+
+            if (!string.IsNullOrEmpty(motion) && motionAnimation == null)
+            {
+                string str = motion;
+                if (!string.IsNullOrEmpty(facial) && facialAnimation == null)
+                    str += ' ' + facial;
+                throw new Exception.AnimationNotFoundException(str);
+            }
+            if (!string.IsNullOrEmpty(facial) && facialAnimation == null)
+                throw new Exception.AnimationNotFoundException(facial);
         }
         public void StopAllAnimation()
         {
@@ -149,6 +167,11 @@ namespace SekaiTools.Live2D
         CubismParameter _parameterEyeROpen;
         CubismParameter _parameterMouthOpenY;
         private void OnEnable()
+        {
+            ResetFacialParameter();
+        }
+
+        private void OnDisable()
         {
             ResetFacialParameter();
         }

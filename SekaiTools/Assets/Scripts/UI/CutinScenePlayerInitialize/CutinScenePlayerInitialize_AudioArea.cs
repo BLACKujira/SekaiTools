@@ -34,15 +34,9 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
             folderBrowserDialog = new FolderBrowserDialog();
             folderBrowserDialog.Description = "选择存放语音的文件夹";
 
-            saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Title = "保存语音资料";
-            saveFileDialog.Filter = "JSON (*.json)|*.json|Others (*.*)|*.*";
-            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog = FileDialogFactory.GetSaveFileDialog_AudioData();
 
-            openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = "选择音频存档";
-            openFileDialog.Filter = "JSON (*.json)|*.json|Others (*.*)|*.*";
-            openFileDialog.RestoreDirectory = true;
+            openFileDialog = FileDialogFactory.GetOpenFileDialog_AudioData();
         }
 
         public void Initialize(CutinSceneData cutinSceneData)
@@ -72,14 +66,14 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
             string fileName = openFileDialog.FileName;
             LoadData(null, fileName);
         }
-        public void LoadData(Action onFinish,string directory)
+        public void LoadData(Action onFinish,string audioPath)
         {
             NowLoadingTypeA nowLoadingTypeA = cutinScenePlayerInitialize.window.OpenWindow<NowLoadingTypeA>(nowLoadingWindow);
             nowLoadingTypeA.TitleText = "正在读取音频";
 
-            AudioData newAudioData = new AudioData();
+            AudioData newAudioData = new AudioData(audioPath);
             audioData = newAudioData;
-            nowLoadingTypeA.StartProcess(newAudioData.LoadAudioData(directory));
+            nowLoadingTypeA.StartProcess(newAudioData.LoadData(File.ReadAllText(audioPath)));
             nowLoadingTypeA.OnFinish += () => { Initialize(cutinScenePlayerInitialize.cutinSceneData); if (onFinish != null) onFinish(); };
         }
 
@@ -100,14 +94,21 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
             NowLoadingTypeA nowLoadingTypeA = cutinScenePlayerInitialize.window.OpenWindow<NowLoadingTypeA>(nowLoadingWindow);
             nowLoadingTypeA.TitleText = "正在读取音频";
 
-            AudioData newAudioData = new AudioData();
+            AudioData newAudioData = new AudioData(savePath);
             audioData = newAudioData;
-            audioData.savePath = audioPath;
-            nowLoadingTypeA.StartProcess(newAudioData.LoadDatas(Directory.GetFiles(audioPath)));
+            List<string> selectedFiles = new List<string>();
+            string[] files = Directory.GetFiles(audioPath);
+            foreach (var file in files)
+            {
+                CutinSceneData.CutinSceneInfo cutinSceneInfo = CutinSceneData.IsCutinVoice(Path.GetFileName(file));
+                if (cutinSceneInfo != null)
+                    selectedFiles.Add(file);
+            }
+            nowLoadingTypeA.StartProcess(newAudioData.LoadFile(selectedFiles.ToArray()));
             nowLoadingTypeA.OnFinish += () =>
             {
                 Initialize(cutinScenePlayerInitialize.cutinSceneData);
-                newAudioData.SaveData(savePath);
+                newAudioData.SaveData();
                 if (onFinish != null) onFinish();
             };
         }

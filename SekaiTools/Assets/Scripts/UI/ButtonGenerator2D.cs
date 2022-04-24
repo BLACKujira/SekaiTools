@@ -41,5 +41,24 @@ namespace SekaiTools.UI
                 buttons.Add(button);
             }
         }
+
+        public override void ClearButtons()
+        {
+            foreach (var button in buttons)
+            {
+                Destroy(button.gameObject);
+            }
+            buttons = new List<Button>();
+        }
+
+        public override void AddButton(Button buttonPrefab, Action<Button> initialize, Action onClick)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void AddButton(Action<Button> initialize, Action onClick)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using SekaiTools;
 using System;
+using System.IO;
+using SekaiTools.Kizuna;
 
 namespace SekaiTools.Cutin
 {
@@ -10,78 +12,64 @@ namespace SekaiTools.Cutin
     /// 互动语音场景资料
     /// </summary>
     [Serializable]
-    public class CutinSceneData
+    public class CutinSceneData : ISaveData
     {
         public List<CutinScene> cutinScenes = new List<CutinScene>();
+
+        public string savePath { get; set; }
 
         /// <summary>
         /// 判断一个文件的名字是否符合互动语音的格式(不支持早期不分前后的语音)
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public bool IsCutinVoice(string name)
+        public static CutinSceneInfo IsCutinVoice(string name)
         {
+            int charFirstID;
+            int charSecondID;
             string[] nameArray = name.Split('_');
-            if (nameArray.Length < 6) return false;
-            if (!nameArray[0].Equals("system")) return false;
-            if (!nameArray[1].Equals("bondscp")) return false;
-            if (!int.TryParse(nameArray[2], out _)) return false;
-            if (!int.TryParse(nameArray[3], out _)) return false;
-            if (!nameArray[4].Equals("first") && !nameArray[4].Equals("second")) return false;
-            if (nameArray[5][0]<'1'|| nameArray[5][0]>'9') return false;
-            return true;
+            if (nameArray.Length < 6) return null;
+            if (!nameArray[0].Equals("system")) return null;
+            if (!nameArray[1].Equals("bondscp")) return null;
+            if (!int.TryParse(nameArray[2], out charFirstID)) return null;
+            if (!int.TryParse(nameArray[3], out charSecondID)) return null;
+            if (!nameArray[4].Equals("first") && !nameArray[4].Equals("second")) return null;
+            if (nameArray[5][0]<'1'|| nameArray[5][0]>'9') return null;
+            return new CutinSceneInfo(
+                charFirstID,
+                charSecondID, 
+                nameArray[5][0] - '0',
+                nameArray[4].Equals("first")?CutinSceneInfo.ClipType.first:CutinSceneInfo.ClipType.second);
         }
 
         /// <summary>
-        /// 构造函数，从一个语音资料中挑选出符合互动语音名称的片段并生成互动语音场景
+        /// 使用cutinSceneInfos生成互动语音场景，音频文件的名称为标准化的名称
         /// </summary>
-        /// <param name="audioData"></param>
-        public CutinSceneData(AudioData audioData)
+        /// <param name="cutinSceneInfos"></param>
+        public CutinSceneData(params CutinSceneInfoBase[] cutinSceneInfos)
         {
-            List<((string, string[]) first, (string, string[]) second)> Pairing(List<(string, string[])> _fileNameData_first, List<(string, string[])> _fileNameData_second)
+            foreach (var cutinSceneInfo in cutinSceneInfos)
             {
-                List<((string, string[]) first, (string, string[]) second)> outList = new List<((string, string[]) first, (string, string[]) second)>();
-                foreach (var file_F in _fileNameData_first)
+                bool flag = false;
+                foreach (var cutinSceneItem in cutinScenes)
                 {
-                    foreach (var file_S in _fileNameData_second)
+                    if(cutinSceneInfo.IsInScene(cutinSceneItem))
                     {
-                        if (file_F.Item2[2].Equals(file_S.Item2[2]) &&
-                            file_F.Item2[3].Equals(file_S.Item2[3]) &&
-                            file_F.Item2[5][0].Equals(file_S.Item2[5][0]))
-                        {
-                            outList.Add((file_F, file_S));
-                            break;
-                        }
+                        flag = true;
+                        break;
                     }
                 }
-                return outList;
-            }
-            List<(string, string[])> fileNameData_first = new List<(string, string[])>();
-            List<(string, string[])> fileNameData_second = new List<(string, string[])>();
-            foreach (var keyValuePair in audioData.audioClips)
-            {
-                string name = keyValuePair.Key;
-                if (!IsCutinVoice(name)) continue;
-                    string[] array = name.Split('_');
-                if (array[4].Equals("second"))
-                    fileNameData_second.Add((name, array));
-                else
-                    fileNameData_first.Add((name, array));
-            }
-            List<((string, string[]) first, (string, string[]) second)> list = Pairing(fileNameData_first, fileNameData_second);
-            foreach (var item in list)
-            {
-                CutinScene data = new CutinScene();
-                data.charFirstID = Convert.ToInt32(item.first.Item2[2]);
-                data.charSecondID = Convert.ToInt32(item.first.Item2[3]);
-                data.talkData_First.talkVoice = item.first.Item1;
-                data.talkData_Second.talkVoice = item.second.Item1;
-                data.dataID = item.first.Item2[5][0] - '0';
 
-                cutinScenes.Add(data);
+                if(!flag)
+                {
+                    CutinScene cutinScene = new CutinScene(cutinSceneInfo);
+                    cutinScene.talkData_First.talkVoice = StandardizeName(new CutinSceneInfo(cutinSceneInfo, CutinSceneInfo.ClipType.first));
+                    cutinScene.talkData_Second.talkVoice = StandardizeName(new CutinSceneInfo(cutinSceneInfo, CutinSceneInfo.ClipType.second));
+                    cutinScenes.Add(cutinScene);
+                }
             }
         }
-        
+
         /// <summary>
         /// 构造函数，生成只含有一个片段的互动语音场景资料(用于编辑器的预览)
         /// </summary>
@@ -89,6 +77,11 @@ namespace SekaiTools.Cutin
         public CutinSceneData(CutinScene cutinScene)
         {
             cutinScenes.Add(cutinScene);
+        }
+
+        public CutinSceneData(List<CutinScene> cutinScenes)
+        {
+            this.cutinScenes = cutinScenes;
         }
 
         /// <summary>
@@ -117,10 +110,11 @@ namespace SekaiTools.Cutin
         public AudioMatchingCount CountMatching(AudioData audioData)
         {
             List<string[]> names = new List<string[]>();
-            foreach (var keyValuePair in audioData.audioClips)
+            AudioClip[] valueArray = audioData.valueArray;
+            foreach (var audioClip in valueArray)
             {
-                if (IsCutinVoice(keyValuePair.Key))
-                    names.Add(keyValuePair.Key.Split('_'));
+                if (IsCutinVoice(audioClip.name) != null)
+                    names.Add(audioClip.name.Split('_'));
             }
             AudioMatchingCount audioMatchingCount = new AudioMatchingCount();
             foreach (var cutinScene in cutinScenes)
@@ -157,6 +151,127 @@ namespace SekaiTools.Cutin
             public int missingFirst = 0;
             public int missingSecond = 0;
             public int missingBoth = 0;
+
+            public int countAll { get => matching + missingFirst + missingSecond + missingBoth; }
+
+            public static AudioMatchingCount operator+(AudioMatchingCount a,AudioMatchingCount b)
+            {
+                AudioMatchingCount audioMatchingCount = new AudioMatchingCount();
+                audioMatchingCount.matching = a.matching + b.matching;
+                audioMatchingCount.missingFirst = a.missingFirst + b.missingFirst;
+                audioMatchingCount.missingBoth = a.missingBoth + b.missingBoth;
+                audioMatchingCount.missingSecond = a.missingSecond + b.missingSecond;
+                return audioMatchingCount;
+            }
+        }
+
+        public class CutinSceneInfoBase
+        {
+            public int charFirstID;
+            public int charSecondID;
+            public int dataID;
+
+            public CutinSceneInfoBase(int charFirstID, int charSecondID, int dataID)
+            {
+                this.charFirstID = charFirstID;
+                this.charSecondID = charSecondID;
+                this.dataID = dataID;
+            }
+
+            public bool IsConversationOf(int charAID, int charBID,bool mergeVirtualSinger = false)
+            {
+                if (mergeVirtualSinger)
+                {
+                    if (ConstData.MergeVirtualSinger(charAID) == ConstData.MergeVirtualSinger(charFirstID)
+                        && ConstData.MergeVirtualSinger(charBID) == ConstData.MergeVirtualSinger(charSecondID)) return true;
+                    if (ConstData.MergeVirtualSinger(charAID) == ConstData.MergeVirtualSinger(charSecondID) 
+                        && ConstData.MergeVirtualSinger(charBID) == ConstData.MergeVirtualSinger(charFirstID)) return true;
+                }
+                else
+                {
+                    if (charAID == charFirstID && charBID == charSecondID) return true;
+                    if (charAID == charSecondID && charBID == charFirstID) return true;
+                }
+                return false;
+            }
+            public bool IsSameConversation(CutinSceneInfo another)
+            {
+                if (charFirstID != another.charFirstID) return false;
+                if (charSecondID != another.charSecondID) return false;
+                if (dataID != another.dataID) return false;
+                return true;
+            }
+
+            public bool IsInScene(CutinScene cutinScene)
+            {
+                if (charFirstID != cutinScene.charFirstID) return false;
+                if (charSecondID != cutinScene.charSecondID) return false;
+                if (dataID != cutinScene.dataID) return false;
+                return true;
+            }
+        }
+
+        public class CutinSceneInfo:CutinSceneInfoBase
+        {
+            public enum ClipType { first, second }
+            public ClipType clipType;
+
+            public CutinSceneInfo(int charFirstID, int charSecondID, int dataID, ClipType clipType):base(charFirstID,charSecondID,dataID)
+            {
+                this.clipType = clipType;
+            }
+            public CutinSceneInfo(CutinSceneInfoBase cutinSceneInfoBase, ClipType clipType) : base(cutinSceneInfoBase.charFirstID, cutinSceneInfoBase.charSecondID, cutinSceneInfoBase.dataID)
+            {
+                this.clipType = clipType;
+            }
+        }
+
+        public static string StandardizeName(CutinSceneInfo cutinSceneInfo)
+        {
+            return $"system_bondscp_{cutinSceneInfo.charFirstID.ToString("000")}_{cutinSceneInfo.charSecondID.ToString("000")}_{cutinSceneInfo.clipType}_{cutinSceneInfo.dataID}";
+        }
+
+        public void StandardizeAudioData(AudioData audioData)
+        {
+            AudioClip[] valueArray = audioData.valueArray;
+            foreach (var value in valueArray)
+            {
+                CutinSceneInfo cutinSceneInfo = IsCutinVoice(value.name);
+
+                string savePath = audioData.GetSavePath(value);
+                audioData.RemoveValue(value);
+
+                foreach (var cutinScene in cutinScenes)
+                {
+                    if (cutinScene.IsConversationOf(cutinSceneInfo.charFirstID, cutinSceneInfo.charSecondID))
+                    {
+                        value.name = StandardizeName(cutinSceneInfo);
+                        audioData.AppendValue(value, savePath);
+                        break;
+                    }
+                }
+            }
+        }
+
+        public virtual void SaveData()
+        {
+            string json = JsonUtility.ToJson(this,true);
+            File.WriteAllText(savePath, json);
+        }
+    }
+    public class CutinSceneDataInKizunaData:CutinSceneData
+    {
+        public Kizuna.KizunaSceneDataBase kizunaSceneData;
+
+        public CutinSceneDataInKizunaData(List<CutinScene> cutinScenes, KizunaSceneDataBase kizunaSceneData) : base(cutinScenes)
+        {
+            this.kizunaSceneData = kizunaSceneData;
+        }
+
+        public override void SaveData()
+        {
+            kizunaSceneData[new Vector2Int(cutinScenes[0].charFirstID, cutinScenes[0].charSecondID)].cutinScenes = cutinScenes;
+            kizunaSceneData.SaveData();
         }
     }
 }

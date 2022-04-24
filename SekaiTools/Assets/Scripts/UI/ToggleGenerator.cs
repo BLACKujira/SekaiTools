@@ -44,5 +44,15 @@ namespace SekaiTools.UI
                 toggles.Add(toggle);
             }
         }
+
+        public void ClearToggles()
+        {
+            foreach (var toggle in toggles)
+            {
+                if(toggle)
+                    Destroy(toggle.gameObject);
+            }
+            toggles = new List<Toggle>();
+        }
     }
 }

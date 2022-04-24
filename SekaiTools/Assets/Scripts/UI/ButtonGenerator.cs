@@ -8,13 +8,13 @@ namespace SekaiTools.UI
 {
     public abstract class ButtonGeneratorBase : MonoBehaviour
     {
-        public virtual void Generate(int count, Action<Button, int> initialize, Action<int> onClick) { }
+        public abstract void Generate(int count, Action<Button, int> initialize, Action<int> onClick);
 
-        public virtual void ClearButtons() { }
+        public abstract void ClearButtons();
 
-        public virtual void AddButton(Button buttonPrefab, Action<Button> initialize, Action onClick) { }
+        public abstract void AddButton(Button buttonPrefab, Action<Button> initialize, Action onClick);
 
-        public virtual void AddButton(Action<Button> initialize, Action onClick) { }
+        public abstract void AddButton(Action<Button> initialize, Action onClick);
     }
 
     public class ButtonGenerator : ButtonGeneratorBase

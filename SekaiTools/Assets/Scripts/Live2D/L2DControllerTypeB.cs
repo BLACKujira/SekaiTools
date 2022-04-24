@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using SekaiTools;
 using DG.Tweening;
+using System;
 
 namespace SekaiTools.Live2D
 {

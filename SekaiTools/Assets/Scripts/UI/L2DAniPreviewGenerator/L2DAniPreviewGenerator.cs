@@ -101,7 +101,7 @@ namespace SekaiTools.UI.L2DAniPreviewGenerator
             groupModel.Generate(modelList.Count,
                 (Toggle toggle, int id) => {
                     ToggleWithIconAndColor toggleWithIconAndColor = toggle.GetComponent<ToggleWithIconAndColor>();
-                    toggleWithIconAndColor.SetIcon(toggleIconSet.icons[ConstData.IsModelOfCharacter(modelList[id].name)]);
+                    toggleWithIconAndColor.SetIcon(toggleIconSet.icons[ConstData.IsLive2DModelOfCharacter(modelList[id].name)]);
                     toggleWithIconAndColor.SetLabel(modelList[id].name);
                 },
                 (bool value,int id)=>{

@@ -18,12 +18,12 @@ namespace SekaiTools.UI.CutinSceneEditor
         public CutinSceneEditor_EditArea editArea;
         public CutinSceneEditor_Scroll scroll;
         public AudioSource audioPlayer;
+        public MessageLayer.MessageLayerBase messageLayer;
         [Header("Prefabs")]
         public Window playerWindow;
 
         [NonSerialized] public AudioData audioData;
         [NonSerialized] public CutinSceneData cutinSceneData;
-        [NonSerialized] public string cutinSceneDataPath;
         [NonSerialized] public CutinScene currentCutinScene;
 
         public void Initialize(CutinSceneEditorSettings settings)
@@ -32,7 +32,6 @@ namespace SekaiTools.UI.CutinSceneEditor
             player.audioData = settings.audioData;
             cutinSceneData = settings.cutinSceneData;
             player.l2DController.live2DModels = settings.sekaiLive2DModels;
-            cutinSceneDataPath = settings.cutinSceneDataPath;
 
             scroll.Generate(cutinSceneData, (CutinScene cutinScene) =>
             { editArea.SetScene(cutinScene); currentCutinScene = cutinScene; });
@@ -40,7 +39,7 @@ namespace SekaiTools.UI.CutinSceneEditor
 
         public void PlayAudioClip(string audioName)
         {
-            AudioClip audioClip = audioData.GetAudioClip(audioName);
+            AudioClip audioClip = audioData.GetValue(audioName);
             if (audioClip)
                 audioPlayer.PlayOneShot(audioClip);
         }
@@ -53,13 +52,12 @@ namespace SekaiTools.UI.CutinSceneEditor
 
         public class CutinSceneEditorSettings : CutinScenePlayerSettings
         {
-            public string cutinSceneDataPath;
         }
 
         public void Save()
         {
-            string json = JsonUtility.ToJson(cutinSceneData, true);
-            File.WriteAllText(cutinSceneDataPath, json);
+            cutinSceneData.SaveData();
+            messageLayer.ShowMessage("保存成功");
         }
 
         public void OpenPlayerWindow()

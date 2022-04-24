@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using SekaiTools.Exception;
 
 namespace SekaiTools.UI.CutinScenePlayer
 {
@@ -22,28 +23,28 @@ namespace SekaiTools.UI.CutinScenePlayer
         public float waitTime_Voice;
         public float waitTime_Scene;
         public float minHoldTime;
+        [Header("Exception")]
+        public MonoBehaviour _exceptionPrinter;
+
+        public IExceptionPrinter exceptionPrinter => _exceptionPrinter as IExceptionPrinter;
+
 
         [NonSerialized] public CutinSceneData cutinSceneData;
         [NonSerialized] public AudioData audioData;
 
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Z))
-            {
-                StopAllCoroutines();
-                StartCoroutine(IPlay());
-            }
-        }
-
         /// <summary>
-        /// 开始播放
+        /// 开始播放,在此组件上开启协程
         /// </summary>
         public void Play()
         {
             StopAllCoroutines();
             StartCoroutine(IPlay());
         }
-        IEnumerator IPlay()
+        /// <summary>
+        /// 播放协程，方便从其它组件调用
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator IPlay()
         {
             talkWindow.Open();
             foreach (var scene in cutinSceneData.cutinScenes)
@@ -66,20 +67,77 @@ namespace SekaiTools.UI.CutinScenePlayer
 
             l2DController.modelL.StopAllAnimation();
             l2DController.modelR.StopAllAnimation();
-            l2DController.modelL.PlayAnimation(scene.talkData_First.motionCharFirst, scene.talkData_First.facialCharFirst);
-            l2DController.modelR.PlayAnimation(scene.talkData_First.motionCharSecond, scene.talkData_First.facialCharSecond, Mathf.Infinity);
+
+            //播放动画并试图捕获SEKAI异常
+            try
+            {
+                l2DController.modelL.PlayAnimation(scene.talkData_First.motionCharFirst, scene.talkData_First.facialCharFirst);
+            }
+            catch (SekaiException ex)
+            {
+                exceptionPrinter.PrintException(ex);
+            }
+            try
+            {
+                l2DController.modelR.PlayAnimation(scene.talkData_First.motionCharSecond, scene.talkData_First.facialCharSecond, Mathf.Infinity);
+            }
+            catch (SekaiException ex)
+            {
+                exceptionPrinter.PrintException(ex);
+            }
+
+            //等待模型淡入后再播放动画
             yield return new WaitForSeconds(.15f);
             l2DController.FadeInAll();
 
-            l2DController.modelL.PlayVoice(audioData.audioClips[scene.talkData_First.talkVoice]);
-            talkWindow.ShowWords(scene.talkData_First.talkText, ConstData.characters[scene.charFirstID].namae, scene.talkData_First.talkText_Translate);
-            yield return new WaitForSeconds(Mathf.Max(minHoldTime, audioData.audioClips[scene.talkData_First.talkVoice].length) + waitTime_Voice);
 
-            l2DController.modelL.PlayAnimation(scene.talkData_Second.motionCharFirst, scene.talkData_Second.facialCharFirst);
-            l2DController.modelR.PlayAnimation(scene.talkData_Second.motionCharSecond, scene.talkData_Second.facialCharSecond);
-            l2DController.modelR.PlayVoice(audioData.audioClips[scene.talkData_Second.talkVoice]);
+            //播放语音并试图捕获SEKAI异常
+            try
+            {
+                if (string.IsNullOrEmpty(scene.talkData_First.talkVoice)) throw new EmptyAudioNameException();
+                AudioClip voiceFirst = audioData.GetValue(scene.talkData_First.talkVoice);
+                if (voiceFirst == null) throw new AudioNotFoundException(scene.talkData_First.talkVoice);
+                l2DController.modelL.PlayVoice(voiceFirst);
+            }
+            catch (System.Exception ex)
+            {
+                exceptionPrinter.PrintException(ex);
+            }
+            talkWindow.ShowWords(scene.talkData_First.talkText, ConstData.characters[scene.charFirstID].namae, scene.talkData_First.talkText_Translate);
+            yield return new WaitForSeconds(Mathf.Max(minHoldTime, audioData.GetValue(scene.talkData_First.talkVoice)?.length??0) + waitTime_Voice);
+
+            //播放动画并试图捕获SEKAI异常
+            try
+            {
+                l2DController.modelL.PlayAnimation(scene.talkData_Second.motionCharFirst, scene.talkData_Second.facialCharFirst);
+            }
+            catch (SekaiException ex)
+            {
+                exceptionPrinter.PrintException(ex);
+            }
+            try
+            {
+                l2DController.modelR.PlayAnimation(scene.talkData_Second.motionCharSecond, scene.talkData_Second.facialCharSecond);
+            }
+            catch (SekaiException ex)
+            {
+                exceptionPrinter.PrintException(ex);
+            }
+
+            //播放语音并试图捕获SEKAI异常
+            try
+            {
+                if (string.IsNullOrEmpty(scene.talkData_Second.talkVoice)) throw new EmptyAudioNameException();
+                AudioClip voiceSecond = audioData.GetValue(scene.talkData_Second.talkVoice);
+                if (voiceSecond == null) throw new AudioNotFoundException(scene.talkData_First.talkVoice);
+                l2DController.modelR.PlayVoice(voiceSecond);
+            }
+            catch (System.Exception ex)
+            {
+                exceptionPrinter.PrintException(ex);
+            }
             talkWindow.ShowWords(scene.talkData_Second.talkText, ConstData.characters[scene.charSecondID].namae, scene.talkData_Second.talkText_Translate);
-            yield return new WaitForSeconds(Mathf.Max(minHoldTime, audioData.audioClips[scene.talkData_Second.talkVoice].length) + waitTime_Scene);
+            yield return new WaitForSeconds(Mathf.Max(minHoldTime, audioData.GetValue(scene.talkData_Second.talkVoice)?.length??0) + waitTime_Scene);
 
             talkWindow.Clear();
             l2DController.FadeOutAll();

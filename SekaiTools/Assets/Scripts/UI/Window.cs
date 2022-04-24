@@ -158,6 +158,18 @@ namespace SekaiTools.UI
             openWindow.Show();
         }
 
+        public void ShowMessageBox(string title, string message, Action onClose = null)
+        {
+            MessageBox.MessageBox messageBox = OpenWindow<MessageBox.MessageBox>(WindowController.windowController.messageBoxWindow);
+            messageBox.Initialize(title, message, onClose);
+        }
+
+        public void ShowLogWindow(string title, string log, Action onClose = null)
+        {
+            MessageBox.MessageBox messageBox = OpenWindow<MessageBox.MessageBox>(WindowController.windowController.logWindow);
+            messageBox.Initialize(title, log, onClose);
+        }
+
         private void OnDestroy()
         {
             windowCount--;

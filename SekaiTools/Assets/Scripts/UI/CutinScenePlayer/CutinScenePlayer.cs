@@ -21,7 +21,7 @@ namespace SekaiTools.UI.CutinScenePlayer
 
         private void Update()
         {
-            if(!ifStartPlaying&&Input.anyKeyDown)
+            if(!ifStartPlaying&&Input.GetKeyDown(KeyCode.Return))
             {
                 player.Play();
                 ifStartPlaying = true;
