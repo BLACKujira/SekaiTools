@@ -24,6 +24,7 @@ namespace SekaiTools.UI
         public UnityEvent OnReShow;
 
         public Window parentWindow { get; private set; } = null;
+        WindowController windowController => WindowController.windowController;
 
         Stack<Window> referenceWindows;
 
@@ -54,6 +55,7 @@ namespace SekaiTools.UI
         /// </summary>
         public virtual void Show()
         {
+            windowController.currentWindow = this;
             if (parentWindow)
             {
                 switch (parentWindowEffect)
@@ -96,6 +98,7 @@ namespace SekaiTools.UI
         /// </summary>
         public virtual void ReShow()
         {
+            windowController.currentWindow = this;
             if (parentWindowEffect == ParentWindowEffect.None) parentWindow.ReShow();
             gameObject.SetActive(true);
             OnReShow.Invoke();

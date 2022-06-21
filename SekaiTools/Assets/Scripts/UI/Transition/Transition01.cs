@@ -9,52 +9,60 @@ using SekaiTools.Exception;
 
 namespace SekaiTools.UI.Transition
 {
-    public abstract class Transition01Base : MonoBehaviour, ITransition
+    public abstract class Transition01Base : Transition
     {
-        public Transform imageTargetTransform;
-        public float _transitionTime = 2;
         public float removeBGPartAfter = 10;
         public BackGroundPart triBurstPrefab;
         public Image whiteImagePrefab;
 
-        public float transitionTime { get => _transitionTime; set => _transitionTime = value; }
         public BackGroundController BackGroundController { get => BackGroundController.backGroundController; }
+        protected List<BackGroundPart> currentBGParts = new List<BackGroundPart>();
 
-
-        public void Initialize(Transform imageTargetTransform)
+        public override TransitionYieldInstruction StartTransition(IEnumerator changeCoroutine)
         {
-            this.imageTargetTransform = imageTargetTransform;
+            TransitionYieldInstruction transitionYieldInstruction = new TransitionYieldInstruction();
+            StartCoroutine(Transition(changeCoroutine, null,transitionYieldInstruction));
+            return transitionYieldInstruction;
         }
 
-        public void StartTransition(IEnumerator changeCoroutine)
+        public override TransitionYieldInstruction StartTransition(Action changeAction)
         {
-            StartCoroutine(Transition(changeCoroutine, null));
+            TransitionYieldInstruction transitionYieldInstruction = new TransitionYieldInstruction();
+            StartCoroutine(Transition(null, changeAction,transitionYieldInstruction));
+            return transitionYieldInstruction;
         }
 
-        public void StartTransition(Action changeAction)
+        public override IEnumerator TransitionCoroutine(IEnumerator changeCoroutine)
         {
-            StartCoroutine(Transition(null, changeAction));
+            TransitionYieldInstruction transitionYieldInstruction = new TransitionYieldInstruction();
+            return Transition(changeCoroutine, null, transitionYieldInstruction);
         }
 
-        public IEnumerator TransitionCoroutine(IEnumerator changeCoroutine)
+        public override IEnumerator TransitionCoroutine(Action changeAction)
         {
-            return Transition(changeCoroutine, null);
+            TransitionYieldInstruction transitionYieldInstruction = new TransitionYieldInstruction();
+            return Transition(null, changeAction,transitionYieldInstruction);
         }
 
-        public IEnumerator TransitionCoroutine(Action changeAction)
-        {
-            return Transition(null, changeAction);
-        }
-
-        protected abstract IEnumerator Transition(IEnumerator changeCoroutine, Action changeAction);
+        protected abstract IEnumerator Transition(IEnumerator changeCoroutine, Action changeAction, TransitionYieldInstruction transitionYieldInstruction);
         
-        protected IEnumerator TransitionBase(IEnumerator changeCoroutine, Action changeAction, BackGroundPart backGroundPart)
+        protected IEnumerator TransitionBase(IEnumerator changeCoroutine, Action changeAction, BackGroundPart backGroundPart, TransitionYieldInstruction transitionYieldInstruction)
         {
-            Image whiteImage = Instantiate(whiteImagePrefab, imageTargetTransform);
+            List<BackGroundPart> bgps = new List<BackGroundPart>(currentBGParts);
+            foreach (var bgp in currentBGParts)
+            {
+                if (!bgp)
+                    bgps.Remove(bgp);
+            }
+            currentBGParts = bgps;
+            currentBGParts.Add(backGroundPart);
+
+            Image whiteImage = Instantiate(whiteImagePrefab, targetTransform);
             whiteImage.color = new Color(1, 1, 1, 0);
             whiteImage.DOFade(1, transitionTime / 2);
             yield return new WaitForSeconds(transitionTime / 2);
 
+            transitionYieldInstruction._keepWaiting = false;
             if (changeCoroutine != null) yield return changeCoroutine;
             if (changeAction != null) changeAction();
             whiteImage.DOFade(0, transitionTime / 2);
@@ -64,15 +72,41 @@ namespace SekaiTools.UI.Transition
             yield return new WaitForSeconds(removeBGPartAfter - transitionTime);
             BackGroundController.RemoveDecoration(backGroundPart);
         }
+
+        public override void Abort()
+        {
+            foreach (var backGroundPart in currentBGParts)
+            {
+                if (backGroundPart) BackGroundController.RemoveDecoration(backGroundPart);
+            }
+            currentBGParts = new List<BackGroundPart>();
+        }
     }
 
     public class Transition01 : Transition01Base
     {
-        protected override IEnumerator Transition(IEnumerator changeCoroutine, Action changeAction)
+        public override ConfigUIItem[] configUIItems
+        {
+            get
+            {
+                return new ConfigUIItem[0];
+            }
+        }
+
+        public override void LoadSettings(string serialisedSettings)
+        {
+        }
+
+        public override string SaveSettings()
+        {
+            return string.Empty;
+        }
+
+        protected override IEnumerator Transition(IEnumerator changeCoroutine, Action changeAction, TransitionYieldInstruction transitionYieldInstruction)
         {
             BackGroundPart backGroundPart = BackGroundController.AddDecoration(triBurstPrefab);
             backGroundPart.disableRemove = true;
-            yield return TransitionBase(changeCoroutine, changeAction, backGroundPart);
+            yield return TransitionBase(changeCoroutine, changeAction, backGroundPart,transitionYieldInstruction);
         }
     }
 }

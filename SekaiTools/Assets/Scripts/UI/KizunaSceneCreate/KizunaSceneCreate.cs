@@ -154,8 +154,8 @@ namespace SekaiTools.UI.KizunaSceneCreate
                     //如果互动语音场景有音频资料则读取资料并标准化
                     if (File.Exists(cutinSceneAudioDataPath))
                     {
-                        AudioData.SerializedAudioData serializedAudioData = AudioData.DeSerializeSaveData(cutinSceneAudioDataPath);
-                        AudioData.SerializedAudioData standardizedAudioData = kizunaSceneData.StandardizeAudioData(serializedAudioData);
+                        SerializedAudioData serializedAudioData = AudioData.DeSerializeSaveData(cutinSceneAudioDataPath);
+                        SerializedAudioData standardizedAudioData = kizunaSceneData.StandardizeAudioData(serializedAudioData);
                         audioData = new AudioData(audioFileName);
                         NowLoadingTypeA nowLoadingTypeA = window.OpenWindow<NowLoadingTypeA>(nowLoadingWindowPrefab);
                         nowLoadingTypeA.TitleText = "读取音频文件中";

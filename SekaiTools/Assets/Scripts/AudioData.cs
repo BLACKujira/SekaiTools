@@ -12,14 +12,17 @@ namespace SekaiTools
         string savePath { get; set; }
         void SaveData();
     }
-    public interface IData<T> : ISaveData
+    public interface IData<T>
     {
+        string savePath { get; set; }
+        void SaveData();
         T[] valueArray { get; }
+        KeyValuePair<T,string>[] valuePathPairArray { get; }
         T GetValue(string name);
         bool RemoveValue(string name);
+        bool ContainsValue(string name);
         bool RemoveValue(T value);
         bool AppendValue(T value, string savePath = null);
-        string GetSavePath(T value);
         IEnumerator LoadData(string serializedData);
     }
 
@@ -45,7 +48,7 @@ namespace SekaiTools
             AudioClip[] valueArray = data.valueArray;
             foreach (var value in valueArray)
             {
-                AppendValue(value, data.GetSavePath(value));
+                AppendValue(value, data.savePath);
             }
         }
 
@@ -62,6 +65,15 @@ namespace SekaiTools
                 return audioClips.ToArray();
             }
         }
+
+        public KeyValuePair<AudioClip, string>[] valuePathPairArray
+        {
+            get
+            {
+                return new List<KeyValuePair<AudioClip, string>>(paths).ToArray();
+            }
+        }
+
         Dictionary<string, AudioClip> audioClips = new Dictionary<string, AudioClip>();
         Dictionary<AudioClip,string> paths = new Dictionary<AudioClip, string>();
 
@@ -81,7 +93,7 @@ namespace SekaiTools
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        public IEnumerator LoadFile(string[] files)
+        public IEnumerator LoadFile(params string[] files)
         {
             for (int i = 0; i < files.Length; i++)
             {
@@ -166,46 +178,6 @@ namespace SekaiTools
         }
 
         /// <summary>
-        /// 音频资料存档，保存每一段音频的位置
-        /// </summary>
-        [System.Serializable]
-        public class SerializedAudioData
-        {
-            [System.Serializable]
-            public class DataItem
-            {
-                public string name;
-                public string path;
-
-                public DataItem(KeyValuePair<AudioClip, string> keyValuePair)
-                {
-                    this.name = keyValuePair.Key.name;
-                    this.path = keyValuePair.Value;
-                }
-
-                public DataItem(string name, string path)
-                {
-                    this.name = name;
-                    this.path = path;
-                }
-            }
-            public List<DataItem> items = new List<DataItem>();
-
-            public SerializedAudioData(Dictionary<AudioClip, string> items)
-            {
-                this.items = new List<DataItem>();
-                foreach (var keyValuePair in items)
-                {
-                    this.items.Add(new DataItem(keyValuePair));
-                }
-            }
-
-            public SerializedAudioData()
-            {
-            }
-        }
-
-        /// <summary>
         /// 保存音频资料存档到path
         /// </summary>
         /// <param name="path"></param>
@@ -235,7 +207,7 @@ namespace SekaiTools
             AudioClip[] valueArray = data.valueArray;
             foreach (var value in valueArray)
             {
-                AppendValue(value,data.GetSavePath(value));
+                AppendValue(value,data.savePath);
             }
         }
 
@@ -249,6 +221,11 @@ namespace SekaiTools
             return JsonUtility.ToJson(serializedAudioData);
         }
 
+        public bool ContainsValue(string name)
+        {
+            return audioClips.ContainsKey(name);
+        }
+
         [Serializable]
         public class NameDuplicateException : System.Exception
         {
@@ -258,6 +235,55 @@ namespace SekaiTools
             protected NameDuplicateException(
               System.Runtime.Serialization.SerializationInfo info,
               System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+    }
+
+    /// <summary>
+    /// 音频资料存档，保存每一段音频的位置
+    /// </summary>
+    [System.Serializable]
+    public class SerializedAudioData
+    {
+        [System.Serializable]
+        public class DataItem
+        {
+            public string name;
+            public string path;
+
+            public DataItem(KeyValuePair<AudioClip, string> keyValuePair)
+            {
+                this.name = keyValuePair.Key.name;
+                this.path = keyValuePair.Value;
+            }
+
+            public DataItem(string name, string path)
+            {
+                this.name = name;
+                this.path = path;
+            }
+        }
+        public List<DataItem> items = new List<DataItem>();
+
+        public SerializedAudioData(Dictionary<AudioClip, string> items)
+        {
+            this.items = new List<DataItem>();
+            foreach (var keyValuePair in items)
+            {
+                this.items.Add(new DataItem(keyValuePair));
+            }
+        }
+
+        public SerializedAudioData(string[] filePaths)
+        {
+            this.items = new List<DataItem>();
+            foreach (var path in filePaths)
+            {
+                items.Add(new DataItem(Path.GetFileNameWithoutExtension(path), path));
+            }
+        }
+
+        public SerializedAudioData()
+        {
         }
     }
 

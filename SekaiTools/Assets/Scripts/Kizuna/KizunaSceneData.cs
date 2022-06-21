@@ -27,9 +27,9 @@ namespace SekaiTools.Kizuna
 
         public string savePath { get; set; }
 
-        public AudioData.SerializedAudioData StandardizeAudioData(AudioData.SerializedAudioData serializedAudioData)
+        public SerializedAudioData StandardizeAudioData(SerializedAudioData serializedAudioData)
         {
-            AudioData.SerializedAudioData newSerializedAudioData = new AudioData.SerializedAudioData();
+            SerializedAudioData newSerializedAudioData = new SerializedAudioData();
             foreach (var item in serializedAudioData.items)
             {
                 CutinSceneData.CutinSceneInfo cutinSceneInfo = CutinSceneData.IsCutinVoice(item.name);
@@ -38,7 +38,7 @@ namespace SekaiTools.Kizuna
                     {
                         if(kizunaScene.IsKizunaOf(cutinSceneInfo.charFirstID,cutinSceneInfo.charSecondID))
                         {
-                            newSerializedAudioData.items.Add(new AudioData.SerializedAudioData.DataItem(CutinSceneData.StandardizeName(cutinSceneInfo), item.path));
+                            newSerializedAudioData.items.Add(new SerializedAudioData.DataItem(CutinSceneData.StandardizeName(cutinSceneInfo), item.path));
                             break;
                         }
                     }
@@ -106,6 +106,11 @@ namespace SekaiTools.Kizuna
             List<int> list = new List<int>(appearCharacters);
             list.Sort();
             return list.ToArray();
+        }
+
+        public KizunaSceneDataBase LoadData(string savePath)
+        {
+            throw new System.NotImplementedException();
         }
     }
 

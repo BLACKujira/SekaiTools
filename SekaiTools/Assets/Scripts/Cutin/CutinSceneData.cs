@@ -258,6 +258,14 @@ namespace SekaiTools.Cutin
             string json = JsonUtility.ToJson(this,true);
             File.WriteAllText(savePath, json);
         }
+
+        public CutinSceneData LoadData(string savePath)
+        {
+            string json = File.ReadAllText(savePath);
+            CutinSceneData cutinSceneData = JsonUtility.FromJson<CutinSceneData>(json);
+            cutinSceneData.savePath = savePath;
+            return cutinSceneData;
+        }
     }
     public class CutinSceneDataInKizunaData:CutinSceneData
     {

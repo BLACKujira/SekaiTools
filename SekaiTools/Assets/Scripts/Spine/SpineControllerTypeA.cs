@@ -48,6 +48,7 @@ namespace SekaiTools.Spine
                     if (model_r) model_r.GetComponent<MeshRenderer>().sortingOrder = value;
                 }
             }
+            public float animationProgress = 0;
 
 
             public SkeletonAnimation model = null;
@@ -148,6 +149,11 @@ namespace SekaiTools.Spine
             onModelChange.Invoke();
         }
 
+        public void RemoveModel(ModelPair modelPair)
+        {
+            RemoveModel(models.IndexOf(modelPair));
+        }
+
         private ModelPair CreateModelPair(AtlasAssetPair atlasAssetPair)
         {
             ModelPair modelPair;
@@ -237,11 +243,10 @@ namespace SekaiTools.Spine
             ApplySortingOrder();
         }
 
-        public SpineScene GetSaveData(SpineScene sceneBeforeChange)
+        public SpineScene GetSaveData()
         {
             SpineScene spineScene = new SpineScene();
-            spineScene.backGroundData = new BackGroundController.BackGroundSaveData(BackGroundController.backGroundController);
-            spineScene.spineLayerID = 1;
+            spineScene.spineLayerID = 1;//TODO 获取图层ID
             List<SpineScene.SpineObject> spineObjects = new List<SpineScene.SpineObject>();
             for (int i = 0; i < models.Count; i++)
             {
@@ -255,7 +260,7 @@ namespace SekaiTools.Spine
                 spineObject.sortingOrder = modelPair.OrderInLayer;
                 spineObject.animation = modelPair.Model.AnimationName;
                 spineObject.animationSpeed = modelPair.Model.AnimationState.TimeScale;
-                spineObject.animationProgress = sceneBeforeChange?.spineObjects[i]?.animationProgress??0;
+                spineObject.animationProgress = modelPair.animationProgress;
                 spineObjects.Add(spineObject);
             }
             spineScene.spineObjects = spineObjects.ToArray();

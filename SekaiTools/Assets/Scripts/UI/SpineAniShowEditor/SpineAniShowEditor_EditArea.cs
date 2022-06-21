@@ -42,6 +42,7 @@ namespace SekaiTools.UI.SpineAniShowEditor
 
         public void UpdateInfo()
         {
+            Debug.Log(1);
             if (spineAniShowEditor.spineImage.selectedID == -1)
             {
                 spineSettingAnimation.NoData();

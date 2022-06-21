@@ -8,8 +8,8 @@ namespace SekaiTools.Spine
     [System.Serializable]
     public class SpineScene
     {
-        public BackGroundController.BackGroundSaveData backGroundData;
-        public int spineLayerID;
+        public BackGroundController.BackGroundSaveData backGroundData = null;
+        public int spineLayerID = 0;
 
         public SpineObject[] spineObjects;
 
@@ -25,6 +25,22 @@ namespace SekaiTools.Spine
             public string animation = ConstData.defaultSpineAnimation;
             public float animationSpeed = 1;
             public float animationProgress = 0;
+        }
+
+        public string GetSaveData()
+        {
+            return JsonUtility.ToJson(this);  
+        }
+
+        public static SpineScene LoadData(string serializedData)
+        {
+            return JsonUtility.FromJson<SpineScene>(serializedData);
+        }
+
+        public static SpineScene GetEmptyScene()
+        {
+            SpineScene spineScene = new SpineScene();
+            return spineScene;
         }
     }
 }

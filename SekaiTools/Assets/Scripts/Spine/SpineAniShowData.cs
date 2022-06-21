@@ -14,6 +14,7 @@ namespace SekaiTools.Spine
         public static string bgs_vbsSekai = "{\"spritePath\":\"Built-in\",\"backGround\":{\"name\":\"area8\",\"serializedModifiers\":[]},\"parts\":[{\"name\":\"area8\",\"serializedModifiers\":[]},{\"name\":\"area8\",\"serializedModifiers\":[]}]}";
         public static string bgs_wsSekai = "{\"spritePath\":\"Built-in\",\"backGround\":{\"name\":\"area9\",\"serializedModifiers\":[]},\"parts\":[{\"name\":\"area9\",\"serializedModifiers\":[]},{\"name\":\"area9\",\"serializedModifiers\":[]}]}";
         public static string bgs_25Sekai = "{\"spritePath\":\"Built-in\",\"backGround\":{\"name\":\"area10\",\"serializedModifiers\":[]},\"parts\":[{\"name\":\"area10\",\"serializedModifiers\":[]},{\"name\":\"area10\",\"serializedModifiers\":[]}]}";
+        public static string bgs_akunoSekai = "{\"spritePath\":\"Built-in\",\"backGround\":{\"name\":\"area14\",\"serializedModifiers\":[]},\"parts\":[{\"name\":\"area14\",\"serializedModifiers\":[]},{\"name\":\"area14\",\"serializedModifiers\":[]}]}";
 
         public string savePath { get; set; }
 
@@ -21,6 +22,14 @@ namespace SekaiTools.Spine
         {
             string json = JsonUtility.ToJson(this,true);
             File.WriteAllText(savePath,json);
+        }
+
+        public SpineAniShowData LoadData(string savePath)
+        {
+            string json = File.ReadAllText(savePath);
+            SpineAniShowData spineAniShowData = JsonUtility.FromJson<SpineAniShowData>(json);
+            spineAniShowData.savePath = savePath;
+            return spineAniShowData;
         }
     }
 }

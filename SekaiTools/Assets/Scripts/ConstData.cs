@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using SekaiTools.DecompiledClass;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace SekaiTools
@@ -15,79 +18,80 @@ namespace SekaiTools
         public static readonly int layerLive2D = 8;
         public static readonly int layerBackGround = 9;
         public static readonly string defaultSpineAnimation = "pose_default";
+        public static string saveDataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games","SekaiTools");
 
         public class Characters
         {
             CharacterInfo[] characterInfos =
             {
                 null,
-                new CharacterInfo(1,"星乃","一歌",new Color32(0x33,0xAA,0xEE,255),(8,11)),
-                new CharacterInfo(2,"天馬","咲希",new Color32(0xFF,0xDD,0x44,255),(5,9)),
-                new CharacterInfo(3,"望月","穂波",new Color32(0xEE,0x66,0x66,255),(10,27)),
-                new CharacterInfo(4,"日野森","志歩",new Color32(0xBB,0xDD,0x22,255),(1,8)),
+                new CharacterInfo(1,"星乃","一歌",new Color32(0x33,0xAA,0xEE,255),(8,11),Unit.Leoneed),
+                new CharacterInfo(2,"天馬","咲希",new Color32(0xFF,0xDD,0x44,255),(5,9),Unit.Leoneed),
+                new CharacterInfo(3,"望月","穂波",new Color32(0xEE,0x66,0x66,255),(10,27),Unit.Leoneed),
+                new CharacterInfo(4,"日野森","志歩",new Color32(0xBB,0xDD,0x22,255),(1,8),Unit.Leoneed),
 
-                new CharacterInfo(5,"花里","みのり",new Color32(0xFF,0xCC,0xAA,255),(4,14)),
-                new CharacterInfo(6,"桐谷","遥",new Color32(0x99,0xCC,0xFF,255),(10,5)),
-                new CharacterInfo(7,"桃井","愛莉",new Color32(0xFF,0xAA,0xCC,255),(3,19)),
-                new CharacterInfo(8,"日野森","雫",new Color32(0x99,0xEE,0xDD,255),(12,6)),
+                new CharacterInfo(5,"花里","みのり",new Color32(0xFF,0xCC,0xAA,255),(4,14),Unit.MOREMOREJUMP),
+                new CharacterInfo(6,"桐谷","遥",new Color32(0x99,0xCC,0xFF,255),(10,5),Unit.MOREMOREJUMP),
+                new CharacterInfo(7,"桃井","愛莉",new Color32(0xFF,0xAA,0xCC,255),(3,19),Unit.MOREMOREJUMP),
+                new CharacterInfo(8,"日野森","雫",new Color32(0x99,0xEE,0xDD,255),(12,6),Unit.MOREMOREJUMP),
 
-                new CharacterInfo(9,"小豆沢","こはね",new Color32(0xFF,0x66,0x99,255),(3,2)),
-                new CharacterInfo(10,"白石","杏",new Color32(0x00,0xBB,0xDD,255),(7,26)),
-                new CharacterInfo(11,"東雲","彰人",new Color32(0xFF,0x77,0x22,255),(11,12)),
-                new CharacterInfo(12,"青柳","冬弥",new Color32(0x00,0x77,0xDD,255),(5,25)),
+                new CharacterInfo(9,"小豆沢","こはね",new Color32(0xFF,0x66,0x99,255),(3,2),Unit.VividBADSQUAD),
+                new CharacterInfo(10,"白石","杏",new Color32(0x00,0xBB,0xDD,255),(7,26),Unit.VividBADSQUAD),
+                new CharacterInfo(11,"東雲","彰人",new Color32(0xFF,0x77,0x22,255),(11,12),Unit.VividBADSQUAD),
+                new CharacterInfo(12,"青柳","冬弥",new Color32(0x00,0x77,0xDD,255),(5,25),Unit.VividBADSQUAD),
 
-                new CharacterInfo(13,"天馬","司",new Color32(0xFF,0xBB,0x00,255),(5,17)),
-                new CharacterInfo(14,"鳳","えむ",new Color32(0xFF,0x66,0xBB,255),(9,9)),
-                new CharacterInfo(15,"草薙","寧々",new Color32(0x33,0xDD,0x99,255),(7,20)),
-                new CharacterInfo(16,"神代","類",new Color32(0xBB,0x88,0xEE,255),(6,24)),
+                new CharacterInfo(13,"天馬","司",new Color32(0xFF,0xBB,0x00,255),(5,17),Unit.WonderlandsShowtime),
+                new CharacterInfo(14,"鳳","えむ",new Color32(0xFF,0x66,0xBB,255),(9,9),Unit.WonderlandsShowtime),
+                new CharacterInfo(15,"草薙","寧々",new Color32(0x33,0xDD,0x99,255),(7,20),Unit.WonderlandsShowtime),
+                new CharacterInfo(16,"神代","類",new Color32(0xBB,0x88,0xEE,255),(6,24),Unit.WonderlandsShowtime),
 
-                new CharacterInfo(17,"宵崎","奏",new Color32(0xBB,0x66,0x88,255),(2,10)),
-                new CharacterInfo(18,"朝比奈","まふゆ",new Color32(0x88,0x88,0xCC,255),(1,27)),
-                new CharacterInfo(19,"東雲","絵名",new Color32(0xCC,0xAA,0x88,255),(4,30)),
-                new CharacterInfo(20,"暁山","瑞希",new Color32(0xDD,0xAA,0xCC,255),(8,27)),
+                new CharacterInfo(17,"宵崎","奏",new Color32(0xBB,0x66,0x88,255),(2,10),Unit.NightCord),
+                new CharacterInfo(18,"朝比奈","まふゆ",new Color32(0x88,0x88,0xCC,255),(1,27),Unit.NightCord),
+                new CharacterInfo(19,"東雲","絵名",new Color32(0xCC,0xAA,0x88,255),(4,30),Unit.NightCord),
+                new CharacterInfo(20,"暁山","瑞希",new Color32(0xDD,0xAA,0xCC,255),(8,27),Unit.NightCord),
 
-                new CharacterInfo(21,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27)),
-                new CharacterInfo(22,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27)),
-                new CharacterInfo(23,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27)),
-                new CharacterInfo(24,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30)),
-                new CharacterInfo(25,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5)),
-                new CharacterInfo(26,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17)),
+                new CharacterInfo(21,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27),Unit.VirtualSinger),
+                new CharacterInfo(22,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27),Unit.VirtualSinger),
+                new CharacterInfo(23,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27),Unit.VirtualSinger),
+                new CharacterInfo(24,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30),Unit.VirtualSinger),
+                new CharacterInfo(25,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5),Unit.VirtualSinger),
+                new CharacterInfo(26,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17),Unit.VirtualSinger),
 
-                new CharacterInfo(27,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27)),
-                new CharacterInfo(28,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27)),
-                new CharacterInfo(29,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27)),
-                new CharacterInfo(30,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27)),
-                new CharacterInfo(31,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27)),
+                new CharacterInfo(27,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27),Unit.Leoneed),
+                new CharacterInfo(28,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27),Unit.MOREMOREJUMP),
+                new CharacterInfo(29,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27),Unit.VividBADSQUAD),
+                new CharacterInfo(30,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27),Unit.WonderlandsShowtime),
+                new CharacterInfo(31,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27),Unit.NightCord),
 
-                new CharacterInfo(32,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27)),
-                new CharacterInfo(33,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27)),
-                new CharacterInfo(34,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27)),
-                new CharacterInfo(35,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27)),
-                new CharacterInfo(36,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27)),
+                new CharacterInfo(32,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27),Unit.Leoneed),
+                new CharacterInfo(33,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27),Unit.MOREMOREJUMP),
+                new CharacterInfo(34,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27),Unit.VividBADSQUAD),
+                new CharacterInfo(35,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27),Unit.WonderlandsShowtime),
+                new CharacterInfo(36,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27),Unit.NightCord),
 
-                new CharacterInfo(37,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27)),
-                new CharacterInfo(38,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27)),
-                new CharacterInfo(39,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27)),
-                new CharacterInfo(40,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27)),
-                new CharacterInfo(41,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27)),
+                new CharacterInfo(37,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27),Unit.Leoneed),
+                new CharacterInfo(38,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27),Unit.MOREMOREJUMP),
+                new CharacterInfo(39,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27),Unit.VividBADSQUAD),
+                new CharacterInfo(40,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27),Unit.WonderlandsShowtime),
+                new CharacterInfo(41,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27),Unit.NightCord),
 
-                new CharacterInfo(42,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30)),
-                new CharacterInfo(43,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30)),
-                new CharacterInfo(44,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30)),
-                new CharacterInfo(45,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30)),
-                new CharacterInfo(46,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30)),
+                new CharacterInfo(42,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30),Unit.Leoneed),
+                new CharacterInfo(43,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30),Unit.MOREMOREJUMP),
+                new CharacterInfo(44,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30),Unit.VividBADSQUAD),
+                new CharacterInfo(45,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30),Unit.WonderlandsShowtime),
+                new CharacterInfo(46,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30),Unit.NightCord),
 
-                new CharacterInfo(47,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5)),
-                new CharacterInfo(48,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5)),
-                new CharacterInfo(49,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5)),
-                new CharacterInfo(50,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5)),
-                new CharacterInfo(51,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5)),
+                new CharacterInfo(47,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5),Unit.Leoneed),
+                new CharacterInfo(48,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5),Unit.MOREMOREJUMP),
+                new CharacterInfo(49,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5),Unit.VividBADSQUAD),
+                new CharacterInfo(50,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5),Unit.WonderlandsShowtime),
+                new CharacterInfo(51,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5),Unit.NightCord),
 
-                new CharacterInfo(52,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17)),
-                new CharacterInfo(53,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17)),
-                new CharacterInfo(54,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17)),
-                new CharacterInfo(55,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17)),
-                new CharacterInfo(56,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17)),
+                new CharacterInfo(52,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17),Unit.Leoneed),
+                new CharacterInfo(53,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17),Unit.MOREMOREJUMP),
+                new CharacterInfo(54,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17),Unit.VividBADSQUAD),
+                new CharacterInfo(55,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17),Unit.WonderlandsShowtime),
+                new CharacterInfo(56,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17),Unit.NightCord),
 
             };
 
@@ -107,16 +111,18 @@ namespace SekaiTools
             public readonly string namae;
             public readonly Color32 imageColor;
             public readonly (int month, int day) birthday;
+            public readonly Unit unit;
 
-            public string Name { get => myouji + ' ' + namae; }
+            public string Name { get => string.IsNullOrEmpty(myouji) ? namae : myouji + ' ' + namae; }
 
-            public CharacterInfo(int id, string myouji, string namae, Color imageColor, (int month, int day) birthday)
+            public CharacterInfo(int id, string myouji, string namae, Color imageColor, (int month, int day) birthday,Unit unit)
             {
                 this.id = id;
                 this.myouji = myouji;
                 this.namae = namae;
                 this.imageColor = imageColor;
                 this.birthday = birthday;
+                this.unit = unit;
             }
         }
         public enum Character
@@ -190,7 +196,6 @@ namespace SekaiTools
             }
             return 0;
         }
-
         public static int IsSpineModelOfCharacter(string name,bool mergeVirtualSinger = false)
         {
             for (int i = 1; i < 27; i++)
@@ -224,9 +229,62 @@ namespace SekaiTools
             }
             return 0;
         }
+        public static EventStoryInfo IsEventStory(string name)
+        {
+            string[] nameArray = name.Split('_');
+            if (nameArray.Length < 3) return null;
+            if (!nameArray[0].Equals("event")) return null;
+            if (nameArray[1].Length != 2) return null;
+            if (nameArray[2].Length != 2) return null;
+            int eventId, chapter;
+            if (!int.TryParse(nameArray[1], out eventId)) return null;
+            if (!int.TryParse(nameArray[2], out chapter)) return null;
+
+            return new EventStoryInfo(eventId, chapter);
+        }
+
+        public static int GetUnitVirtualSinger(int virtualSingerID,Unit unit)
+        {
+            if (virtualSingerID >= 21 && virtualSingerID <= 26)
+            {
+                int offset = 0;
+                switch (unit)
+                {
+                    case Unit.none:
+                        return virtualSingerID;
+                    case Unit.VirtualSinger:
+                        return virtualSingerID;
+                    case Unit.Leoneed:
+                        offset = 0;
+                        break;
+                    case Unit.MOREMOREJUMP:
+                        offset = 1;
+                        break;
+                    case Unit.VividBADSQUAD:
+                        offset = 2;
+                        break;
+                    case Unit.WonderlandsShowtime:
+                        offset = 3;
+                        break;
+                    case Unit.NightCord:
+                        offset = 4;
+                        break;
+                    default:
+                        break;
+                }
+
+                int startID = (virtualSingerID - 21) * 5 + 27;
+
+                int vsID = startID + offset;
+
+                return vsID;
+            }
+            else
+                return virtualSingerID;
+        }
 
         /// <summary>
-        /// 将5个SEKAI的VS的ID合并到原始VS上
+        /// 将5个SEKAI的VS的ID合并到原始VS上,不适用于Scenario
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -258,6 +316,27 @@ namespace SekaiTools
                 return new int[] { id };
         }
 
+        /// <summary>
+        /// 判断ScenarioSnippetTalk的说话角色
+        /// </summary>
+        /// <param name="scenarioSnippetTalk"></param>
+        /// <returns></returns>
+        public static int GetCharacterId_Scenario(ScenarioSnippetTalk scenarioSnippetTalk)
+        {
+            int characterId = 0;
+            if (scenarioSnippetTalk.TalkCharacters.Length <= 0
+                || scenarioSnippetTalk.TalkCharacters[0].Character2dId == 0
+                || scenarioSnippetTalk.TalkCharacters[0].Character2dId > 31)
+                characterId = NamaeToId(scenarioSnippetTalk.WindowDisplayName);
+            else if (scenarioSnippetTalk.TalkCharacters[0].Character2dId <= 20)
+                characterId = scenarioSnippetTalk.TalkCharacters[0].Character2dId;
+            else if (scenarioSnippetTalk.TalkCharacters[0].Character2dId <= 26)
+                characterId = 21;
+            else
+                characterId = scenarioSnippetTalk.TalkCharacters[0].Character2dId - 5;
+            return characterId;
+        }
+
         public static Unit InUnit(int id)
         {
             if (id <= 0) return Unit.none;
@@ -281,5 +360,32 @@ namespace SekaiTools
             }
             return Unit.none;
         }
+
+        public static int NamaeToId(string namae)
+        {
+            for (int i = 1; i < 27; i++)
+            {
+                if (namae.Equals(characters[i].namae))
+                    return i;
+            }
+            return 0;
+        }
     }
+
+    [System.Serializable]
+    public class EventStoryInfo
+    {
+        public int eventId;
+        public int chapter;
+
+        public EventStoryInfo(int eventId, int chapter)
+        {
+            this.eventId = eventId;
+            this.chapter = chapter;
+        }
+    }
+
+    public enum StoryType
+    { UnitStory, EventStory, CardStory, MapTalk, LiveTalk, OtherStory }
+
 }

@@ -45,6 +45,8 @@ namespace SekaiTools.UI.BackGround
             main = targetParticleSystem.main;
             SerializedModifier serializedModifier = JsonUtility.FromJson<SerializedModifier>(serializedData);
             color = serializedModifier.color;
+            targetParticleSystem.Stop();
+            targetParticleSystem.Play();
         }
 
         [System.Serializable]

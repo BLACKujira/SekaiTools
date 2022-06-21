@@ -49,6 +49,11 @@ namespace SekaiTools.Live2D
             }
         }
 
+        public void SetModel(SekaiLive2DModel model, int talkerId)
+        {
+            SetModel(model, (ConstData.Character)talkerId);
+        }
+
         public SekaiLive2DModel ShowModelLeft(ConstData.Character character)
         {
             SekaiLive2DModel sekaiLive2DModel = live2DModels[(int)character];

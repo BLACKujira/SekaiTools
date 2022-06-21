@@ -126,5 +126,23 @@ namespace SekaiTools
             return saveFileDialog;
         }
 
+        private const string audioFile = "Audio |*.wav;*.ogg;*.mp3|Others (*.*)|*.*";
+        public static OpenFileDialog GetOpenFileDialog_Audio()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "选择音频文件";
+            openFileDialog.Filter = audioFile;
+            openFileDialog.RestoreDirectory = true;
+            return openFileDialog;
+        }
+
+        private const string nicknameCountShowcaseFile = "NicknameCountShowcase (*.ncs)|*.ncs|Others (*.*)|*.*";
+        public static OpenFileDialog GetOpenFileDialog_NCS()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = nicknameCountShowcaseFile;
+            openFileDialog.RestoreDirectory = true;
+            return openFileDialog;
+        }
     }
 }

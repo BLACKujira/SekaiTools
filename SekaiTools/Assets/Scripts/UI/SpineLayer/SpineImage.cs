@@ -39,8 +39,9 @@ namespace SekaiTools.UI.SpineLayer
         public RectTransform rectTransform { get { if (!_rectTransform) _rectTransform = GetComponent<RectTransform>();return _rectTransform; } }
         public ToggleGroup toggleGroup { get { if (!_toggleGroup) _toggleGroup = GetComponent<ToggleGroup>(); return _toggleGroup; } }
 
-        public void Initialize(Action<int> onSelect, Action<int> onUnselect, Action onAllUnselect)
+        public void Initialize(SpineControllerTypeA spineController,Action<int> onSelect, Action<int> onUnselect, Action onAllUnselect)
         {
+            this.spineController = spineController;
             this.onSelect = onSelect;
             this.onUnselect = onUnselect;
             this.onAllUnselect = onAllUnselect;

@@ -34,6 +34,14 @@ namespace SekaiTools
 
         public string savePath { get; set; }
 
+        public KeyValuePair<Sprite, string>[] valuePathPairArray
+        {
+            get
+            {
+                return new List<KeyValuePair<Sprite, string>>(paths).ToArray();
+            }
+        }
+
         public IEnumerator LoadFile(params string[] files)
         {
             foreach (var file in files)
@@ -131,6 +139,11 @@ namespace SekaiTools
             SerializedImageData serializedImageData = new SerializedImageData(paths);
             string json = JsonUtility.ToJson(serializedImageData, true);
             File.WriteAllText(savePath, json);
+        }
+
+        public bool ContainsValue(string name)
+        {
+            return sprites.ContainsKey(name);
         }
 
         [System.Serializable]

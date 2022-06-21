@@ -42,7 +42,7 @@ namespace SekaiTools.UI.BackGround
             BackGroundPart backGroundDecoration = Instantiate(prefab, transform);
             backGroundDecoration.name = prefab.name;
             if (index == -1) decorations.Add(backGroundDecoration);
-            else decorations.Insert(index, backGroundDecoration);
+            else decorations.Insert(Mathf.Min(index,decorations.Count), backGroundDecoration);
             SetSortingLayers();
             return backGroundDecoration;
         }
@@ -73,6 +73,7 @@ namespace SekaiTools.UI.BackGround
         public void RemoveDecoration(BackGroundPart decoration)
         {
             int id = decorations.IndexOf(decoration);
+            if (id == -1) return;
             RemoveDecoration(id);
         }
 
@@ -156,6 +157,7 @@ namespace SekaiTools.UI.BackGround
 
         public string[] Load(BackGroundSaveData saveData,List<BackGroundPart> backGroundParts = null)
         {
+            ClearAndReset();
             List<string> log = new List<string>();
 
             //读取背景

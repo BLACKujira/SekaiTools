@@ -36,7 +36,7 @@ namespace SekaiTools.UI.SpineAniShowEditor
         {
             spineController = Instantiate(spineControllerPrefab);
             spineImage.spineController = spineController;
-            spineImage.Initialize((int value)=> {if(editArea.gameObject.activeSelf) editArea.UpdateInfo(); }, null, null);
+            spineImage.Initialize(spineController,(int value)=> {if(editArea.gameObject.activeSelf) editArea.UpdateInfo(); }, null, null);
 
             SpineAniShowData spineAniShowData = JsonUtility.FromJson<SpineAniShowData>(File.ReadAllText(@"C:\Users\KUROKAWA_KUJIRA\Desktop\255\save.sas"));
             spineAniShowData.savePath = @"C:\Users\KUROKAWA_KUJIRA\Desktop\255\save.sas";
@@ -53,7 +53,7 @@ namespace SekaiTools.UI.SpineAniShowEditor
         public void Prev()
         {
             if (currentID <= 0) return;
-            spineAniShowData.spineScenes[currentID] = spineController.GetSaveData(spineAniShowData.spineScenes[currentID]);
+            spineAniShowData.spineScenes[currentID] = spineController.GetSaveData();
             ShowScene(--currentID);
 
             spineImage.UpdateInfo();
@@ -62,7 +62,7 @@ namespace SekaiTools.UI.SpineAniShowEditor
         public void Next()
         {
             if (currentID >= spineScenes.Length - 1) return;
-            spineAniShowData.spineScenes[currentID] = spineController.GetSaveData(spineAniShowData.spineScenes[currentID]);
+            spineAniShowData.spineScenes[currentID] = spineController.GetSaveData();
             ShowScene(++currentID);
 
             spineImage.UpdateInfo();

@@ -147,6 +147,7 @@ namespace SekaiTools.UI.Modifier
                     onColorChange.Invoke();
                 });
 
+            if(valueA)
             ((IValueEditElement<float>)valueA).Initialize(
                 () => color.a,
                 (value) => color = new Color(color.r, color.g, color.b, value),
@@ -187,6 +188,7 @@ namespace SekaiTools.UI.Modifier
             MonoBehaviour[] monoBehaviours = { valueR, valueG, valueB, valueH, valueS, valueV, valueA };
             foreach (var monoBehaviour in monoBehaviours)
             {
+                if (!monoBehaviour) continue;
                 IValueEditElement<float> valueEditElement = (IValueEditElement<float>)monoBehaviour;
                 valueEditElement.Refresh();
             }
