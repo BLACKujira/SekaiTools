@@ -28,7 +28,7 @@ namespace SekaiTools.UI.KizunaSceneCreate
         private void Awake()
         {
             folderBrowserDialog = new FolderBrowserDialog();
-            openFileDialog = FileDialogFactory.GetOpenFileDialog_CutinSceneData();
+            openFileDialog = FileDialogFactory.GetOpenFileDialog(FileDialogFactory.FILTER_CSD);
         }
 
         public void NewData()
@@ -67,7 +67,7 @@ namespace SekaiTools.UI.KizunaSceneCreate
             try
             {
                 cutinSceneData = JsonUtility.FromJson<CutinSceneData>(File.ReadAllText(fileName));
-                cutinSceneData.savePath = fileName;
+                cutinSceneData.SavePath = fileName;
                 mode = Mode.cutinData;
             }
             catch(System.Exception ex)

@@ -50,7 +50,7 @@ namespace SekaiTools.Editor
                 int id = ConstData.IsSpineModelOfCharacter(folderName);
                 if (id == 0) continue;
                 string[] nameArray = folderName.Split('_');
-                if (nameArray.Length == 3)
+                if (nameArray.Length >= 3)
                 {
                     AtlasAsset atlasAsset = AssetDatabase.LoadAssetAtPath<AtlasAsset>(Path.Combine(folder, "sekai_atlas_Atlas.asset"));
                     AtlasAsset atlasAsset_r = AssetDatabase.LoadAssetAtPath<AtlasAsset>(Path.Combine(folder + "_r", "sekai_atlas_Atlas.asset"));

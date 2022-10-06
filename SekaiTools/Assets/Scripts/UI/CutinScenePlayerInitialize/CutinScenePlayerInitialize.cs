@@ -32,9 +32,9 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
 
         private void Awake()
         {
-            openFileDialog = FileDialogFactory.GetOpenFileDialog_CutinSceneData();
+            openFileDialog = FileDialogFactory.GetOpenFileDialog(FileDialogFactory.FILTER_CSD);
 
-            saveFileDialog = FileDialogFactory.GetSaveFileDialog_CutinSceneData();
+            saveFileDialog = FileDialogFactory.GetSaveFileDialog(FileDialogFactory.FILTER_CSD);
 
             folderBrowserDialog = new FolderBrowserDialog();
 
@@ -45,7 +45,7 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
         {
             modelArea.Initialize(cutinSceneData?.CountAppearCharacters());
             audioArea.Initialize(cutinSceneData);
-            inputFieldSaveData.text = cutinSceneData == null? "请读取或创建存档" : cutinSceneData.savePath;
+            inputFieldSaveData.text = cutinSceneData == null? "请读取或创建存档" : cutinSceneData.SavePath;
 
             if (cutinSceneData != null) audioArea.UnlockButtons();
             else audioArea.LockButtons();
@@ -82,7 +82,7 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
                 if (cutinSceneInfo != null) cutinSceneInfos.Add(cutinSceneInfo);
             }
             cutinSceneData = new CutinSceneData(cutinSceneInfos.ToArray());
-            cutinSceneData.savePath = savePath;
+            cutinSceneData.SavePath = savePath;
             cutinSceneData.SaveData();
 
             audioArea.NewData(() => 
@@ -100,7 +100,7 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
 
             CutinSceneData cutinSceneData = JsonUtility.FromJson<CutinSceneData>(File.ReadAllText(fileName));
             this.cutinSceneData = cutinSceneData;
-            cutinSceneData.savePath = fileName;
+            cutinSceneData.SavePath = fileName;
             audioArea.audioData = null;
 
             string audioDatafileName = Path.ChangeExtension(fileName, ".aud");

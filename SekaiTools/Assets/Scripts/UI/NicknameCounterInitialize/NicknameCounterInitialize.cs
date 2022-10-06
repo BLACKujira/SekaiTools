@@ -48,7 +48,7 @@ namespace SekaiTools.UI.NicknameCounterInitialize
                 countMatrix.fileName = Path.GetFileNameWithoutExtension(file);
                 countMatrix.storyType = StoryType.LiveTalk;
                 countMatrix.masterOfCeremonyData = JsonUtility.FromJson<DecompiledClass.Core.VirtualLive.MasterOfCeremonyData>(File.ReadAllText(file));
-                countMatrix.savePath = Path.Combine(saveFolder, NicknameCounterInitialize_SampleArea.liveTalkFolder, countMatrix.fileName + ".ncm");
+                countMatrix.SavePath = Path.Combine(saveFolder, NicknameCounterInitialize_SampleArea.liveTalkFolder, countMatrix.fileName + ".ncm");
                 nicknameCountMatrices.Add(countMatrix);
             }
             foreach (var file in sampleArea.otherStoriesFiles)
@@ -76,7 +76,7 @@ namespace SekaiTools.UI.NicknameCounterInitialize
             countMatrix.fileName = Path.GetFileNameWithoutExtension(file);
             countMatrix.storyType = storyType;
             countMatrix.scenarioSceneData = JsonUtility.FromJson<ScenarioSceneData>(File.ReadAllText(file));
-            countMatrix.savePath = Path.Combine(saveFolder, countMatrix.fileName + ".ncm");
+            countMatrix.SavePath = Path.Combine(saveFolder, countMatrix.fileName + ".ncm");
             return countMatrix;
         }
     }

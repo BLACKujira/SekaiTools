@@ -121,10 +121,10 @@ namespace SekaiTools.UI.NCSEditor
             buttonTrEdit.onClick.AddListener(() =>
             {
                 TransitionEditor.TransitionEditor transitionEditor = nCSEditor.window.OpenWindow<TransitionEditor.TransitionEditor>(transitionEditorWindowPrefab);
-                transitionEditor.Initialize(GlobalData.globalData.transitionSet.GetValue(scene.transition.type), scene.transition.serialisedSettings,
+                transitionEditor.Initialize(GlobalData.globalData.transitionSet.GetValue(scene.transition.type), scene.transition.serializedSettings,
                     (value) =>
                     {
-                        scene.transition.serialisedSettings = value;
+                        scene.transition.serializedSettings = value;
                         nCSEditor.Refresh();
                     });
             });
@@ -141,11 +141,11 @@ namespace SekaiTools.UI.NCSEditor
                 },
                 (int id) =>
                 {
-                    scene.transition = new Count.Showcase.NicknameCountShowcase.Transition(transitions[id].name, string.Empty);
+                    scene.transition = new Transition.SerializedTransition(transitions[id].name, string.Empty);
                     nCSEditor.Refresh();
                 });
             });
-            textTrName.text = scene.transition?.type ?? "无";
+            textTrName.text = scene.transition?.type ?? "Null";
         }
     }
 }

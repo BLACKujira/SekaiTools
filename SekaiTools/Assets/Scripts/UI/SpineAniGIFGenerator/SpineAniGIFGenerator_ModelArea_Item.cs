@@ -27,7 +27,7 @@ namespace SekaiTools.UI.SpineAniGIFGenerator
             SpineControllerTypeA spineController = modelArea.spineAniGIFGenerator.spineController;
             SpineControllerTypeA.ModelPair modelPair = spineController.models[modelId];
             iconImage.sprite = imageData.GetValue(modelPair.Name);
-            labelText.name = modelPair.Name;
+            labelText.text = modelPair.Name;
             deleteButton.onClick.AddListener(() => { spineController.RemoveModel(modelId); modelArea.Refresh(); });
             configButton.onClick.AddListener(() => 
             {

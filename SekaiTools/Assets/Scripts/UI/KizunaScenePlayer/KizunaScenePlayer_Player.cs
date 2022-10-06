@@ -86,8 +86,8 @@ namespace SekaiTools.UI.KizunaScenePlayer
 
             bGController.SetScene(scene);
             l2DController.HideModelAll();
-            l2DController.ShowModelLeft((ConstData.Character)scene.charAID);
-            l2DController.ShowModelRight((ConstData.Character)scene.charBID);
+            l2DController.ShowModelLeft((Character)scene.charAID);
+            l2DController.ShowModelRight((Character)scene.charBID);
             l2DController.SetModelPositionLeft(new Vector2(-modelPositionHonor, modelPositionY));
             l2DController.SetModelPositionRight(new Vector2(modelPositionHonor, modelPositionY));
             l2DController.modelL.transform.localScale = new Vector3(modelScale, modelScale, 1);
@@ -162,8 +162,8 @@ namespace SekaiTools.UI.KizunaScenePlayer
                     else
                     {
                         l2DController.HideModelAll();
-                        l2DController.ShowModelLeft((ConstData.Character)cutinScene.charFirstID);
-                        l2DController.ShowModelRight((ConstData.Character)cutinScene.charSecondID);
+                        l2DController.ShowModelLeft((Character)cutinScene.charFirstID);
+                        l2DController.ShowModelRight((Character)cutinScene.charSecondID);
                         l2DController.SetModelPositionLeft(new Vector2(-modelPositionCutin, modelPositionY));
                         l2DController.SetModelPositionRight(new Vector2(modelPositionCutin, modelPositionY));
                         l2DController.modelL.transform.localScale = new Vector3(modelScale, modelScale, 1);

@@ -9,7 +9,7 @@ namespace SekaiTools
 {
     public interface ISaveData
     {
-        string savePath { get; set; }
+        string SavePath { get; set; }
         void SaveData();
     }
     public interface IData<T>

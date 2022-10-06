@@ -7,6 +7,28 @@ using UnityEngine;
 
 namespace SekaiTools
 {
+    public enum Unit
+    {
+        none,
+        VirtualSinger,
+        Leoneed,
+        MOREMOREJUMP,
+        VividBADSQUAD,
+        WonderlandsShowtime,
+        NightCord
+    }
+
+    public enum Character
+    {
+        none,
+        ichika, saki, honami, shiho,
+        minori, haruka, airi, shizuku,
+        kohane, an, akito, touya,
+        tsukasa, emu, nene, rui,
+        kanade, mafuyu, ena, mizuki,
+        miku, rin, len, luka, meiko, kaito
+    }
+
     /// <summary>
     /// 用于保存固定的资料
     /// </summary>
@@ -125,16 +147,6 @@ namespace SekaiTools
                 this.unit = unit;
             }
         }
-        public enum Character
-        {
-            none,
-            ichika,saki,honami,shiho,
-            minori,haruka,airi,shizuku,
-            kohane,an,akito,touya,
-            tsukasa,emu,nene,rui,
-            kanade,mafuyu,ena,mizuki,
-            miku,rin,len,luka,meiko,kaito
-        }
 
         public class Units
         {
@@ -172,16 +184,6 @@ namespace SekaiTools
                 this.name = name;
                 this.color = color;
             }
-        }
-        public enum Unit
-        {
-            none,
-            VirtualSinger,
-            Leoneed,
-            MOREMOREJUMP,
-            VividBADSQUAD,
-            WonderlandsShowtime,
-            NightCord
         }
 
         public static int IsLive2DModelOfCharacter(string name)
@@ -242,6 +244,44 @@ namespace SekaiTools
 
             return new EventStoryInfo(eventId, chapter);
         }
+        public static CardStoryInfo IsCardStory(string name)
+        {
+            string[] nameArray = name.Split('_');
+            if (nameArray.Length < 2) return null;
+            if (nameArray[0].Length != 6) return null;
+            if (!int.TryParse(nameArray[0].Substring(0, 3), out int charId)) return null;
+            if (!int.TryParse(nameArray[0].Substring(3, 3), out int cardId)) return null;
+            if (nameArray[1].Length != characterNames_Roman[charId].Length + 2) return null;
+            if (!nameArray[1].StartsWith(characterNames_Roman[charId])) return null;
+            if (!int.TryParse(nameArray[1].Substring(characterNames_Roman[charId].Length), out int chapter)) return null;
+            return new CardStoryInfo(charId, cardId, chapter);
+        }
+        public static UnitStoryInfo IsUnitStory(string name)
+        {
+            string[] nameArray = name.Split('_');
+            if (nameArray.Length != 3) return null;
+            HashSet<string> unitSet = new HashSet<string>(unitStoryTypes);
+            if (!unitSet.Contains(nameArray[0])) return null;
+            if (!int.TryParse(nameArray[1], out int season)) return null;
+            if (!int.TryParse(nameArray[2], out int chapter)) return null;
+            return new UnitStoryInfo(nameArray[0], season, chapter);
+        }
+
+        public static readonly string[] characterNames_Roman =
+        {
+            null,
+            "ichika","saki","honami","shiho",
+            "minori","haruka","airi","shizuku",
+            "kohane","an","akito","touya",
+            "tsukasa","emu","nene","rui",
+            "kanade","mafuyu","ena","muzuki",
+            "miku","rin","len","luka","meiko","kaito"
+        };
+        public static readonly string[] unitStoryTypes = 
+        { 
+            "leo","mmj","street","wonder","nightcode",
+            "vs","vsleo","vsmmj","vsstreet","vswonder","vsnightcode"
+        };
 
         public static int GetUnitVirtualSinger(int virtualSingerID,Unit unit)
         {
@@ -368,11 +408,35 @@ namespace SekaiTools
                 if (namae.Equals(characters[i].namae))
                     return i;
             }
-            return 0;
+            return -1;
+        }
+
+        public static int NameToId(string name)
+        {
+            for (int i = 1; i < 27; i++)
+            {
+                if (name.Equals(characters[i].Name))
+                    return i;
+            }
+            return -1;
+        }
+
+        public static bool MusicTagEqualsUnitType(MusicTag musicTag,UnitType unitType)
+        {
+            if (
+                (musicTag == MusicTag.light_music_club && unitType == UnitType.light_sound) ||
+                (musicTag == MusicTag.idol && unitType == UnitType.idol) ||
+                (musicTag == MusicTag.street && unitType == UnitType.street) ||
+                (musicTag == MusicTag.theme_park && unitType == UnitType.theme_park) ||
+                (musicTag == MusicTag.school_refusal && unitType == UnitType.school_refusal) ||
+                (musicTag == MusicTag.vocaloid && unitType == UnitType.piapro)
+                )
+                return true;
+            return false;
         }
     }
 
-    [System.Serializable]
+    [Serializable]
     public class EventStoryInfo
     {
         public int eventId;
@@ -381,6 +445,36 @@ namespace SekaiTools
         public EventStoryInfo(int eventId, int chapter)
         {
             this.eventId = eventId;
+            this.chapter = chapter;
+        }
+    }
+
+    [Serializable]
+    public class CardStoryInfo
+    {
+        public int charId;
+        public int cardId;
+        public int chapter;
+
+        public CardStoryInfo(int charId, int cardId, int chapter)
+        {
+            this.charId = charId;
+            this.cardId = cardId;
+            this.chapter = chapter;
+        }
+    }
+
+    [Serializable]
+    public class UnitStoryInfo
+    {
+        public string unit;
+        public int season;
+        public int chapter;
+
+        public UnitStoryInfo(string unit, int season, int chapter)
+        {
+            this.unit = unit;
+            this.season = season;
             this.chapter = chapter;
         }
     }

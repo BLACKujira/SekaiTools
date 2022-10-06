@@ -133,7 +133,7 @@ namespace SekaiTools.UI.BackGround
             }
         }
 
-        //用于序列化的类，生成时读取当前背景配置
+        //用于序列化的类
         [System.Serializable]
         public class BackGroundSaveData
         {

@@ -16,7 +16,7 @@ namespace SekaiTools.Cutin
     {
         public List<CutinScene> cutinScenes = new List<CutinScene>();
 
-        public string savePath { get; set; }
+        public string SavePath { get; set; }
 
         /// <summary>
         /// 判断一个文件的名字是否符合互动语音的格式(不支持早期不分前后的语音)
@@ -256,14 +256,14 @@ namespace SekaiTools.Cutin
         public virtual void SaveData()
         {
             string json = JsonUtility.ToJson(this,true);
-            File.WriteAllText(savePath, json);
+            File.WriteAllText(SavePath, json);
         }
 
         public CutinSceneData LoadData(string savePath)
         {
             string json = File.ReadAllText(savePath);
             CutinSceneData cutinSceneData = JsonUtility.FromJson<CutinSceneData>(json);
-            cutinSceneData.savePath = savePath;
+            cutinSceneData.SavePath = savePath;
             return cutinSceneData;
         }
     }

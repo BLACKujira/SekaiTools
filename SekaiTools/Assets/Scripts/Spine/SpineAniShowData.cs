@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace SekaiTools.Spine
 {
-    public class SpineAniShowData:ISaveData
+    public class SpineAniShowData : ISaveData
     {
-        public List<SpineScene> spineScenes = new List<SpineScene>();
+        public List<SpineSceneWithMeta> spineScenes = new List<SpineSceneWithMeta>();
 
         public static string bgs_lnSekai = "{\"spritePath\":\"Built-in\",\"backGround\":{\"name\":\"area5\",\"serializedModifiers\":[]},\"parts\":[{\"name\":\"area5\",\"serializedModifiers\":[]},{\"name\":\"area5\",\"serializedModifiers\":[]}]}";
         public static string bgs_mmjSekai = "{\"spritePath\":\"Built-in\",\"backGround\":{\"name\":\"area7\",\"serializedModifiers\":[]},\"parts\":[{\"name\":\"area7\",\"serializedModifiers\":[]},{\"name\":\"area7\",\"serializedModifiers\":[]}]}";
@@ -16,19 +16,17 @@ namespace SekaiTools.Spine
         public static string bgs_25Sekai = "{\"spritePath\":\"Built-in\",\"backGround\":{\"name\":\"area10\",\"serializedModifiers\":[]},\"parts\":[{\"name\":\"area10\",\"serializedModifiers\":[]},{\"name\":\"area10\",\"serializedModifiers\":[]}]}";
         public static string bgs_akunoSekai = "{\"spritePath\":\"Built-in\",\"backGround\":{\"name\":\"area14\",\"serializedModifiers\":[]},\"parts\":[{\"name\":\"area14\",\"serializedModifiers\":[]},{\"name\":\"area14\",\"serializedModifiers\":[]}]}";
 
-        public string savePath { get; set; }
+        public string SavePath { get; set; }
 
         public void SaveData()
         {
             string json = JsonUtility.ToJson(this,true);
-            File.WriteAllText(savePath,json);
+            File.WriteAllText(SavePath,json);
         }
 
-        public SpineAniShowData LoadData(string savePath)
+        public static SpineAniShowData LoadData(string serializedData)
         {
-            string json = File.ReadAllText(savePath);
-            SpineAniShowData spineAniShowData = JsonUtility.FromJson<SpineAniShowData>(json);
-            spineAniShowData.savePath = savePath;
+            SpineAniShowData spineAniShowData = JsonUtility.FromJson<SpineAniShowData>(serializedData);
             return spineAniShowData;
         }
     }

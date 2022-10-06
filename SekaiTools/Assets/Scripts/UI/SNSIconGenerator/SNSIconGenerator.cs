@@ -4,40 +4,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using SekaiTools.Spine;
 using UnityEngine.UI;
+using System;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace SekaiTools.UI.SNSIconGenerator
 {
     public class SNSIconGenerator : MonoBehaviour
     {
-        public enum Mode {AllModel,AllAnimation,ThisScene }
+        public enum Mode { AllModel , ThisScene }
+        public enum Style { SNS , Clear }
 
         public Window window;
         [Header("Components")]
         public Image iconBGImage;
+        public Dropdown styleDropdown;
         public Toggle toggle_AllModel;
-        public Toggle toggle_AllAnimation;
         public Toggle toggle_ThisScene;
         [Header("Settings")]
         public InbuiltSpineModelSet spineModelSet;
         [Header("Prefab")]
         public SpineControllerTypeA spineControllerPrefab;
-        public Window sNSIconCapturerPrefab;
+        public Window sNSIconCapturerPrefab_SNS;
+        public Window sNSIconCapturerPrefab_Clear;
 
         SpineControllerTypeA spineController;
         Mode mode;
+        Style style;
 
         #region 由切换开关调用的方法
-        public void ChangeMode_AllModel()
+        void ChangeMode_AllModel()
         {
             mode = Mode.AllModel;
         }
 
-        public void ChangeMode_AllAnimation()
-        {
-            mode = Mode.AllAnimation;
-        }
-
-        public void ChangeMode_ThisScene()
+        void ChangeMode_ThisScene()
         {
             mode = Mode.ThisScene;
         }
@@ -46,8 +47,16 @@ namespace SekaiTools.UI.SNSIconGenerator
         private void Awake()
         {
             spineController = Instantiate(spineControllerPrefab);
+
+            styleDropdown.options = new List<Dropdown.OptionData>(
+                from string str in Enum.GetNames(typeof(Style))
+                select new Dropdown.OptionData(str));
+            styleDropdown.onValueChanged.AddListener((i) =>
+            {
+                style = (Style)i;
+            });
+
             toggle_AllModel.onValueChanged.AddListener((value) => { if (value) ChangeMode_AllModel(); });
-            toggle_AllAnimation.onValueChanged.AddListener((value) => { if (value) ChangeMode_AllAnimation(); });
             toggle_ThisScene.onValueChanged.AddListener((value) => { if (value) ChangeMode_ThisScene(); });
         }
 
@@ -65,17 +74,18 @@ namespace SekaiTools.UI.SNSIconGenerator
                 case Mode.AllModel:
                     sNSIconCapturerSettings.fileNameType = SNSIconCapturer.SNSIconCapturer.FileNameType.modelName;
                     break;
-                case Mode.AllAnimation:
-                    sNSIconCapturerSettings.fileNameType = SNSIconCapturer.SNSIconCapturer.FileNameType.animationName;
-                    break;
                 case Mode.ThisScene:
                     sNSIconCapturerSettings.fileNameType = SNSIconCapturer.SNSIconCapturer.FileNameType.both;
                     break;
             }
-            sNSIconCapturerSettings.savePath = @"C:\Users\KUROKAWA_KUJIRA\Desktop\25";
+
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            DialogResult dialogResult = folderBrowserDialog.ShowDialog();
+            if (dialogResult != DialogResult.OK) return;
+            sNSIconCapturerSettings.savePath = folderBrowserDialog.SelectedPath;
             sNSIconCapturerSettings.spineController = spineController;
 
-            SNSIconCapturer.SNSIconCapturer sNSIconCapturer = window.OpenWindow<SNSIconCapturer.SNSIconCapturer>(sNSIconCapturerPrefab);
+            SNSIconCapturer.SNSIconCapturer sNSIconCapturer = window.OpenWindow<SNSIconCapturer.SNSIconCapturer>(sNSIconCapturerPrefab_SNS);
             sNSIconCapturer.Initialize(sNSIconCapturerSettings);
             sNSIconCapturer.StartCapture();
         }
@@ -86,7 +96,7 @@ namespace SekaiTools.UI.SNSIconGenerator
             switch (mode)
             {
                 case Mode.AllModel:
-                    for (int i = 0; i < spineModelSet.characters.Length; i++)
+                    for (int i = 1; i < spineModelSet.characters.Length; i++)
                     {
                         InbuiltSpineModelSet.Character character = spineModelSet.characters[i];
                         foreach (var atlasAssetPair in character.atlasAssets)
@@ -96,17 +106,8 @@ namespace SekaiTools.UI.SNSIconGenerator
                         }
                     }
                     break;
-                case Mode.AllAnimation:
-                    global::Spine.SkeletonData skeletonData = spineController.models[0].Model.SkeletonDataAsset.GetSkeletonData(false);
-                    AtlasAssetPair thisAtlasAssetPair = spineController.models[0].AtlasAssetPair;
-                    foreach (var animation in skeletonData.Animations)
-                    {
-                        SNSIconCaptureItem sNSIconCaptureItem = new SNSIconCaptureItem(thisAtlasAssetPair, animation.name, iconBGImage.color);
-                        sNSIconCaptureItems.Add(sNSIconCaptureItem);
-                    }
-                    break;
                 case Mode.ThisScene:
-                    throw new System.NotImplementedException();
+                    throw new NotImplementedException();
                     break;
                 default:
                     break;

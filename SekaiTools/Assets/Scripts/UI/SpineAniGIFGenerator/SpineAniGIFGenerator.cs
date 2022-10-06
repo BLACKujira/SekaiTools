@@ -50,9 +50,9 @@ namespace SekaiTools.UI.SpineAniGIFGenerator
             System.Windows.Forms.SaveFileDialog saveFileDialog;
             GenerateMode generateMode = modeArea.generateMode;
             if (generateMode == GenerateMode.GIF)
-                saveFileDialog = FileDialogFactory.GetSaveFileDialog_GIF();
+                saveFileDialog = FileDialogFactory.GetSaveFileDialog(FileDialogFactory.FILTER_GIF);
             else
-                saveFileDialog = FileDialogFactory.GetSaveFileDialog_PNG();
+                saveFileDialog = FileDialogFactory.GetSaveFileDialog(FileDialogFactory.FILTER_PNG);
 
             System.Windows.Forms.DialogResult dialogResult = saveFileDialog.ShowDialog();
             if (dialogResult != System.Windows.Forms.DialogResult.OK) return;

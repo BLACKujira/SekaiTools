@@ -58,8 +58,8 @@ namespace SekaiTools.UI.CutinScenePlayer
         IEnumerator IPlayScene(CutinScene scene)
         {
             l2DController.HideModelAll();
-            l2DController.ShowModelLeft((ConstData.Character)scene.charFirstID);
-            l2DController.ShowModelRight((ConstData.Character)scene.charSecondID);
+            l2DController.ShowModelLeft((Character)scene.charFirstID);
+            l2DController.ShowModelRight((Character)scene.charSecondID);
             l2DController.SetModelPositionLeft(modelPositionL);
             l2DController.SetModelPositionRight(modelPositionR);
             l2DController.modelL.transform.localScale = new Vector3(modelScale, modelScale, 1);

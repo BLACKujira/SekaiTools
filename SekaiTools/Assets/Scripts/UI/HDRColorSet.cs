@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SekaiTools.UI
 {
-    [CreateAssetMenu(menuName = "SekaiTools/UI/HDRColorSet")]
+    [CreateAssetMenu(menuName = "SekaiTools/HDRColorSet")]
     public class HDRColorSet : ScriptableObject
     {
         [ColorUsage(true, true)]

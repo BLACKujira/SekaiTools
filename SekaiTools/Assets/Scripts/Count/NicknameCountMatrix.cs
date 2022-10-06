@@ -38,7 +38,7 @@ namespace SekaiTools.Count
             }
         }
 
-        public string savePath { get; set; }
+        public string SavePath { get; set; }
 
         public NicknameCountItem this[int talkerId, int nameId]
         {
@@ -74,7 +74,7 @@ namespace SekaiTools.Count
         public static NicknameCountData Load(string folder)
         {
             NicknameCountData nicknameCountData = new NicknameCountData();
-            nicknameCountData.savePath = folder;
+            nicknameCountData.SavePath = folder;
             void Load<T>(List<T> targetList,string folderName) where T : NicknameCountMatrix
             {
                 string path = Path.Combine(folder, folderName);
@@ -85,7 +85,7 @@ namespace SekaiTools.Count
                     {
                         T t = JsonUtility.FromJson<T>(File.ReadAllText(file));
                         t.fileName = Path.GetFileNameWithoutExtension(file);
-                        t.savePath = file;
+                        t.SavePath = file;
                         targetList.Add(t);
                     }
                 }
@@ -171,7 +171,7 @@ namespace SekaiTools.Count
             }
         }
 
-        public string savePath { get; set; }
+        public string SavePath { get; set; }
 
         public abstract BaseTalkData[] GetTalkDatas();
         public BaseTalkData[] GetTalkDatas(int talkerId)
@@ -202,7 +202,7 @@ namespace SekaiTools.Count
         public void SaveData()
         {
             string json = JsonUtility.ToJson(this,true);
-            File.WriteAllText(savePath, json);
+            File.WriteAllText(SavePath, json);
         }
     }
 
@@ -415,7 +415,7 @@ namespace SekaiTools.Count
         public readonly int talkerId;
         public readonly int nameId;
 
-        public void AddItem(NicknameCountMatrix nicknameCountMatrix)
+        void AddItem(NicknameCountMatrix nicknameCountMatrix)
         {
             EventStoryInfo eventStoryInfo = ConstData.IsEventStory(nicknameCountMatrix.fileName);
             if (eventStoryInfo == null) return;

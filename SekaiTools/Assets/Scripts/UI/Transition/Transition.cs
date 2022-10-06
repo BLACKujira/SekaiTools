@@ -24,6 +24,21 @@ namespace SekaiTools.UI.Transition
             return transitionYieldInstruction;
         }
 
+        public TransitionYieldInstruction StartTransition(float holdTime)
+        {
+            return StartTransition(WaitCoroutine(holdTime));
+        }
+
+        public IEnumerator TransitionCoroutine(float holdTime)
+        {
+            yield return TransitionCoroutine(WaitCoroutine(holdTime));
+        }
+
+        IEnumerator WaitCoroutine(float holdTime)
+        {
+            yield return new WaitForSeconds(holdTime);
+        }
+
         public abstract string SaveSettings();
         public abstract void LoadSettings(string serialisedSettings);
 

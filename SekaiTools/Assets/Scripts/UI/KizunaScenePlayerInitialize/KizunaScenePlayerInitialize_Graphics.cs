@@ -51,7 +51,7 @@ namespace SekaiTools.UI.KizunaScenePlayerInitialize
             if (dialogResult != DialogResult.OK) return;
 
             string selectedPath = folderBrowserDialog.SelectedPath;
-            string savePath = Path.ChangeExtension(kizunaScenePlayerInitialize.kizunaSceneData.savePath, ".imd");
+            string savePath = Path.ChangeExtension(kizunaScenePlayerInitialize.kizunaSceneData.SavePath, ".imd");
 
             List<string> selectedFiles = new List<string>();
             string[] files = Directory.GetFiles(selectedPath);

@@ -25,7 +25,7 @@ namespace SekaiTools.Kizuna
         }
 
 
-        public string savePath { get; set; }
+        public string SavePath { get; set; }
 
         public SerializedAudioData StandardizeAudioData(SerializedAudioData serializedAudioData)
         {
@@ -76,7 +76,7 @@ namespace SekaiTools.Kizuna
         public void SaveData()
         {
             string json = JsonUtility.ToJson(this, true);
-            File.WriteAllText(savePath, json);
+            File.WriteAllText(SavePath, json);
         }
 
         /// <summary>

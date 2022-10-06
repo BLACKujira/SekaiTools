@@ -34,9 +34,9 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
             folderBrowserDialog = new FolderBrowserDialog();
             folderBrowserDialog.Description = "选择存放语音的文件夹";
 
-            saveFileDialog = FileDialogFactory.GetSaveFileDialog_AudioData();
+            saveFileDialog = FileDialogFactory.GetSaveFileDialog(FileDialogFactory.FILTER_AUD);
 
-            openFileDialog = FileDialogFactory.GetOpenFileDialog_AudioData();
+            openFileDialog = FileDialogFactory.GetOpenFileDialog(FileDialogFactory.FILTER_AUD);
         }
 
         public void Initialize(CutinSceneData cutinSceneData)

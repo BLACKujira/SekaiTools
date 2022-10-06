@@ -29,7 +29,8 @@ namespace SekaiTools.Spine
                 }
             }
 
-            public bool IfFlip { get => ifFlip; }
+            public bool IfFlip => ifFlip;
+
             public AtlasAssetPair AtlasAssetPair 
             {
                 get
@@ -49,7 +50,6 @@ namespace SekaiTools.Spine
                 }
             }
             public float animationProgress = 0;
-
 
             public SkeletonAnimation model = null;
             public SkeletonAnimation model_r = null;
@@ -85,9 +85,16 @@ namespace SekaiTools.Spine
 
                 if (!model_r)
                 {
-                    //TODO 改为使用scale翻转
-                    model.initialFlipX = value;
-                    model.Initialize(true);
+                    global::Spine.TrackEntry savedTrackEntry = Model.state.GetCurrent(0);
+                    string animationName = savedTrackEntry.Animation.Name;
+                    float trackTime = savedTrackEntry.TrackTime;
+                    float timeScale = Model.AnimationState.TimeScale;
+
+                    Model.initialFlipX = ifFlip;
+                    Model.Initialize(true);
+
+                    Model.AnimationState.SetAnimation(0, animationName, true).trackTime = trackTime;
+                    Model.AnimationState.TimeScale = timeScale;
                 }
                 else
                 {
@@ -96,13 +103,25 @@ namespace SekaiTools.Spine
                         model.gameObject.SetActive(false);
                         model_r.transform.CopyComponentValues(model.transform);
                         model_r.gameObject.SetActive(true);
+                        CopyModelAnimation(model, model_r);
                     }
                     else
                     {
                         model_r.gameObject.SetActive(false);
                         model.transform.CopyComponentValues(model_r.transform);
                         model.gameObject.SetActive(true);
+                        CopyModelAnimation(model_r, model);
                     }
+                }
+            }
+
+            public static void CopyModelAnimation(SkeletonAnimation modelOld, SkeletonAnimation modelNew)
+            {
+                global::Spine.TrackEntry trackEntryOld = modelOld.state.GetCurrent(0);
+                if (trackEntryOld != null)
+                {
+                    modelNew.AnimationState.SetAnimation(0, modelOld.AnimationName, true).trackTime = trackEntryOld.trackTime;
+                    modelNew.AnimationState.TimeScale = modelOld.AnimationState.TimeScale;
                 }
             }
 
@@ -198,6 +217,9 @@ namespace SekaiTools.Spine
         {
             ModelPair newModelPair = CreateModelPair(atlasAssetPair);
             newModelPair.Model.transform.CopyComponentValues(models[index].Model.transform);
+            newModelPair.SetFlip(models[index].IfFlip);
+            newModelPair.animationProgress = models[index].animationProgress;
+            ModelPair.CopyModelAnimation(models[index].Model, newModelPair.Model);
             models[index].DestroyThis();
             models[index] = newModelPair;
             onModelChange.Invoke();
@@ -228,7 +250,9 @@ namespace SekaiTools.Spine
             ModelPair[] sortingArray = new ModelPair[spineScene.spineObjects.Length];
             foreach (var spineObject in spineScene.spineObjects)
             {
-                ModelPair modelPair = AddModel(spineModelSet.GetValue(spineObject.atlasAssetName));
+                AtlasAssetPair atlasAssetPair = spineModelSet.GetValue(spineObject.atlasAssetName);
+                if (atlasAssetPair == null) throw new ModelNotFoundException(spineObject.atlasAssetName);
+                ModelPair modelPair = AddModel(atlasAssetPair);
                 modelPair.Model.transform.position = spineObject.position;
                 modelPair.Model.transform.rotation = Quaternion.Euler(spineObject.rotation);
                 modelPair.Model.transform.localScale = spineObject.scale;
@@ -237,6 +261,7 @@ namespace SekaiTools.Spine
                 sortingArray[spineObject.sortingOrder] = modelPair;
                 global::Spine.TrackEntry trackEntry = modelPair.Model.AnimationState.SetAnimation(0, spineObject.animation, true);
                 modelPair.Model.AnimationState.TimeScale = spineObject.animationSpeed;
+                modelPair.animationProgress = spineObject.animationProgress;
                 trackEntry.TrackTime = trackEntry.animationEnd * spineObject.animationProgress;
             }
             models = new List<ModelPair>(sortingArray);
@@ -338,7 +363,7 @@ namespace SekaiTools.Spine
             public static string info = "在此控制器的列表中未找到模型";
             
             public ModelNotFoundException() : base(info) { }
-            public ModelNotFoundException(string message) : base(message+info) { }
+            public ModelNotFoundException(string message) : base(message) { }
             public ModelNotFoundException(string message, System.Exception inner) : base(message, inner) { }
             protected ModelNotFoundException(
               System.Runtime.Serialization.SerializationInfo info,

@@ -16,10 +16,22 @@ namespace SekaiTools.UI.SpineLayer
         [Header("Prefabs")]
         public Toggle hitboxPrefab;
 
-        List<Toggle> toggles = new List<Toggle>();
+        List<ToggleWithModel> toggles = new List<ToggleWithModel>();
         Action<int> onSelect = null;
         Action<int> onUnselect = null;
         Action onAllUnselect = null;
+
+        class ToggleWithModel
+        {
+            public readonly Toggle toggle;
+            public readonly SpineControllerTypeA.ModelPair modelPair;
+
+            public ToggleWithModel(Toggle toggle, SpineControllerTypeA.ModelPair modelPair)
+            {
+                this.toggle = toggle;
+                this.modelPair = modelPair;
+            }
+        }
 
         public int selectedID
         {
@@ -27,7 +39,7 @@ namespace SekaiTools.UI.SpineLayer
             {
                 for (int i = 0; i < toggles.Count; i++)
                 {
-                    if (toggles[i].isOn)
+                    if (toggles[i].toggle.isOn)
                         return i;
                 }
                 return -1;
@@ -45,10 +57,10 @@ namespace SekaiTools.UI.SpineLayer
             this.onSelect = onSelect;
             this.onUnselect = onUnselect;
             this.onAllUnselect = onAllUnselect;
-            UpdateInfo();
+            ResetAll();
         }
 
-        public void UpdateInfo()
+        public void ResetAll()
         {
             ClearToggles();
             for (int i = 0; i < spineController.models.Count; i++)
@@ -76,22 +88,33 @@ namespace SekaiTools.UI.SpineLayer
                 });
 
                 toggle.group = toggleGroup;
-                toggles.Add(toggle);
+                toggles.Add(new ToggleWithModel(toggle,modelPair));
             }
 
             foreach (var toggle in toggles)
             {
-                toggle.isOn = false;
+                toggle.toggle.isOn = false;
             }
-        }   
+        }
+
+        public void ResetPosition()
+        {
+            foreach (var toggleWithModel in toggles)
+            {
+                Vector2 pointInRect = RectTransformUtility.WorldToScreenPoint(
+                    CameraController.SpineCamera, 
+                    toggleWithModel.modelPair.Model.transform.position);
+                toggleWithModel.toggle.GetComponent<RectTransform>().anchoredPosition = pointInRect;
+            }
+        }
 
         void ClearToggles()
         {
             foreach (var toggle in toggles)
             {
-                Destroy(toggle.gameObject);
+                Destroy(toggle.toggle.gameObject);
             }
-            toggles = new List<Toggle>();
+            toggles = new List<ToggleWithModel>();
         }
     }
 }

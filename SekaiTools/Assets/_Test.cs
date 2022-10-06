@@ -13,55 +13,58 @@ using SekaiTools.Spine;
 using static SekaiTools.UI.BackGround.BackGroundController;
 using SekaiTools.Count;
 using SekaiTools.IO;
+using SekaiTools.UI.Radio;
+using SekaiTools.UI;
+using SekaiTools.StringConverter;
+using System;
+using SekaiTools.DecompiledClass;
 
 public class _Test : MonoBehaviour
 {
-    public float animationSpeed = 0.8403361344537815f * 2;
-    public List<string> atlasAssets;
-    public SpineControllerTypeA_DefaultSettings defaultSettings;
-    public Vector3 modelScale = new Vector3(0.69f, 0.69f,1);
-    public L2DControllerTypeC l2DController;
+    //private void Awake1()
+    //{
+    //    Radio_MusicLayer player = new Radio_MusicLayer();
+    //    player.musicNames = new StringConverter_MusicName(
+    //        CSVTools.LoadCSV(
+    //            File.ReadAllText(@"C:\Users\KUROKAWA_KUJIRA\Desktop\CSV\MusicNameCSV.txt"),
+    //            ",",Environment.NewLine));
+    //    player.singerNames = new StringConverter_SingerName(
+    //        CSVTools.LoadCSV(
+    //            File.ReadAllText(@"C:\Users\KUROKAWA_KUJIRA\Desktop\CSV\CharNameCSV.txt"),
+    //            ",", Environment.NewLine),
+    //        CSVTools.LoadCSV(
+    //            File.ReadAllText(@"C:\Users\KUROKAWA_KUJIRA\Desktop\CSV\OutsideCharVocalCSV.txt"),
+    //            ",", Environment.NewLine));
+    //    player.cpNames = new StringConverter_StringAlias(
+    //        CSVTools.LoadCSV(
+    //            File.ReadAllText(@"C:\Users\KUROKAWA_KUJIRA\Desktop\CSV\CPnameCSV.txt"),
+    //            ",", Environment.NewLine));
+    //    player.vocalTypeNames = new StringConverter_StringAlias(
+    //        CSVTools.LoadCSV(
+    //            File.ReadAllText(@"C:\Users\KUROKAWA_KUJIRA\Desktop\CSV\VocalTypeCSV.txt"),
+    //            ",", Environment.NewLine));
+    //    player.sizeTypeNames = new StringConverter_StringAlias(
+    //        CSVTools.LoadCSV(
+    //            File.ReadAllText(@"C:\Users\KUROKAWA_KUJIRA\Desktop\CSV\SizeTypeCSV.txt"),
+    //            ",", Environment.NewLine));
 
-    public class Item
-    {
-        public List<string> atlasAssets;
-        public TextAsset bgSettings;
-    }
+    //    player.masterMusics = JsonHelper.getJsonArray<MasterMusic>(
+    //        File.ReadAllText(@"C:\Users\KUROKAWA_KUJIRA\Documents\SekaiTools\sekai_master_db_diff\musics.json"));
+    //    player.masterMusicVocals = JsonHelper.getJsonArray<MasterMusicVocal>(
+    //        File.ReadAllText(@"C:\Users\KUROKAWA_KUJIRA\Documents\SekaiTools\sekai_master_db_diff\musicVocals.json"));
 
-    SpineAniShowData spineAniShowData = new SpineAniShowData();
+    //    player.Initialize();
+    //    player.LoadMusicInSV(@"C:\Users\KUROKAWA_KUJIRA\Documents\SekaiTools\assets\music\long",
+    //        JsonHelper.getJsonArray<MasterOutsideCharacter>(
+    //            File.ReadAllText(@"C:\Users\KUROKAWA_KUJIRA\Documents\SekaiTools\sekai_master_db_diff\outsideCharacters.json")),
+    //        ".mp3");
+
+    //    MusicVocalData music1 = player.GetVocal(new MusicOrderInfo("raddogs", "ankh", null));
+    //    MusicVocalData music2 = player.GetVocal(new MusicOrderInfo("スイートマジック",null,null));
+    //}
 
     private void Awake()
     {
-        string json = MessagePackConverter.ToJSON(File.ReadAllBytes(@"C:\Users\KUROKAWA_KUJIRA\Desktop\0\2.0.5.41.dec"));
-        File.WriteAllText(@"C:\Users\KUROKAWA_KUJIRA\Desktop\0\2.0.5.41.json", json);
-
-    }
-
-    void AddSpineData(string backGroundSaveData,params SpineScene.SpineObject[] spineObjects)
-    {
-        SpineScene spineScene = new SpineScene();
-        spineScene.backGroundData = JsonUtility.FromJson<BackGroundSaveData>(backGroundSaveData);
-        spineScene.spineLayerID = 1;
-        spineScene.spineObjects = spineObjects;
-        spineAniShowData.spineScenes.Add(spineScene);
-    }
-
-    SpineScene.SpineObject GetSpineObject(string atlasAsset,int id,int count)
-    {
-        SpineScene.SpineObject spineObject = new SpineScene.SpineObject();
-        SpineControllerTypeA_DefaultSettings.DefaultSettingItem defaultSettingItem = defaultSettings.GetDefaultSetting(id, count);
-        spineObject.atlasAssetName = atlasAsset;
-        spineObject.position = defaultSettingItem.position;
-        spineObject.scale = modelScale;
-        spineObject.ifFlip = defaultSettingItem.flipX;
-        spineObject.animation = "z_test_F_negi01";
-        spineObject.animationProgress = 0;
-        spineObject.animationSpeed = animationSpeed;
-        int order = id;
-        order *= 2;
-        if (atlasAsset.Equals("sd_negionly_normal")) order++;
-        spineObject.sortingOrder = order;
-
-        return spineObject;
+        Application.targetFrameRate = 60;
     }
 }

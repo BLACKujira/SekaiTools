@@ -55,7 +55,7 @@ namespace SekaiTools.UI.GeneralSettingsWindow
                     }
                 });
 
-            if(toggleGenerator.toggles.Count>=0)
+            if(toggleGenerator.toggles.Count>0)
             {
                 toggleGenerator.toggles[0].isOn = true;
                 Refresh();

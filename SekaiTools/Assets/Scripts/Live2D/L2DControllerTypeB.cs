@@ -30,7 +30,7 @@ namespace SekaiTools.Live2D
         Camera l2DCameraL;
         Camera l2DCameraR;
 
-        public void SetModel(SekaiLive2DModel model, ConstData.Character character)
+        public void SetModel(SekaiLive2DModel model, Character character)
         {
             live2DModels[(int)character] = model;
         }
@@ -40,7 +40,7 @@ namespace SekaiTools.Live2D
             {
                 foreach (var model in modelLoader.models)
                 {
-                    if (model.name.Contains(((ConstData.Character)i).ToString()))
+                    if (model.name.Contains(((Character)i).ToString()))
                     {
                         live2DModels[i] = model;
                         break;
@@ -51,10 +51,10 @@ namespace SekaiTools.Live2D
 
         public void SetModel(SekaiLive2DModel model, int talkerId)
         {
-            SetModel(model, (ConstData.Character)talkerId);
+            SetModel(model, (Character)talkerId);
         }
 
-        public SekaiLive2DModel ShowModelLeft(ConstData.Character character)
+        public SekaiLive2DModel ShowModelLeft(Character character)
         {
             SekaiLive2DModel sekaiLive2DModel = live2DModels[(int)character];
             if (!sekaiLive2DModel) { Debug.LogError($"没有加载 {ConstData.characters[character].Name} 的模型"); return null; }
@@ -67,7 +67,7 @@ namespace SekaiTools.Live2D
             modelL.gameObject.SetActive(true);
             return sekaiLive2DModel;
         }
-        public SekaiLive2DModel ShowModelRight(ConstData.Character character)
+        public SekaiLive2DModel ShowModelRight(Character character)
         {
             SekaiLive2DModel sekaiLive2DModel = live2DModels[(int)character];
             if (!sekaiLive2DModel) { Debug.LogError($"没有加载 {ConstData.characters[character].Name} 的模型"); return null; }

@@ -14,6 +14,10 @@ namespace SekaiTools
         Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
         Dictionary<Sprite, string> paths = new Dictionary<Sprite, string>();
 
+        public ImageData()
+        {
+        }
+
         public ImageData(string savePath)
         {
             this.savePath = savePath;

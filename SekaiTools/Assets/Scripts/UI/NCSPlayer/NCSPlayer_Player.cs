@@ -12,7 +12,6 @@ namespace SekaiTools.UI.NCSPlayer
 {
     public class NCSPlayer_Player : NCSPlayerBase
     {
-        public Window window;
         [Header("Components")]
         public RectTransform targetTransformScene;
         public RectTransform targetTransformTransition;
@@ -61,20 +60,15 @@ namespace SekaiTools.UI.NCSPlayer
                         currentTransition.Abort();
                         Destroy(currentTransition.gameObject);
                     }
-                    Count.Showcase.NicknameCountShowcase.Transition transitionData = showcase.scenes[i + 1].transition;
+                    Transition.SerializedTransition transitionData = showcase.scenes[i + 1].transition;
                     Transition.Transition transitionPrefab = GlobalData.globalData.transitionSet.GetValue(transitionData.type);
                     currentTransition = Instantiate(transitionPrefab, transform);
                     currentTransition.targetTransform = targetTransformTransition;
-                    currentTransition.LoadSettings(transitionData.serialisedSettings);
-                    yield return currentTransition.StartTransition(WaitCoroutine());
+                    currentTransition.LoadSettings(transitionData.serializedSettings);
+                    yield return currentTransition.StartTransition(waitTimeSafe);
                     Destroy(scene.nCSScene.gameObject);
                 }
             }
-        }
-
-        IEnumerator WaitCoroutine()
-        {
-            yield return new WaitForSeconds(waitTimeSafe);
         }
 
         public class Settings

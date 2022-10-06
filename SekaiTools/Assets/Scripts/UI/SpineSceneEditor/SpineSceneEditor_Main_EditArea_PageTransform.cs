@@ -32,7 +32,7 @@ namespace SekaiTools.UI.SpineSceneEditor
                 Vector3 position = modelPair.Model.transform.position;
                 position.x = TryGetValue(value, 0);
                 modelPair.Model.transform.position = position;
-                spineSceneEditor.SaveChanges();
+                spineSceneEditor.spineImage.ResetPosition();
             });
 
             inputFieldPositionY.onEndEdit.AddListener((value) =>
@@ -40,13 +40,12 @@ namespace SekaiTools.UI.SpineSceneEditor
                 Vector3 position = modelPair.Model.transform.position;
                 position.y = TryGetValue(value, 0);
                 modelPair.Model.transform.position = position;
-                spineSceneEditor.SaveChanges();
+                spineSceneEditor.spineImage.ResetPosition();
             });
 
             inputFieldRotation.onEndEdit.AddListener((value) =>
             {
                 modelPair.Model.transform.rotation = Quaternion.Euler(0,0, TryGetValue(value, 0));
-                spineSceneEditor.SaveChanges();
             });
 
             inputFieldScaleX.onEndEdit.AddListener((value) =>
@@ -54,7 +53,6 @@ namespace SekaiTools.UI.SpineSceneEditor
                 Vector3 scale = modelPair.Model.transform.localScale;
                 scale.x = TryGetValue(value, 0);
                 modelPair.Model.transform.localScale = scale;
-                spineSceneEditor.SaveChanges();
             });
 
             inputFieldScaleY.onEndEdit.AddListener((value) =>
@@ -62,13 +60,12 @@ namespace SekaiTools.UI.SpineSceneEditor
                 Vector3 scale = modelPair.Model.transform.localScale;
                 scale.y = TryGetValue(value, 0);
                 modelPair.Model.transform.localScale = scale;
-                spineSceneEditor.SaveChanges();
             });
 
             buttonFlip.onClick.AddListener(() =>
             {
                 modelPair.SetFlip(!modelPair.IfFlip);
-                spineSceneEditor.SaveChanges();
+                spineSceneEditor.PlayFromBeginning();
             });
         }
 

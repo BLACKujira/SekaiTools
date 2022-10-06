@@ -42,8 +42,8 @@ namespace SekaiTools.UI.KizunaSceneEditor
             yield return new WaitForSeconds(switchTime);
 
             l2DController.HideModelAll();
-            l2DController.ShowModelLeft((ConstData.Character)kizunaScene.charAID);
-            l2DController.ShowModelRight((ConstData.Character)kizunaScene.charBID);
+            l2DController.ShowModelLeft((Character)kizunaScene.charAID);
+            l2DController.ShowModelRight((Character)kizunaScene.charBID);
             l2DController.SetModelPositionLeft(modelPosL);
             l2DController.SetModelPositionRight(modelPosR);
             l2DController.modelL.transform.localScale = new Vector3(modelScale, modelScale, 1);

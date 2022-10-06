@@ -11,7 +11,7 @@ namespace SekaiTools.Spine
         public BackGroundController.BackGroundSaveData backGroundData = null;
         public int spineLayerID = 0;
 
-        public SpineObject[] spineObjects;
+        public SpineObject[] spineObjects = new SpineObject[0];
 
         [System.Serializable]
         public class SpineObject
@@ -41,6 +41,33 @@ namespace SekaiTools.Spine
         {
             SpineScene spineScene = new SpineScene();
             return spineScene;
+        }
+
+        public bool HasSameAnimation()
+        {
+            HashSet<string> animations = new HashSet<string>();
+            foreach (var spineObject in spineObjects)
+            {
+                if (animations.Contains(spineObject.animation))
+                    return true;
+                animations.Add(spineObject.animation);
+            }
+            return false;
+        }
+
+        public bool HasSameAnimationAndOffset()
+        {
+            if (spineObjects.Length <= 1) return false;
+            for (int i = 0; i < spineObjects.Length -1; i++)
+            {
+                for (int j = i+1; j < spineObjects.Length; j++)
+                {
+                    if (spineObjects[i].animation.Equals(spineObjects[j].animation)
+                        && spineObjects[i].animationProgress == spineObjects[j].animationProgress)
+                        return true;
+                }
+            }
+            return false;
         }
     }
 }

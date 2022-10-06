@@ -10,7 +10,7 @@ namespace SekaiTools.Count
     {
         public NicknameItem[] nicknameItems;
 
-        public string savePath { get; set; }
+        public string SavePath { get; set; }
 
         [System.Serializable]
         public class NicknameItem
@@ -55,14 +55,14 @@ namespace SekaiTools.Count
         public void SaveData()
         {
             string json = JsonUtility.ToJson(this,true);
-            File.WriteAllText(savePath, json);
+            File.WriteAllText(SavePath, json);
         }
 
         public static NicknameSet LoadData(string savePath)
         {
             string data = File.ReadAllText(savePath);
             NicknameSet nicknameSet = JsonUtility.FromJson<NicknameSet>(data);
-            nicknameSet.savePath = savePath;
+            nicknameSet.SavePath = savePath;
             return nicknameSet;
 ;        }
 

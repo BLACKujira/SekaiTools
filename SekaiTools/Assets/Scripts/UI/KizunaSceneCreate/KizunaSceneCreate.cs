@@ -33,7 +33,7 @@ namespace SekaiTools.UI.KizunaSceneCreate
 
         private void Awake()
         {
-            saveFileDialog = FileDialogFactory.GetSaveFileDialog_KizunaSceneData();
+            saveFileDialog = FileDialogFactory.GetSaveFileDialog(FileDialogFactory.FILTER_KZN);
             Refresh();
         }
 
@@ -111,7 +111,7 @@ namespace SekaiTools.UI.KizunaSceneCreate
             else
                 kizunaSceneData = new CustomKizunaData(bonds);
 
-            kizunaSceneData.savePath = fileName;
+            kizunaSceneData.SavePath = fileName;
             AudioData audioData = null;
 
             if (audioArea.mode != KizunaSceneCreate_Audio.Mode.none)
@@ -150,7 +150,7 @@ namespace SekaiTools.UI.KizunaSceneCreate
                                 { kizunaScene.cutinScenes.Add(cutinScene);}
                         }
                     }
-                    string cutinSceneAudioDataPath = Path.ChangeExtension(audioArea.cutinSceneData.savePath, ".aud");
+                    string cutinSceneAudioDataPath = Path.ChangeExtension(audioArea.cutinSceneData.SavePath, ".aud");
                     //如果互动语音场景有音频资料则读取资料并标准化
                     if (File.Exists(cutinSceneAudioDataPath))
                     {

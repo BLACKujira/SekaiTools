@@ -1,5 +1,6 @@
 ﻿using SekaiTools.UI.BackGround;
 using SekaiTools.UI.NicknameCountShowcase;
+using SekaiTools.UI.Transition;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ namespace SekaiTools.Count.Showcase
         public List<Scene> scenes = new List<Scene>();
         public int[] charactersRequireL2d;
 
-        public string savePath { get; set; }
+        public string SavePath { get; set; }
 
         public void SaveData()
         {
@@ -32,7 +33,7 @@ namespace SekaiTools.Count.Showcase
             }
 
             string json = JsonUtility.ToJson(this,true);
-            File.WriteAllText(savePath, json);
+            File.WriteAllText(SavePath, json);
         }
 
         public NCSScene AddScene(NCSScene nCSScenePrefab)
@@ -48,7 +49,7 @@ namespace SekaiTools.Count.Showcase
         {
             string json = File.ReadAllText(savePath);
             NicknameCountShowcase nicknameCountShowcase = JsonUtility.FromJson<NicknameCountShowcase>(json);
-            nicknameCountShowcase.savePath = savePath;
+            nicknameCountShowcase.SavePath = savePath;
             if(instantiateScene) nicknameCountShowcase.InstantiateScenes();
             return nicknameCountShowcase;
         }
@@ -69,7 +70,7 @@ namespace SekaiTools.Count.Showcase
         public class Scene
         {
             public bool useTransition = false;
-            public Transition transition = null;
+            public SerializedTransition transition = null;
             public bool changeBackGround = false;
             public BackGroundController.BackGroundSaveData backGround = null;
 
@@ -90,18 +91,6 @@ namespace SekaiTools.Count.Showcase
                 nCSScene = GameObject.Instantiate(GlobalData.globalData.nCSSceneSet.GetValue(nCSSceneType));
                 nCSScene.name = nCSSceneType;
                 nCSScene.LoadData(nCSSceneSettings);
-            }
-        }
-        [System.Serializable]
-        public class Transition
-        {
-            public string type;
-            public string serialisedSettings;
-
-            public Transition(string type, string serialisedSettings)
-            {
-                this.type = type;
-                this.serialisedSettings = serialisedSettings;
             }
         }
     }

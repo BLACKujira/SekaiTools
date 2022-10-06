@@ -129,4 +129,18 @@ namespace SekaiTools.UI
             this.resetScene = resetScene;
         }
     }
+
+    public abstract class ConfigUIItem_StringList : ConfigUIItem_Void<List<string>>
+    {
+        protected ConfigUIItem_StringList(string itemName, string itemGroup, Func<List<string>> getValue, Action<List<string>> setValue) : base(itemName, itemGroup, getValue, setValue)
+        {
+        }
+    }
+
+    public class ConfigUIItem_StringListLong : ConfigUIItem_StringList
+    {
+        public ConfigUIItem_StringListLong(string itemName, string itemGroup, Func<List<string>> getValue, Action<List<string>> setValue) : base(itemName, itemGroup, getValue, setValue)
+        {
+        }
+    }
 }

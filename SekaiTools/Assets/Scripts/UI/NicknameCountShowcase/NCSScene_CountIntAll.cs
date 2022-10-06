@@ -101,7 +101,7 @@ namespace SekaiTools.UI.NicknameCountShowcase
             countTextTotal.text = $"共计 {countData.GetCountTotal(talkerId,true)} 次 ，在 {countData.GetSerifCount(talkerId)} 句台词中";
             if (l2DController.live2DModels[talkerId])
             {
-                l2DController.ShowModelLeft((ConstData.Character)talkerId);
+                l2DController.ShowModelLeft((Character)talkerId);
                 l2DController.SetModelPositionLeft(modelPosition);
                 l2DController.modelL.transform.localScale = new Vector3(modelScale,modelScale,1);
                 l2DController.FadeInLeft();

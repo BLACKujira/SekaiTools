@@ -25,7 +25,7 @@ namespace SekaiTools.UI.NCSPlayerInitialize
 
         public void LoadData()
         {
-            OpenFileDialog openFileDialog = FileDialogFactory.GetOpenFileDialog_NCS();
+            OpenFileDialog openFileDialog = FileDialogFactory.GetOpenFileDialog(FileDialogFactory.FILTER_NCS);
             DialogResult dialogResult = openFileDialog.ShowDialog();
             if (dialogResult != DialogResult.OK) return;
 
@@ -37,7 +37,7 @@ namespace SekaiTools.UI.NCSPlayerInitialize
             l2dArea.Initialize(nicknameCountShowcase.charactersRequireL2d);
             ncdArea.Load(Path.GetDirectoryName(audioDataPath));
 
-            pathInputField.text = nicknameCountShowcase.savePath;
+            pathInputField.text = nicknameCountShowcase.SavePath;
             textInfo.text = $"包含{nicknameCountShowcase.scenes.Count}个场景";
         }
 

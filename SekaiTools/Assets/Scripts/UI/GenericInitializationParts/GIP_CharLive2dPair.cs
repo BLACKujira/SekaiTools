@@ -43,7 +43,7 @@ namespace SekaiTools.UI.GenericInitializationParts
             {
                 foreach (var model in models)
                 {
-                    if (model.name.Contains(((ConstData.Character)charID).ToString()))
+                    if (model.name.Contains(((Character)charID).ToString()))
                     {
                         sekaiLive2DModels[charID] = model;
                         break;

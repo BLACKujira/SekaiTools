@@ -23,7 +23,7 @@ namespace SekaiTools
 
         public static AudioData LoadAudioData(Action<AudioData> onFinish)
         {
-            OpenFileDialog openFileDialog = FileDialogFactory.GetOpenFileDialog_Audio();
+            OpenFileDialog openFileDialog = FileDialogFactory.GetOpenFileDialog(FileDialogFactory.FILTER_AUDIO);
             DialogResult dialogResult = openFileDialog.ShowDialog();
             if (dialogResult != DialogResult.OK) return null;
             string fileName = openFileDialog.FileName;

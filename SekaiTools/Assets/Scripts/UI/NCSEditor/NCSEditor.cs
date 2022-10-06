@@ -21,15 +21,14 @@ namespace SekaiTools.UI.NCSEditor
 
         public NCSSceneSet nCSSceneSet => GlobalData.globalData.nCSSceneSet;
 
-
         private void Awake()
         {
-            countData = NicknameCountData.Load(@"C:\Users\KUROKAWA_KUJIRA\Desktop\0");
-            audioData = new AudioData(@"C:\Users\KUROKAWA_KUJIRA\Desktop\0\save.aud");
+            countData = NicknameCountData.Load(@"D:\BackUp\220528\0");
+            audioData = new AudioData(@"D:\BackUp\220528\0\save.aud");
             NowLoadingTypeA nowLoadingTypeA = WindowController.windowController.currentWindow.OpenWindow<NowLoadingTypeA>(WindowController.windowController.nowLoadingTypeAWindow);
             nowLoadingTypeA.OnFinish += () => 
             {
-                showcase = Count.Showcase.NicknameCountShowcase.LoadData(@"C:\Users\KUROKAWA_KUJIRA\Desktop\0\save.ncs");
+                showcase = Count.Showcase.NicknameCountShowcase.LoadData(@"D:\BackUp\220528\0\save.ncs");
                 Initialize(showcase); 
             };
             nowLoadingTypeA.StartProcess(audioData.LoadData(File.ReadAllText(audioData.savePath)));

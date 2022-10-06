@@ -44,19 +44,19 @@ namespace SekaiTools.Editor
                 switch (nameType)
                 {
                     case NameType.id_name:
-                        folderName = $"{i.ToString("00")}_{(ConstData.Character)i}";
+                        folderName = $"{i.ToString("00")}_{(Character)i}";
                         break;
                     case NameType.name_id:
-                        folderName = $"{(ConstData.Character)i}_{i.ToString("00")}";
+                        folderName = $"{(Character)i}_{i.ToString("00")}";
                         break;
                     case NameType.id:
                         folderName = $"{i.ToString("00")}";
                         break;
                     case NameType.name:
-                        folderName = $"{(ConstData.Character)i}";
+                        folderName = $"{(Character)i}";
                         break;
                     case NameType.idname:
-                        folderName = $"{i.ToString("00")}{(ConstData.Character)i}";
+                        folderName = $"{i.ToString("00")}{(Character)i}";
                         break;
                     default: continue;
                 }

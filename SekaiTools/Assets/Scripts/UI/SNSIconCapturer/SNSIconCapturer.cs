@@ -4,35 +4,34 @@ using UnityEngine;
 using Spine.Unity;
 using SekaiTools.Spine;
 using System.IO;
-using UnityEngine.UI;
+using System;
 
 namespace SekaiTools.UI.SNSIconCapturer
 {
-    public class SNSIconCapturer : MonoBehaviour
+    public abstract class SNSIconCapturer : MonoBehaviour
     {
         public enum FileNameType { modelName, animationName, both }
         public Window window;
         [Header("Components")]
         public RectTransform targetRectTransform;
         public Canvas targetCanvas;
-        public Image bgImage;
         public PerecntBar perecntBar;
-        [Header("Settings")]
-        public Texture2D mask;
 
         List<SNSIconCaptureItem> capturerItems = new List<SNSIconCaptureItem>();
         SpineControllerTypeA spineController;
         string savePath;
         FileNameType fileNameType;
 
-        public void Initialize(SNSIconCapturerSettings sNSIconCapturerSettings)
+        public virtual void Initialize(SNSIconCapturerSettings sNSIconCapturerSettings)
         {
-            this.capturerItems = sNSIconCapturerSettings.capturerItems;
-            this.spineController = sNSIconCapturerSettings.spineController;
-            this.savePath = sNSIconCapturerSettings.savePath;
-            this.fileNameType = sNSIconCapturerSettings.fileNameType;
+            capturerItems = sNSIconCapturerSettings.capturerItems;
+            spineController = sNSIconCapturerSettings.spineController;
+            savePath = sNSIconCapturerSettings.savePath;
+            fileNameType = sNSIconCapturerSettings.fileNameType;
         }
 
+        public event Action<SNSIconCaptureItem> onItemChange;
+        public Func<Texture2D, Texture2D> postProcessing = null;
         public void StartCapture()
         {
             StartCoroutine(IStartCapture());
@@ -42,7 +41,7 @@ namespace SekaiTools.UI.SNSIconCapturer
             for (int i = 0; i < capturerItems.Count; i++)
             {
                 SNSIconCaptureItem sNSIconCaptureItem = capturerItems[i];
-                bgImage.color = sNSIconCaptureItem.bgColor;
+                onItemChange(sNSIconCaptureItem);
                 spineController.ReplaceModel(sNSIconCaptureItem.atlasAssetPair, 0);
                 SpineControllerTypeA.ModelPair modelPair = spineController.models[0];
                 modelPair.Model.AnimationState.TimeScale = 0xffffffff;
@@ -51,7 +50,8 @@ namespace SekaiTools.UI.SNSIconCapturer
                 yield return new WaitForEndOfFrame();
 
                 Texture2D texture2D = ExtensionTools.Capture(targetRectTransform, targetCanvas);
-                texture2D = ExtensionTools.ApplyMask(texture2D, mask);
+                if(postProcessing != null)
+                    texture2D = postProcessing(texture2D);
                 byte[] png = texture2D.EncodeToPNG();
                 string fileName = "snsicon.png";
                 switch (fileNameType)
@@ -80,21 +80,6 @@ namespace SekaiTools.UI.SNSIconCapturer
             public SpineControllerTypeA spineController;
             public string savePath;
             public FileNameType fileNameType;
-        }
-    }
-
-    public class SNSIconCaptureItem
-    {
-        public AtlasAssetPair atlasAssetPair;
-        public string animation;
-        //public float animationProgress;
-        public Color bgColor;
-
-        public SNSIconCaptureItem(AtlasAssetPair atlasAssetPair, string animation, Color bgColor)
-        {
-            this.atlasAssetPair = atlasAssetPair;
-            this.animation = animation;
-            this.bgColor = bgColor;
         }
     }
 }

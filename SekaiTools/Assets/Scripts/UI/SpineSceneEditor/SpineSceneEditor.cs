@@ -12,9 +12,10 @@ namespace SekaiTools.UI.SpineSceneEditor
         [Header("Components")]
         public SpineSceneEditor_Main mainArea;
 
-        public void Initialize(SpineScene spineScene,Action<SpineScene> onClose)
+        public void Initialize(SpineScene spineScene,Action<SpineScene> onClose=null)
         {
-            window.OnClose.AddListener(() => onClose(mainArea.spineScene));
+            if(onClose!=null)
+                window.OnClose.AddListener(() => onClose(mainArea.spineScene));
             mainArea.SetScene(spineScene);
         }
     }

@@ -142,6 +142,8 @@ namespace SekaiTools.UI
         /// <typeparam name="T"></typeparam>
         public T OpenWindow<T>(Window window) where T: MonoBehaviour
         {
+            if (windowController.currentWindow != this)
+                Debug.LogError("窗口不一致，可能导致错误");
             Window openWindow = Instantiate(window);
             T controlScript = openWindow.controlScript as T;
             if (!controlScript) throw new Exception.WindowControlScriptException();

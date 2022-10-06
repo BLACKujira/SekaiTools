@@ -24,7 +24,7 @@ namespace SekaiTools.UI.GenericInitializationParts
         private void Awake()
         {
             folderBrowserDialog = new FolderBrowserDialog();
-            openFileDialog = FileDialogFactory.GetOpenFileDialog_AudioData();
+            openFileDialog = FileDialogFactory.GetOpenFileDialog(FileDialogFactory.FILTER_AUD);
         }
 
         public void NewData()

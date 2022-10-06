@@ -9,7 +9,7 @@ namespace SekaiTools.UI.SpineSceneEditor
     {
         [Header("Component")]
         public Button selectAnimationButton;
-        public Slider animationProgressSlider;
+        public InputField animationProgressInput;
         public Text animationName;
         [Header("Settings")]
         public InbuiltImageData animationPreview;
@@ -25,15 +25,28 @@ namespace SekaiTools.UI.SpineSceneEditor
                 spineAnimationSelect.Initialize((string str) =>
                 {
                     modelPair.Model.AnimationState.SetAnimation(0,str,true);
-                    spineSceneEditor.SaveChanges();
                     spineSceneEditor.PlayFromBeginning();
                 });
             });
 
-            animationProgressSlider.onValueChanged.AddListener((float value) => 
-            { 
-                modelPair.animationProgress = value;
-                spineSceneEditor.SaveChanges();
+            animationProgressInput.onEndEdit.AddListener((str) => 
+            {
+                try
+                {
+                    modelPair.animationProgress = float.Parse(str);
+                }
+                catch
+                {
+                    spineSceneEditor.msgLayer_Err.ShowMessage("非法输入，将重置动画偏移为0");
+                    animationProgressInput.text = "0";
+                    modelPair.animationProgress = 0;
+                }
+                if(modelPair.animationProgress<0 || modelPair.animationProgress>1)
+                {
+                    spineSceneEditor.msgLayer_Err.ShowMessage("动画偏移应在[0,1]之间，将重置偏移为0");
+                    animationProgressInput.text = "0";
+                    modelPair.animationProgress = 0;
+                }
                 spineSceneEditor.PlayFromBeginning();
             });
         }
@@ -42,15 +55,15 @@ namespace SekaiTools.UI.SpineSceneEditor
         {
             selectAnimationButton.image.sprite = animationPreview.GetValue(modelPair.Model.AnimationName);
             animationName.text = modelPair.Model.AnimationName;
-            animationProgressSlider.value = modelPair.animationProgress;
+            animationProgressInput.text = modelPair.animationProgress.ToString();
             selectAnimationButton.interactable = true;
-            animationProgressSlider.interactable = true;
+            animationProgressInput.interactable = true;
         }
 
         protected override void Interactive()
         {
             selectAnimationButton.interactable = true;
-            animationProgressSlider.interactable = true;
+            animationProgressInput.interactable = true;
         }
 
         protected override void NonInteractive()
@@ -58,8 +71,8 @@ namespace SekaiTools.UI.SpineSceneEditor
             selectAnimationButton.interactable = false;
             selectAnimationButton.image.sprite = noDataIcon;
             animationName.text = "请选择模型";
-            animationProgressSlider.value = 0;
-            animationProgressSlider.interactable = false;
+            animationProgressInput.text = string.Empty;
+            animationProgressInput.interactable = false;
         }
     }
 }

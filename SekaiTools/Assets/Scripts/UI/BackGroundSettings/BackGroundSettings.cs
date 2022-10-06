@@ -43,9 +43,9 @@ namespace SekaiTools.UI.BackGroundSettings
 
         private void Awake()
         {
-            openFileDialog_BGImage = FileDialogFactory.GetOpenFileDialog_Image();
-            openFileDialog_SaveData = FileDialogFactory.GetOpenFileDialog_BGSettings();
-            saveFileDialog_SaveData = FileDialogFactory.GetSaveFileDialog_BGSettings();
+            openFileDialog_BGImage = FileDialogFactory.GetOpenFileDialog(FileDialogFactory.FILTER_IMAGE);
+            openFileDialog_SaveData = FileDialogFactory.GetOpenFileDialog(FileDialogFactory.FILTER_BGS);
+            saveFileDialog_SaveData = FileDialogFactory.GetSaveFileDialog(FileDialogFactory.FILTER_BGS);
 
             InitializeButtonGenerator();
         }

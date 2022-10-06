@@ -46,7 +46,7 @@ namespace SekaiTools.UI.KizunaScenePlayerInitialize
         private void Awake()
         {
             Refresh();
-            openFileDialog = FileDialogFactory.GetOpenFileDialog_KizunaSceneData();
+            openFileDialog = FileDialogFactory.GetOpenFileDialog(FileDialogFactory.FILTER_KZN);
         }
 
         public void NewData()
@@ -72,7 +72,7 @@ namespace SekaiTools.UI.KizunaScenePlayerInitialize
             else
                 kizunaSceneData = CustomKizunaData.LoadData(File.ReadAllText(fileName));
 
-            kizunaSceneData.savePath = fileName;
+            kizunaSceneData.SavePath = fileName;
             string audioFileName = Path.ChangeExtension(fileName, ".aud");
             if (File.Exists(audioFileName))
             {
@@ -96,7 +96,7 @@ namespace SekaiTools.UI.KizunaScenePlayerInitialize
 
         public void Refresh()
         {
-            pathInputField.text = kizunaSceneData == null ? string.Empty : kizunaSceneData.savePath;
+            pathInputField.text = kizunaSceneData == null ? string.Empty : kizunaSceneData.SavePath;
             if(graphicArea!=null) graphicArea.Refresh();
             audioArea.Initialize(kizunaSceneData);
             if (kizunaSceneData == null) return;
