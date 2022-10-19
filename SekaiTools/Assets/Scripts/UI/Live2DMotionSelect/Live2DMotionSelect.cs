@@ -9,6 +9,7 @@ namespace SekaiTools.UI.Live2DMotionSelect
 {
     public class Live2DMotionSelect : MonoBehaviour
     {
+        public Window window;
         [Header("Components")]
         public Live2DMotionSelect_SelectArea selectArea;
         public ToggleGenerator toggleGenerator;
@@ -18,7 +19,7 @@ namespace SekaiTools.UI.Live2DMotionSelect
         public void Initialize(L2DAnimationSet animationSet,Action<string> onButtonClick)
         {
             this.animationSet = animationSet;
-            selectArea.Initialize(onButtonClick);
+            selectArea.Initialize((str) => { onButtonClick(str); window.Close(); });
             toggleGenerator.Generate(animationSet.motionSets.Count+1,
                 (Toggle toggle, int id) =>
                 {

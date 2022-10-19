@@ -46,7 +46,7 @@ namespace Live2D.Cubism.Editor.Deleters
             var directoryName = Path.GetDirectoryName(AssetPath).ToString();
             var modelDir = Path.GetDirectoryName(directoryName).ToString();
             var modelName = Path.GetFileName(modelDir).ToString();
-            var fadeMotionListPath = Path.GetDirectoryName(directoryName).ToString() + "/" + modelName + ".fadeMotionList.asset";
+            var fadeMotionListPath = Path.GetDirectoryName(directoryName).ToString() + "/" + Path.GetFileName(directoryName) + ".fadeMotionList.asset";//FIXED
             var fadeMotionList = AssetDatabase.LoadAssetAtPath<CubismFadeMotionList>(fadeMotionListPath);
 
             if (fadeMotionList == null)

@@ -18,9 +18,9 @@ namespace SekaiTools.UI.GenericInitializationParts
 
         [NonSerialized] public SekaiLive2DModel[] sekaiLive2DModels = new SekaiLive2DModel[57];
         int[] appearCharacters;
-        ModelLoader modelLoader;
+        //L2dModelLoader modelLoader;
 
-        public ModelLoader ModelLoader { get { if (!modelLoader) modelLoader = ModelLoader.modelLoader; return modelLoader; } set => modelLoader = value; }
+        //public L2dModelLoader ModelLoader { get { if (!modelLoader) modelLoader = L2dModelLoader.modelLoader; return modelLoader; } set => modelLoader = value; }
 
         public void Initialize(int[] appearCharacters)
         {
@@ -37,20 +37,20 @@ namespace SekaiTools.UI.GenericInitializationParts
 
         public void AutoSetModel()
         {
-            if (appearCharacters == null) return;
-            List<SekaiLive2DModel> models = ModelLoader.models;
-            foreach (var charID in appearCharacters)
-            {
-                foreach (var model in models)
-                {
-                    if (model.name.Contains(((Character)charID).ToString()))
-                    {
-                        sekaiLive2DModels[charID] = model;
-                        break;
-                    }
-                }
-            }
-            Refresh();
+            //if (appearCharacters == null) return;
+            //List<SekaiLive2DModel> models = ModelLoader.models;
+            //foreach (var charID in appearCharacters)
+            //{
+            //    foreach (var model in models)
+            //    {
+            //        if (model.name.Contains(((Character)charID).ToString()))
+            //        {
+            //            sekaiLive2DModels[charID] = model;
+            //            break;
+            //        }
+            //    }
+            //}
+            //Refresh();
         }
 
         void GenerateButton()
@@ -63,8 +63,8 @@ namespace SekaiTools.UI.GenericInitializationParts
             },
             (int id) =>
             {
-                L2DModelSelect l2DModelSelect = WindowController.windowController.currentWindow.OpenWindow<L2DModelSelect>(l2DModelSelectWindow);
-                l2DModelSelect.Generate((SekaiLive2DModel model) => { sekaiLive2DModels[appearCharacters[id]] = model; Refresh(); });
+                //L2DModelSelect l2DModelSelect = WindowController.windowController.currentWindow.OpenWindow<L2DModelSelect>(l2DModelSelectWindow);
+                //l2DModelSelect.Generate((SekaiLive2DModel model) => { sekaiLive2DModels[appearCharacters[id]] = model; Refresh(); });
             });
         }
 

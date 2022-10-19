@@ -37,5 +37,27 @@ namespace SekaiTools.UI
             MultiOptionsMessageBox multiOptionsMessageBox = windowController.currentWindow.OpenWindow<MultiOptionsMessageBox>(windowController.cancelOkBoxWindow);
             multiOptionsMessageBox.Initialize(title, message, onOk, onCancel);
         }
+        public static NowLoadingTypeA ShowNowLoadingCenter(string message, IEnumerator coroutine)
+        {
+            NowLoadingTypeA nowLoadingTypeA = windowController.currentWindow.OpenWindow<NowLoadingTypeA>(windowController.nowLoadingTypeAWindow);
+            nowLoadingTypeA.TitleText = message;
+            nowLoadingTypeA.StartProcess(coroutine);
+            return nowLoadingTypeA;
+        }
+        public static NowLoadingTypeA ShowNowLoadingCenter(string message,Func<bool> keepWaiting)
+        {
+            NowLoadingTypeA nowLoadingTypeA = windowController.currentWindow.OpenWindow<NowLoadingTypeA>(windowController.nowLoadingTypeAWindow);
+            nowLoadingTypeA.TitleText = message;
+            nowLoadingTypeA.StartProcess(KeepWaiting(keepWaiting));
+            return nowLoadingTypeA;
+        }
+
+        static IEnumerator KeepWaiting(Func<bool> keepWaiting)
+        {
+            while (keepWaiting())
+            {
+                yield return 1;
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using SekaiTools.Live2D;
@@ -10,9 +11,9 @@ namespace SekaiTools.UnityEditor
 {
     public class L2DAnimationSetGenerator : EditorWindow
     {
-        string path;
-        public enum ProcessType { folder, subFolder }
-        public ProcessType processType;
+        string motionPath;
+        string fadePath;
+        string savePath;
 
         [MenuItem("Void/L2DAnimationSetGenerator")]
         static void Init()
@@ -23,8 +24,9 @@ namespace SekaiTools.UnityEditor
         private void OnGUI()
         {
             EditorGUILayout.BeginVertical();
-            path = EditorGUILayout.TextField("Path", path);
-            processType = (ProcessType)EditorGUILayout.EnumPopup("ProcessType", processType);
+            motionPath = EditorGUILayout.TextField("motionPath", motionPath);
+            fadePath = EditorGUILayout.TextField("fadePath", fadePath);
+            savePath = EditorGUILayout.TextField("savePath", savePath);
 
             EditorGUILayout.BeginHorizontal();
 
@@ -32,33 +34,26 @@ namespace SekaiTools.UnityEditor
 
             if (GUILayout.Button("Apply"))
             {
-                if (processType == ProcessType.folder)
-                {
-                    ProcessTypeFolder(path);
-                }
-                else
-                {
-                    ProcessTypeSubFolder(path);
-                }
+                Process();
             }
 
             EditorGUILayout.EndVertical();
         }
-        void ProcessTypeFolder(string path)
+        void ProcessFolder(string path)
         {
             L2DAnimationSet l2DAnimationSet = L2DAnimationSet.CreateL2DAnimationSet(path);
-            l2DAnimationSet.fadeMotionList = AssetDatabase.LoadAssetAtPath<CubismFadeMotionList>(Path.Combine(path, Path.GetFileName(path) + ".fadeMotionList.asset"));
-            string savePath = Path.Combine(path, Path.GetFileName(path) + ".animationSet.asset");
+            l2DAnimationSet.fadeMotionList = AssetDatabase.LoadAssetAtPath<CubismFadeMotionList>(Path.Combine(fadePath, Path.GetFileName(path) + ".fadeMotionList.asset"));
+            string savePath = Path.Combine(this.savePath, Path.GetFileName(path) + ".asset");
             AssetDatabase.CreateAsset(l2DAnimationSet, savePath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
-        void ProcessTypeSubFolder(string path)
+        void Process()
         {
-            string[] subFolders = Directory.GetDirectories(path);
+            string[] subFolders = Directory.GetDirectories(motionPath);
             foreach (var subFolder in subFolders)
             {
-                ProcessTypeFolder(subFolder);
+                ProcessFolder(subFolder);
             }
         }
     }

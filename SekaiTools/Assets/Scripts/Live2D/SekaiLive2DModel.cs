@@ -113,12 +113,14 @@ namespace SekaiTools.Live2D
             cubismAudioMouthInput.Smoothing = 1;
             cubismAudioMouthInput.Gain = 2.5f;
 
+            CubismModel.ForceUpdateNow();
+
             Transform parameters = gameObject.transform.GetChild(0);
             parameters.Find("ParamEyeROpen").gameObject.AddComponent<CubismEyeBlinkParameter>();
             parameters.Find("ParamEyeLOpen").gameObject.AddComponent<CubismEyeBlinkParameter>();
             parameters.Find("ParamMouthOpenY").gameObject.AddComponent<CubismMouthParameter>();
             CubismHarmonicMotionParameter cubismHarmonicMotionParameter = parameters.Find("ParamBreath").gameObject.AddComponent<CubismHarmonicMotionParameter>();
-            cubismHarmonicMotionParameter.Duration = 4;
+            cubismHarmonicMotionParameter.Duration = 7;
 
             _motionController = gameObject.AddComponent<CubismMotionController>();
             _motionController.LayerCount = 5;

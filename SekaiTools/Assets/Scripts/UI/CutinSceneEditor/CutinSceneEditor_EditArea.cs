@@ -98,8 +98,9 @@ namespace SekaiTools.UI.CutinSceneEditor
         public void SetScene(CutinScene cutinScene)
         {
             this.cutinScene = cutinScene;
-            L2DAnimationSet animationSetFirst = inbuiltAnimationSet.l2DAnimationSets[cutinScene.charFirstID];
-            L2DAnimationSet animationSetSecond = inbuiltAnimationSet.l2DAnimationSets[cutinScene.charSecondID];
+            throw new System.NotImplementedException();
+            L2DAnimationSet animationSetFirst = null;//inbuiltAnimationSet.l2DAnimationSets[cutinScene.charFirstID];
+            L2DAnimationSet animationSetSecond = null;//inbuiltAnimationSet.l2DAnimationSets[cutinScene.charSecondID];
 
             button_SF_CF_F.L2DAnimationSelectButton.SetAnimation(animationSetFirst, cutinScene.talkData_First.facialCharFirst);
             button_SF_CF_M.L2DAnimationSelectButton.SetAnimation(animationSetFirst, cutinScene.talkData_First.motionCharFirst);

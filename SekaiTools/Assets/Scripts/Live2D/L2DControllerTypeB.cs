@@ -34,19 +34,21 @@ namespace SekaiTools.Live2D
         {
             live2DModels[(int)character] = model;
         }
-        public void SetModels(ModelLoader modelLoader)
+        public void SetModels()
         {
-            for (int i = 1; i < 27; i++)
-            {
-                foreach (var model in modelLoader.models)
-                {
-                    if (model.name.Contains(((Character)i).ToString()))
-                    {
-                        live2DModels[i] = model;
-                        break;
-                    }
-                }
-            }
+            //TODO 重置此函数
+            throw new NotImplementedException();
+            //for (int i = 1; i < 27; i++)
+            //{
+            //    foreach (var model in L2DModelLoader.ModelList)
+            //    {
+            //        if (model.Contains(((Character)i).ToString()))
+            //        {
+            //            live2DModels[i] = model;
+            //            break;
+            //        }
+            //    }
+            //}
         }
 
         public void SetModel(SekaiLive2DModel model, int talkerId)

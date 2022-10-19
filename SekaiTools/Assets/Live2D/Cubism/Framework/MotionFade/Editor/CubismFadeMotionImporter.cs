@@ -82,7 +82,7 @@ namespace Live2D.Cubism.Framework.MotionFade
             var directoryName = Path.GetDirectoryName(importer.AssetPath);
             var modelDir = Path.GetDirectoryName(directoryName);
             var modelName = Path.GetFileName(modelDir);
-            var fadeMotionListPath = modelDir + "/" + modelName + ".fadeMotionList.asset";
+            var fadeMotionListPath = modelDir + "/" + Path.GetFileName(directoryName) + ".fadeMotionList.asset";//FIXED
 
             var fadeMotions = GetFadeMotionList(fadeMotionListPath);
 

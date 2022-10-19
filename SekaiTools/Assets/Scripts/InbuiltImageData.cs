@@ -7,11 +7,13 @@ namespace SekaiTools
     /// <summary>
     /// 内置图像资料，只读
     /// </summary>
+    [CreateAssetMenu(menuName = "SekaiTools/InbuiltImageData")]
     public class InbuiltImageData : ScriptableObject
     {
         public List<Sprite> sprites = new List<Sprite>();
         public Sprite spriteNull;
 
+        public Sprite this[int index] => sprites[index];
         Dictionary<string, Sprite> spritesDictionary;
 
         private void OnEnable()

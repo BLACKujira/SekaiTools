@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using SekaiTools;
@@ -7,6 +6,7 @@ using System.IO;
 
 namespace SekaiTools.Editor
 {
+
     public class FolderGenerator : EditorWindow
     {
         string path;

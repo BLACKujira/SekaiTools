@@ -51,7 +51,7 @@ namespace SekaiTools.Live2D
         {
             string[] nameArray = animationClip.name.Split('-');
             //挑选出armescape动画，减少normal集合大小
-            if (nameArray[1].Equals("normal") && nameArray[2].StartsWith("armescape"))
+            if (nameArray.Length>2 && nameArray[1].Equals("normal") && nameArray[2].StartsWith("armescape"))
             {
                 for (int i = 0; i < motionSets.Count; i++)
                 {
@@ -68,10 +68,11 @@ namespace SekaiTools.Live2D
             }
             else
             {
+                string setName = nameArray.Length > 1 ? nameArray[1] : nameArray[0];
                 for (int i = 0; i < motionSets.Count; i++)
                 {
                     MotionSet set = motionSets[i];
-                    if (set.setName.Equals(nameArray[1]))
+                    if (set.setName.Equals(setName))
                     {
                         set.motions.Add(animationClip);
                         return;
@@ -79,7 +80,7 @@ namespace SekaiTools.Live2D
                 }
                 List<AnimationClip> newList = new List<AnimationClip>();
                 newList.Add(animationClip);
-                motionSets.Add(new MotionSet(nameArray[1], newList));
+                motionSets.Add(new MotionSet(setName, newList));
             }
         }
 
@@ -96,7 +97,7 @@ namespace SekaiTools.Live2D
                 {
                     facialPack.Add(animationClip);
                 }
-                if (animationClip.name.StartsWith("w-") || animationClip.name.StartsWith("m-") || animationClip.name.StartsWith("n-"))
+                else
                 {
                     motionPack.Add(animationClip);
                 }
@@ -192,7 +193,7 @@ namespace SekaiTools.Live2D
         public static L2DAnimationSet CreateL2DAnimationSet(string directory)
         {
             L2DAnimationSet l2DAnimationSet = CreateInstance<L2DAnimationSet>();
-            string[] files = Directory.GetFiles(Path.Combine(directory, "motions"));
+            string[] files = Directory.GetFiles(directory);
             foreach (var file in files)
             {
                 if (Path.GetExtension(file).Equals(".anim"))

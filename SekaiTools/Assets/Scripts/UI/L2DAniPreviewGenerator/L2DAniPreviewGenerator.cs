@@ -67,7 +67,6 @@ namespace SekaiTools.UI.L2DAniPreviewGenerator
         }
 
         [HideInInspector] public List<L2DAnimationSet> animationSets;
-        private ModelLoader modelLoader;
 
         Vector2 modelPosition_Motion;
         float modelScale_Motion = 1;
@@ -85,11 +84,9 @@ namespace SekaiTools.UI.L2DAniPreviewGenerator
             set { if (mode == Mode.Motion) modelScale_Motion = value; else modelScale_Facial = value; }
         }
 
-        public ModelLoader ModelLoader { get { if (!modelLoader) modelLoader = ModelLoader.modelLoader; return modelLoader; }}
-
         private void Awake()
         {
-            animationSets = new List<L2DAnimationSet>(inbuiltAnimationSet.l2DAnimationSets);
+            //animationSets = new List<L2DAnimationSet>(inbuiltAnimationSet.l2DAnimationSets);
             Initialize();
             SetToggleGroupModel();
             SetToggleGroupAnimation();
@@ -97,23 +94,23 @@ namespace SekaiTools.UI.L2DAniPreviewGenerator
 
         void SetToggleGroupModel()
         {
-            List<SekaiLive2DModel> modelList = ModelLoader.models;
-            groupModel.Generate(modelList.Count,
-                (Toggle toggle, int id) => {
-                    ToggleWithIconAndColor toggleWithIconAndColor = toggle.GetComponent<ToggleWithIconAndColor>();
-                    toggleWithIconAndColor.SetIcon(toggleIconSet.icons[ConstData.IsLive2DModelOfCharacter(modelList[id].name)]);
-                    toggleWithIconAndColor.SetLabel(modelList[id].name);
-                },
-                (bool value,int id)=>{
-                    if(value)
-                    {
-                        ResetPositionAndScale();
-                        l2DController.ShowModel(ModelLoader.models[id]);
-                        if (!toggleMotionMode.isOn) toggleMotionMode.isOn = true;
-                        Refresh();
-                    }
-                }
-            );
+            //List<SekaiLive2DModel> modelList = ModelLoader.models;
+            //groupModel.Generate(modelList.Count,
+            //    (Toggle toggle, int id) => {
+            //        ToggleWithIconAndColor toggleWithIconAndColor = toggle.GetComponent<ToggleWithIconAndColor>();
+            //        toggleWithIconAndColor.SetIcon(toggleIconSet.icons[ConstData.IsLive2DModelOfCharacter(modelList[id].name)]);
+            //        toggleWithIconAndColor.SetLabel(modelList[id].name);
+            //    },
+            //    (bool value,int id)=>{
+            //        if(value)
+            //        {
+            //            ResetPositionAndScale();
+            //            l2DController.ShowModel(ModelLoader.models[id]);
+            //            if (!toggleMotionMode.isOn) toggleMotionMode.isOn = true;
+            //            Refresh();
+            //        }
+            //    }
+            //);
         }
         void SetToggleGroupAnimation()
         {

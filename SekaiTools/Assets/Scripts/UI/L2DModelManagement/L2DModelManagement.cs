@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Button = UnityEngine.UI.Button;
 using System.IO;
+using System;
 
 namespace SekaiTools.UI.L2DModelManagement
 {
@@ -13,25 +14,19 @@ namespace SekaiTools.UI.L2DModelManagement
     {
         public Window window;
         [Header("Components")]
-        public RectTransform scorllContent;
+        public L2DModelManagement_InfoArea infoArea;
+        public ButtonGenerator2D buttonGenerator2D;
+        public Button downloadModelButton;
         public Button loadModelButton;
         public Button loadModelsButton;
-        [Header("Prefabs")]
-        public L2DModelManagement_Item item;
-        public Window nowLoadingWindowPrefab;
-        [Header("Settings")]
-        public InbuiltAnimationSet animationSetsAll;
-        public InbuiltAnimationSet animationSetsCharID;
-        public float itemDistance;
 
-        ModelLoader modelLoader;
         OpenFileDialog fileDialog = new OpenFileDialog();
         FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-        List<L2DModelManagement_Item> items = new List<L2DModelManagement_Item>();
 
-        public ModelLoader ModelLoader { 
-            get { if (modelLoader == null) modelLoader = ModelLoader.modelLoader; return modelLoader; }
-            set => modelLoader = value; }
+        ModelInfo currentModelInfo;
+        public ModelInfo CurrentModelInfo => currentModelInfo;
+
+        protected event Action<ModelInfo> onChangeSelection;
 
         private void Awake()
         {
@@ -47,23 +42,22 @@ namespace SekaiTools.UI.L2DModelManagement
 
         void GenerateItem()
         {
-            scorllContent.sizeDelta = new Vector2(scorllContent.sizeDelta.x, itemDistance * ModelLoader.models.Count);
-            for (int i = 0; i < ModelLoader.models.Count ; i++)
+            string[] modelList = L2DModelLoader.ModelList;
+            foreach (var modelName in modelList)
             {
-                SekaiLive2DModel sekaiLive2DModel = ModelLoader.models[i];
-                L2DModelManagement_Item l2DModelManagement_Item = Instantiate(item, scorllContent);
-                l2DModelManagement_Item.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -i * itemDistance);
-                l2DModelManagement_Item.Initialize(sekaiLive2DModel,animationSetsAll, window);
-                items.Add(l2DModelManagement_Item);
+                buttonGenerator2D.Generate(modelList.Length,
+                    (btn, id) =>
+                    {
+                        L2DModelManagement_Item l2DModelManagement_Item = btn.GetComponent<L2DModelManagement_Item>();
+                        l2DModelManagement_Item.Initialize(modelList[id]);
+                    }, 
+                    (id) => 
+                    {
+                        currentModelInfo = L2DModelLoader.GetModelInfo(modelList[id]);
+                        onChangeSelection(currentModelInfo);
+                        infoArea.Refresh();
+                    });
             }
-        }
-        void ClearItem()
-        {
-            foreach (var item in items)
-            {
-                Destroy(item.gameObject);
-            }
-            items = new List<L2DModelManagement_Item>();
         }
 
         public void LoadModel()
@@ -72,15 +66,13 @@ namespace SekaiTools.UI.L2DModelManagement
             if (dialogResult != DialogResult.OK) return;
             string path = fileDialog.FileName;
 
-            NowLoadingTypeA nowLoadingTypeA = window.OpenWindow<NowLoadingTypeA>(nowLoadingWindowPrefab);
-            nowLoadingTypeA.TitleText = "正在读取模型";
-            nowLoadingTypeA.OnFinish += Refresh;
-            nowLoadingTypeA.StartProcess(ModelLoader.LoadModel(path));
+            L2DModelLoader.AddLocalModel(path);
+            Refresh();
         }
 
-        private void Refresh()
+        public void Refresh()
         {
-            ClearItem();
+            buttonGenerator2D.ClearButtons();
             GenerateItem();
         }
 
@@ -100,19 +92,28 @@ namespace SekaiTools.UI.L2DModelManagement
                 }
             }
 
-            NowLoadingTypeA nowLoadingTypeA = window.OpenWindow<NowLoadingTypeA>(nowLoadingWindowPrefab);
-            nowLoadingTypeA.TitleText = "正在读取模型";
-            nowLoadingTypeA.OnFinish += Refresh;
-            nowLoadingTypeA.StartProcess(ILoadModels(files.ToArray()));
+            WindowController.ShowNowLoadingCenter("正在读取模型", ILoadModels(files.ToArray())).OnFinish += Refresh;
         }
         IEnumerator ILoadModels(string[] files)
         {
             foreach (var file in files)
             {
-                yield return ModelLoader.LoadModel(file);
+                //yield return L2dModelLoader.LoadModel(file);
+                throw new System.NotImplementedException();
             }
+            yield break;
         }
 
-
+        public void DeleteModel()
+        {
+            WindowController.ShowCancelOK("注意", $"确定要移除模型 {CurrentModelInfo.modelName} 吗？",
+                () =>
+                {
+                    L2DModelLoader.RemoveModel(CurrentModelInfo.modelName);
+                    Refresh();
+                });
+            currentModelInfo = null;
+            infoArea.Refresh();
+        }
     }
 }

@@ -33,10 +33,11 @@ namespace SekaiTools.UI.L2DAniSetManagement
 
         void GenerateItem()
         {
-            scorllContent.sizeDelta = new Vector2(scorllContent.sizeDelta.x, itemDistance * animationSets.l2DAnimationSets.Length);
-            for (int i = 0; i < animationSets.l2DAnimationSets.Length; i++)
+            L2DAnimationSet[] l2DAnimationSetArray = animationSets.L2DAnimationSetArray;
+            scorllContent.sizeDelta = new Vector2(scorllContent.sizeDelta.x, itemDistance * l2DAnimationSetArray.Length);
+            for (int i = 0; i < l2DAnimationSetArray.Length; i++)
             {
-                L2DAnimationSet animationSet = animationSets.l2DAnimationSets[i];
+                L2DAnimationSet animationSet = l2DAnimationSetArray[i];
                 L2DAniSetManagement_Item l2DAniSetManagement_Item = Instantiate(item,scorllContent);
                 l2DAniSetManagement_Item.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -i * itemDistance);
                 l2DAniSetManagement_Item.Initialize(animationSet, this);

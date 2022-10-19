@@ -24,14 +24,14 @@ namespace SekaiTools.UI.GeneralSettingsWindow
 
             selectButton.onClick.AddListener(() =>
             {
-                L2DModelSelect l2DModelSelect = WindowController.windowController.currentWindow.OpenWindow<L2DModelSelect>(modelSelectWindow);
-                l2DModelSelect.Generate(
-                    (SekaiLive2DModel model) => 
-                    {
-                        configUIItem_Live2dModel.setValue(model);
-                        nameText.text = sekaiLive2DModel == null ? "无" : model.name;
-                        generalSettingsWindow.Refresh();
-                    });
+                //L2DModelSelect l2DModelSelect = WindowController.windowController.currentWindow.OpenWindow<L2DModelSelect>(modelSelectWindow);
+                //l2DModelSelect.Generate(
+                //    (SekaiLive2DModel model) => 
+                //    {
+                //        configUIItem_Live2dModel.setValue(model);
+                //        nameText.text = sekaiLive2DModel == null ? "无" : model.name;
+                //        generalSettingsWindow.Refresh();
+                //    });
             });
         }
     }

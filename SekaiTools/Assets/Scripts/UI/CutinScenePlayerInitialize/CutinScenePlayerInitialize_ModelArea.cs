@@ -20,9 +20,6 @@ namespace SekaiTools.UI
 
         [NonSerialized] public SekaiLive2DModel[] sekaiLive2DModels = new SekaiLive2DModel[57];
         int[] appearCharacters;
-        ModelLoader modelLoader;
-
-        public ModelLoader ModelLoader { get { if (!modelLoader) modelLoader = ModelLoader.modelLoader; return modelLoader; } set => modelLoader = value; }
 
         public void Initialize(int[] appearCharacters)
         {
@@ -40,7 +37,7 @@ namespace SekaiTools.UI
         public void AutoSetModel()
         {
             if (appearCharacters == null) return;
-            List<SekaiLive2DModel> models = ModelLoader.models;
+            List<SekaiLive2DModel> models = new List<SekaiLive2DModel>();
             foreach (var charID in appearCharacters)
             {
                 foreach (var model in models)
@@ -65,8 +62,8 @@ namespace SekaiTools.UI
             },
             (int id) =>
             {
-                L2DModelSelect l2DModelSelect = window.OpenWindow<L2DModelSelect>(l2DModelSelectWindow);
-                l2DModelSelect.Generate((SekaiLive2DModel model) => { sekaiLive2DModels[appearCharacters[id]] = model; Refresh(); });
+                //L2DModelSelect l2DModelSelect = window.OpenWindow<L2DModelSelect>(l2DModelSelectWindow);
+                //l2DModelSelect.Generate((SekaiLive2DModel model) => { sekaiLive2DModels[appearCharacters[id]] = model; Refresh(); });
             });
         }
 

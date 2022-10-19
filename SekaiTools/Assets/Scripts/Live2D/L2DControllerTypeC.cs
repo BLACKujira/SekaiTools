@@ -12,14 +12,17 @@ namespace SekaiTools.Live2D
     {
         [Header("Components")]
         public RawImage image;
+        [Header("Settings")]
+        public Vector3 normalScale = new Vector3(10, 10, 1);
         [Header("Prefabs")]
         public Camera l2DCameraPrefab;
 
         public SekaiLive2DModel model { get; private set; }
 
+        public Vector2 ModelPosition => (Vector2)model.transform.position - modelPosition;
+        public float ModelScale => model.transform.localScale.x / normalScale.x;
         readonly Vector2 unusedModelPosition = Vector2.zero;
         readonly Vector2 modelPosition = new Vector2(-32, 0);
-        readonly Vector3 normalScale = new Vector3(10, 10,1);
 
         Camera l2DCamera;
 

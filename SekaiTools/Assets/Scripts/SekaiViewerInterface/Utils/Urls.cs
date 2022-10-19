@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SekaiTools.SekaiViewerInterface
+namespace SekaiTools.SekaiViewerInterface.Utils
 {
     public enum MasterSever { cn,ww }
 
