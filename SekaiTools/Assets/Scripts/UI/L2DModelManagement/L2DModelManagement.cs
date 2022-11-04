@@ -19,6 +19,8 @@ namespace SekaiTools.UI.L2DModelManagement
         public Button downloadModelButton;
         public Button loadModelButton;
         public Button loadModelsButton;
+        [Header("Prefab")]
+        public Window modelDownloaderPrefab;
 
         OpenFileDialog fileDialog = new OpenFileDialog();
         FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
@@ -43,21 +45,18 @@ namespace SekaiTools.UI.L2DModelManagement
         void GenerateItem()
         {
             string[] modelList = L2DModelLoader.ModelList;
-            foreach (var modelName in modelList)
-            {
-                buttonGenerator2D.Generate(modelList.Length,
-                    (btn, id) =>
-                    {
-                        L2DModelManagement_Item l2DModelManagement_Item = btn.GetComponent<L2DModelManagement_Item>();
-                        l2DModelManagement_Item.Initialize(modelList[id]);
-                    }, 
-                    (id) => 
-                    {
-                        currentModelInfo = L2DModelLoader.GetModelInfo(modelList[id]);
-                        onChangeSelection(currentModelInfo);
-                        infoArea.Refresh();
-                    });
-            }
+            buttonGenerator2D.Generate(modelList.Length,
+                (btn, id) =>
+                {
+                    L2DModelManagement_Item l2DModelManagement_Item = btn.GetComponent<L2DModelManagement_Item>();
+                    l2DModelManagement_Item.Initialize(modelList[id]);
+                },
+                (id) =>
+                {
+                    currentModelInfo = L2DModelLoader.GetModelInfo(modelList[id]);
+                    onChangeSelection(currentModelInfo);
+                    infoArea.Refresh();
+                });
         }
 
         public void LoadModel()
@@ -92,16 +91,12 @@ namespace SekaiTools.UI.L2DModelManagement
                 }
             }
 
-            WindowController.ShowNowLoadingCenter("正在读取模型", ILoadModels(files.ToArray())).OnFinish += Refresh;
-        }
-        IEnumerator ILoadModels(string[] files)
-        {
             foreach (var file in files)
             {
-                //yield return L2dModelLoader.LoadModel(file);
-                throw new System.NotImplementedException();
+                L2DModelLoader.AddLocalModel(file);
             }
-            yield break;
+
+            Refresh();
         }
 
         public void DeleteModel()
@@ -114,6 +109,15 @@ namespace SekaiTools.UI.L2DModelManagement
                 });
             currentModelInfo = null;
             infoArea.Refresh();
+        }
+
+        public void DownloadModel()
+        {
+            L2DModelDownloader.L2DModelDownloader l2DModelDownloader = window.OpenWindow<L2DModelDownloader.L2DModelDownloader>(modelDownloaderPrefab);
+            l2DModelDownloader.window.OnClose.AddListener(() =>
+            {
+                Refresh();
+            });
         }
     }
 }

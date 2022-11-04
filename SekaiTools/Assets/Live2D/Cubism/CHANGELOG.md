@@ -4,10 +4,106 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+
+## [4-r.5] - 2022-09-08
+
+### Added
+
+* Add Unity 2022 to the development environment.
+* Add the multilingual supported documents.
+* Add immediate stabilization of physics.
+
+### Removed
+
+* Remove Unity 2019 from the development environment.
+
+
+## [4-r.5-beta.5] - 2022-08-04
+
+### Added
+
+* Add a feature to change the value of components in batches.
+
+### Changed
+
+* Update `Mao` model.
+
+### Fixed
+
+* Fix crash with exception when reading .moc3 files of unsupported versions.
+  * The console now produces an explicit error log instead of an exception.
+* Fix physics system input to be split by the physics setting time.
+* Fix a bug in which processing was interrupted when an invalid vertex was specified in the middle of a physics operation.
+
+
+## [4-r.5-beta.4] - 2022-07-07
+
+### Added
+
+* Add properties to get the latest .moc3 version and the .moc3 version of the loaded model in CubismMoc.
+* Add `Mao` model.
+* Add `Demo4.2` scene to run `Mao` model.
+* Add a function to get the type of parameters of the model.
+* Add a function to get the parent part of the model's Drawable.
+
+### Fixed
+
+* Fix `GetMocVersion` function argument in `CoreDll` class that was different from the original Core API argument.
+* Fix that does not occur error when Sorting Mode of CubismRenderController is changed in the Project window.
+
+
+## [4-r.5-beta.3] - 2022-06-16
+
+### Changed
+
+* Change the version of the development project to `2019.4.39f1`.
+
+### Fixed
+
+* Fix physics system behaviour when exists Physics Fps Setting in .physics3.json.
+
+
+## [4-r.5-beta.2] - 2022-06-02
+
+### Fixed
+
+* Fixed a bug that caused Multiply Color / Screen Color of different objects to be applied.
+  * See `CHANGELOG.md` in Core.
+  * No modifications to Samples and Framework.
+
+
+## [4-r.5-beta.1] - 2022-05-19
+
+### Added
+
+* Add support to prevent exceptions depending on the presence or absence of parameters. by [@ppcuni](https://github.com/ppcuni)
+* Add Weight argument to BlendToValue function. by [@ppcuni](https://github.com/ppcuni)
+* Add processing related to Multiply Color / Screen Color added in Cubism 4.2.
+
+### Fixed
+
+* Fix for changes `EditorUserBuildSettings` in 2021.2 and later.
+
+
+## [4-r.4.2] - 2022-03-09
+
+### Fixed
+
+* Fix an issue where inversion masks did not work properly and the mask limit was different from normal.
+
+
+## [4-r.4.1] - 2022-02-10
+
+### Added
+
+* Added an editor extension that switches the library depending on Unity version when exporting to WebGL.
+
+
 ## [4-r.4] - 2021-12-09
 
 ### Added
 
+* Add Unity 2021 to the development environment.
 * Add the function to set assets to a component when importing a model.
 * Add Chrome OS from the tested environment.
 
@@ -146,6 +242,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fix issue that mesh remain when deleting model.
 * Fix issue where Priority value was not reset after playing motion with CubismMotionController.
 
+
+[4-r.5]: https://github.com/Live2D/CubismUnityComponents/compare/4-r.5-beta.5...4-r.5
+[4-r.5-beta.5]: https://github.com/Live2D/CubismUnityComponents/compare/4-r.5-beta.4...4-r.5-beta.5
+[4-r.5-beta.4]: https://github.com/Live2D/CubismUnityComponents/compare/4-r.5-beta.3...4-r.5-beta.4
+[4-r.5-beta.3]: https://github.com/Live2D/CubismUnityComponents/compare/4-r.5-beta.2...4-r.5-beta.3
+[4-r.5-beta.2]: https://github.com/Live2D/CubismUnityComponents/compare/4-r.5-beta.1...4-r.5-beta.2
+[4-r.5-beta.1]: https://github.com/Live2D/CubismUnityComponents/compare/4-r.4.2...4-r.5-beta.1
+[4-r.4.2]: https://github.com/Live2D/CubismUnityComponents/compare/4-r.4.1...4-r.4.2
+[4-r.4.1]: https://github.com/Live2D/CubismUnityComponents/compare/4-r.4...4-r.4.1
 [4-r.4]: https://github.com/Live2D/CubismUnityComponents/compare/4-r.3...4-r.4
 [4-r.3]: https://github.com/Live2D/CubismUnityComponents/compare/4-r.2...4-r.3
 [4-r.2]: https://github.com/Live2D/CubismUnityComponents/compare/4-r.1...4-r.2

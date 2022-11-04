@@ -16,6 +16,8 @@ namespace SekaiTools.UI.L2DModelPreview
         public Text txtMotion;
         public Text txtVoice;
         public Button btnPlayVoice;
+        public GameObject gobjAnimationArea;
+        public GameObject gobjTipArea;
         [Header("Prefab")]
         public Window facialSelectWindowPrefab;
         public Window motionSelectWindowPrefab;
@@ -56,6 +58,17 @@ namespace SekaiTools.UI.L2DModelPreview
         {
             Model.PlayAnimation(motionName, facialName);
             PlayVoice();
+        }
+
+        public void PlayAllSync()
+        {
+            Model.PlayAnimation(MotionName,null);
+            AnimationClip animationClip = Model.AnimationSet.GetAnimation(MotionName);
+            if(animationClip)
+            {
+                StopAllCoroutines();
+                l2DModelPreview.StartCoroutine(CoPlayFacial(animationClip.length, FacialName));
+            }
         }
 
         public void SelectFacial()
@@ -108,6 +121,8 @@ namespace SekaiTools.UI.L2DModelPreview
 
         public void ResetVoice()
         {
+            if (Model != null)
+                Model.PlayVoice(null);
             audioData = null;
             Refresh();
         }
@@ -121,24 +136,34 @@ namespace SekaiTools.UI.L2DModelPreview
 
         void Refresh()
         {
-            txtFacial.text = string.IsNullOrEmpty(facialName)?"无表情":facialName;
-            txtMotion.text = string.IsNullOrEmpty(motionName)?"无动作":motionName;
-            if(audioData == null)
+            if (Model == null || Model.AnimationSet == null)
             {
-                txtVoice.text = "无语音";
-                btnPlayVoice.interactable = false;
+                gobjAnimationArea.SetActive(false);
+                gobjTipArea.SetActive(true);
             }
             else
             {
-                txtVoice.text = audioData.valueArray[0].name;
-                btnPlayVoice.interactable = true;
+                gobjAnimationArea.SetActive(true);
+                gobjTipArea.SetActive(false);
+                txtFacial.text = string.IsNullOrEmpty(facialName) ? "无表情" : facialName;
+                txtMotion.text = string.IsNullOrEmpty(motionName) ? "无动作" : motionName;
+                if (audioData == null)
+                {
+                    txtVoice.text = "无语音";
+                    btnPlayVoice.interactable = false;
+                }
+                else
+                {
+                    txtVoice.text = audioData.valueArray[0].name;
+                    btnPlayVoice.interactable = true;
+                }
             }
         }
 
-        private void Update()
+        IEnumerator CoPlayFacial(float motionLength,string facialName)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-                PlayAll();
+            yield return new WaitForSeconds(motionLength);
+            Model.PlayAnimation(null,facialName);
         }
     }
 }

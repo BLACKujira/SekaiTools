@@ -7,6 +7,24 @@ namespace SekaiTools
 {
     public class MathTools : MonoBehaviour
     {
+        public static int[] Getrandomarray(int size)
+        {
+            //使用洗牌算法返回一个乱序数组
+            System.Random rd = new System.Random();
+            int[] arr = new int[size];
+            int rdn, temp;
+            for (int i = 0; i < size; i++)
+                arr[i] = i;
+            for (int i = 0; i < size; i++)
+            {
+                rdn = (int)rd.Next(0, size - 1 - i);
+                temp = arr[rdn];
+                arr[rdn] = arr[size - 1 - i];
+                arr[size - 1 - i] = temp;
+            }
+            return arr;
+        }
+
         public static float RadianToAngle(float pi) { return 360 * pi / 2; }
         public static float AngleToRadian(float angle) { return angle / 360 * 2; }
         public static Vector2 RadianToRadiusOne(float pi)

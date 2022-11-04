@@ -22,13 +22,14 @@ namespace SekaiTools.Live2D
         AudioSource _audioSource;
         CubismModel _cubismModel;
         CubismFadeController _fadeController;
+        //CubismExpressionController _expressionController;
 
         //同时设置CubismFadeMotionList
         public L2DAnimationSet AnimationSet
         {
             get
             {
-                if (!_animationSet) throw new Exception.AnimationSetNotSetException(name);
+                //if (!_animationSet) throw new Exception.AnimationSetNotSetException(name);
                 return _animationSet;
             }
 
@@ -37,6 +38,7 @@ namespace SekaiTools.Live2D
                 _animationSet = value;
                 if (value != null) FadeController.CubismFadeMotionList = _animationSet.fadeMotionList;
                 else FadeController.enabled = false;
+                FadeController.Refresh();
             }
         }
         public CubismFadeController FadeController
@@ -83,6 +85,7 @@ namespace SekaiTools.Live2D
 
         private void Awake()
         {
+            //_expressionController = GetComponent<CubismExpressionController>();
             _motionController = GetComponent<CubismMotionController>();
             _audioSource = GetComponent<AudioSource>();
         }
@@ -91,18 +94,21 @@ namespace SekaiTools.Live2D
         {
             gameObject.SetActive(false);
 
-            gameObject.AddComponent<CubismUpdateController>();
-            gameObject.AddComponent<CubismParameterStore>();
-            gameObject.AddComponent<CubismPoseController>();
-            gameObject.AddComponent<CubismExpressionController>();
+            if(gameObject.GetComponent<CubismUpdateController>()==null)
+                gameObject.AddComponent<CubismUpdateController>();
+            if (gameObject.GetComponent<CubismParameterStore>() == null)
+                gameObject.AddComponent<CubismParameterStore>();
+            if (gameObject.GetComponent<CubismPoseController> () == null)
+                gameObject.AddComponent<CubismPoseController>();
+            if (gameObject.GetComponent<CubismExpressionController>() == null)
+                gameObject.AddComponent<CubismExpressionController>();
 
             gameObject.AddComponent<CubismEyeBlinkController>().BlendMode = CubismParameterBlendMode.Multiply;
             CubismAutoEyeBlinkInput cubismAutoEyeBlinkInput = gameObject.AddComponent<CubismAutoEyeBlinkInput>();
-            cubismAutoEyeBlinkInput.MaximumDeviation = 6;
+            cubismAutoEyeBlinkInput.MaximumDeviation = 5;
             cubismAutoEyeBlinkInput.Mean = 4;
             cubismAutoEyeBlinkInput.Timescale = 16;
 
-            gameObject.AddComponent<CubismHarmonicMotionController>();
 
             _audioSource = gameObject.AddComponent<AudioSource>();
             _audioSource.playOnAwake = false;
@@ -113,7 +119,7 @@ namespace SekaiTools.Live2D
             cubismAudioMouthInput.Smoothing = 1;
             cubismAudioMouthInput.Gain = 2.5f;
 
-            CubismModel.ForceUpdateNow();
+            CubismHarmonicMotionController cubismHarmonicMotionController = gameObject.AddComponent<CubismHarmonicMotionController>();
 
             Transform parameters = gameObject.transform.GetChild(0);
             parameters.Find("ParamEyeROpen").gameObject.AddComponent<CubismEyeBlinkParameter>();
@@ -122,8 +128,16 @@ namespace SekaiTools.Live2D
             CubismHarmonicMotionParameter cubismHarmonicMotionParameter = parameters.Find("ParamBreath").gameObject.AddComponent<CubismHarmonicMotionParameter>();
             cubismHarmonicMotionParameter.Duration = 7;
 
+            cubismHarmonicMotionController.Refresh();
+            cubismHarmonicMotionController.ResetChannels();
+
             _motionController = gameObject.AddComponent<CubismMotionController>();
             _motionController.LayerCount = 5;
+
+            if (FadeController.CubismFadeMotionList == null)
+                FadeController.CubismFadeMotionList = new CubismFadeMotionList();
+
+            gameObject.GetComponent<CubismUpdateController>().Refresh();
         }
 
         public void PlayVoice(AudioClip voice)
@@ -134,9 +148,16 @@ namespace SekaiTools.Live2D
         public void PlayAnimation(AnimationClip motion, AnimationClip facial, float speed = 1)
         {
             if (motion != null)
+            {
+                //_motionController.StopAnimation(0, 1);
                 _motionController.PlayAnimation(motion, isLoop: false, layerIndex: 1, priority: 3, speed: speed);
+            }
+
             if (facial != null)
+            {
+                //_motionController.StopAnimation(0, 2);
                 _motionController.PlayAnimation(facial, isLoop: false, layerIndex: 2, priority: 3, speed: speed);
+            }
         }
         public void PlayAnimation(string motion, string facial, float speed = 1)
         {

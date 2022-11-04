@@ -14,6 +14,7 @@ namespace SekaiTools.UI.L2DModelPreview
         public L2DModelPreview_AnimationArea animationArea;
         public L2DModelPreview_TransformArea transformArea;
         public L2DControllerTypeC l2DController;
+        public GameObject gobjEditArea;
         [Header("Settings")]
         public InbuiltAnimationSet animationSet;
         [Header("Prefab")]
@@ -37,6 +38,7 @@ namespace SekaiTools.UI.L2DModelPreview
                 {
                     SekaiLive2DModel model = l2DModelLoaderObjectBase.Model;
                     model.AnimationSet = animationSet.GetAnimationSet(smi.animationSet);
+                    if (l2DController.model != null) Destroy(l2DController.model.gameObject);
                     l2DController.ShowModel(model);
                     Refresh();
                     transformArea.ResetTransform();
@@ -47,7 +49,20 @@ namespace SekaiTools.UI.L2DModelPreview
 
         public void Refresh()
         {
-            txtModelName.text = l2DController.model == null ? "请选择模型" : l2DController.model.name; 
+            txtModelName.text = l2DController.model == null ? "请选择模型" : l2DController.model.name;
+            gobjEditArea.SetActive(l2DController.model == null ? false : true);
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+                animationArea.PlayAllSync();
+        }
+
+        private void OnDestroy()
+        {
+            if (l2DController.model != null)
+                Destroy(l2DController.model);
         }
     }
 }

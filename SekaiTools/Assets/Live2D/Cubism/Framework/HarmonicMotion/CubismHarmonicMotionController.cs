@@ -143,8 +143,13 @@ namespace Live2D.Cubism.Framework.HarmonicMotion
         /// <summary>
         /// Called by Unity. Resets channels.
         /// </summary>
-        /// Changed_Reast_Awake
-        private void Awake()
+        private void Reset()
+        {
+            ResetChannels();
+        }
+
+        //KJRFIX
+        public void ResetChannels()
         {
             // Reset/Initialize channel timescales.
             ChannelTimescales = new float[DefaultChannelCount];

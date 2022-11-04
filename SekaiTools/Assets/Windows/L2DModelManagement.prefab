@@ -122,8 +122,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6011488936712392380}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: LoadModels
+        m_TargetAssemblyTypeName: SekaiTools.UI.L2DModelManagement.L2DModelManagement,
+          Assembly-CSharp
+        m_MethodName: DownloadModel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1218,7 +1219,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 40, y: -40}
-  m_SizeDelta: {x: -80, y: -80}
+  m_SizeDelta: {x: -80, y: -150}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &6011488935733978319
 CanvasRenderer:
@@ -1583,7 +1584,8 @@ MonoBehaviour:
   downloadModelButton: {fileID: 2283890520654806818}
   loadModelButton: {fileID: 3447004458593164780}
   loadModelsButton: {fileID: 3447004457708735838}
-  animationSets: {fileID: 11400000, guid: 5dda02205b79d584b81e4bbdb7461f88, type: 2}
+  modelDownloaderPrefab: {fileID: 3103431172899519546, guid: 9523e90d57b5efc44b6815554483c899,
+    type: 3}
 --- !u!1 &6387238974648857749
 GameObject:
   m_ObjectHideFlags: 0

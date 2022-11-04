@@ -27,7 +27,7 @@ namespace SekaiTools.Live2D
                     }
                 }
                 return animationSetDictionary;
-            }    
+            }
         }
 
         public L2DAnimationSet[] L2DAnimationSetArray => l2DAnimationSets.ToArray();
@@ -66,6 +66,7 @@ namespace SekaiTools.Live2D
         public void UpdateSet(List<L2DAnimationSet> l2DAnimationSets)
         {
             this.l2DAnimationSets = l2DAnimationSets;
+            UnityEditor.EditorUtility.SetDirty(this);
             UnityEditor.AssetDatabase.SaveAssets();
             UnityEditor.AssetDatabase.Refresh();
         }

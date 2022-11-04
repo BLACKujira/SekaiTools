@@ -10,6 +10,7 @@ namespace SekaiTools.UI.L2DModelManagement
     {
         [Header("Components")]
         public Text textName;
+        public Image imageEdgeColor;
         public Image imageCharColor;
         public Image characterIcon;
         [Header("Settings")]

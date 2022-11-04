@@ -107,6 +107,23 @@ namespace SekaiTools.Live2D
         {
             l2DModelLoader.localModelMetas.Add(new LocalModelMeta(modelPath));
         }
+
+        public static bool HasModel(string modelName)
+        {
+            foreach (var cubismModel in l2DModelLoader.inbuiltModelSet.inbuiltModelPrefabs)
+            {
+                if (cubismModel.name.Equals(modelName))
+                    return true;
+            }
+
+            foreach (var localModelMeta in l2DModelLoader.localModelMetas)
+            {
+                if (localModelMeta.ModelName.Equals(modelName))
+                    return true;
+            }
+
+            return false;
+        }
     }
 
     [System.Serializable]
@@ -153,13 +170,20 @@ namespace SekaiTools.Live2D
         public IEnumerator LoadModel(string path)
         {
             CubismModel3Json modelJson = CubismModel3Json.LoadAtPath(path, CubismViewerIo.LoadAsset);
-            CubismModel model = modelJson.ToModel();
+            CubismModel model = modelJson.ToModel(true);
+            yield return 1;
+            CubismModel oldModel = model;
+            model = Object.Instantiate(model);
+            model.name = oldModel.name;
+            Object.Destroy(oldModel.gameObject);
+            yield return 1;
 
             SekaiLive2DModel sekaiLive2DModel = model.gameObject.AddComponent<SekaiLive2DModel>();
             yield return 1;
 
             sekaiLive2DModel.Initialize();
 
+            yield return 1;
             Transform drawables = model.transform.GetChild(2);
             int drawableCount = drawables.childCount;
             for (int i = 0; i < drawableCount; i++)
@@ -171,7 +195,7 @@ namespace SekaiTools.Live2D
             //yield return new WaitForSeconds(Mathf.Infinity);
             yield return 1;
 
-            //model.gameObject.SetActive(false);
+            model.gameObject.SetActive(false);
 
             this.model = sekaiLive2DModel;
             _keepWaiting = false;
@@ -184,6 +208,7 @@ namespace SekaiTools.Live2D
         {
             Debug.Log(1);
             model = Object.Instantiate(prefab).gameObject.AddComponent<SekaiLive2DModel>();
+            model.name = prefab.name;
 
             yield return 1;
             model.Initialize();
@@ -203,7 +228,6 @@ namespace SekaiTools.Live2D
             model.gameObject.SetActive(false);
 
             _keepWaiting = false;
-            yield break;
         }
     }
 

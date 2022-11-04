@@ -57,8 +57,8 @@ namespace Live2D.Cubism.Rendering.Masking
 
 
                 // Try switch mask textures.
-                OnDisable();
-                OnEnable();
+                OnDestroy();
+                Start();
             }
         }
 
@@ -194,7 +194,7 @@ namespace Live2D.Cubism.Rendering.Masking
         /// <summary>
         /// Initializes instance.
         /// </summary>
-        private void OnEnable()
+        private void Start()
         {
             // Fail silently.
             if (MaskTexture == null)
@@ -225,7 +225,7 @@ namespace Live2D.Cubism.Rendering.Masking
         /// <summary>
         /// Finalizes instance.
         /// </summary>
-        private void OnDisable()
+        private void OnDestroy()
         {
             if (MaskTexture == null)
             {

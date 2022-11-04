@@ -13,7 +13,7 @@ namespace SekaiTools.SekaiViewerInterface.Pages
         public static string GetFilePathURL(string path)
         {
             if (!path.EndsWith("/")) path += '/';
-            return $"{Env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets/?list-type=2&delimiter=%2F&prefix={path.Replace("/","%2F")}&max-keys=500";
+            return $"{Env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets/?list-type=2&delimiter=%2F&prefix={path.Replace("/", "%2F")}&max-keys=500";
         }
 
 
@@ -21,7 +21,7 @@ namespace SekaiTools.SekaiViewerInterface.Pages
         /// 获取资产浏览器一个目录的信息，需要MonoBehaviour启动协程
         /// </summary>
         /// <returns></returns>
-        public static IEnumerator GetFilePath(string path,Action<ListBucketResult> onCompleted, Action<string> onError)
+        public static IEnumerator GetFilePath(string path, Action<ListBucketResult> onCompleted, Action<string> onError)
         {
             using (UnityWebRequest getRequest = UnityWebRequest.Get(GetFilePathURL(path)))
             {
@@ -32,7 +32,7 @@ namespace SekaiTools.SekaiViewerInterface.Pages
                     {
                         yield return 1;
                     }
-                    if(getRequest.error != null)
+                    if (getRequest.error != null)
                     {
                         onError(getRequest.error);
                     }
@@ -43,7 +43,7 @@ namespace SekaiTools.SekaiViewerInterface.Pages
                         ListBucketResult filePath = ListBucketResult.Deserialize(getRequest.downloadHandler.data);
                         onCompleted(filePath);
                     }
-                    catch(System.Exception ex)
+                    catch (System.Exception ex)
                     {
                         onError(ex.Message);
                     }

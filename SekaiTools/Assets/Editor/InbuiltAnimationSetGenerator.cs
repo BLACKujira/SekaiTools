@@ -6,8 +6,6 @@ using SekaiTools.Live2D;
 
 namespace SekaiTools.Editor
 {
-
-
     public class InbuiltAnimationSetGenerator : EditorWindow
     {
         string animationSetPath;

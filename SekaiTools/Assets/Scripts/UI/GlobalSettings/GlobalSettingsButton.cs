@@ -6,14 +6,11 @@ namespace SekaiTools.UI.GlobalSettings
 {
     public class GlobalSettingsButton : MonoBehaviour
     {
-        public Window inWindow;
         public Window globalSettingsWindowPrefab;
 
         public void OpenGlobalSettings()
         {
-            Window globalSettingsWindow = Instantiate(globalSettingsWindowPrefab);
-            globalSettingsWindow.Initialize(inWindow);
-            globalSettingsWindow.Show();
+            WindowController.windowController.currentWindow.OpenWindow(globalSettingsWindowPrefab);
         }
     }
 }

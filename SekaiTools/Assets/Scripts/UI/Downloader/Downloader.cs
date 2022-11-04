@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -36,6 +37,31 @@ namespace SekaiTools.UI.Downloader
         }
     }
 
+    public enum DownloadResult
+    {
+        Null,
+        Failure,
+        Complete,
+        PassExist,
+        PassSameHash
+    }
+
+    public class DownloaderLogItem
+    {
+        public DateTime startTime;
+        public DateTime endTime;
+        public DownloadFileInfo downloadFileInfo;
+        public DownloadResult downloadResult;
+        public string error = null;
+
+        public DownloaderLogItem(DateTime startTime, DownloadFileInfo downloadFileInfo)
+        {
+            this.startTime = startTime;
+            this.downloadFileInfo = downloadFileInfo;
+        }
+    }
+
+
     public class Downloader : MonoBehaviour
     {
         public Window window;
@@ -48,6 +74,25 @@ namespace SekaiTools.UI.Downloader
         public ExistingFileProcessingMode existingFileProcessingMode = ExistingFileProcessingMode.Override;
 
         DownloadFileInfo[] downloadFiles;
+        List<DownloaderLogItem> downloaderLog = new List<DownloaderLogItem>();
+        bool isDone = false;
+        
+        public bool IsDone => isDone;
+        public DownloaderLogItem[] DownloaderLog => downloaderLog.ToArray();
+        public bool HasError
+        {
+            get
+            {
+                foreach (var downloaderLogItem in downloaderLog)
+                {
+                    if (downloaderLogItem.downloadResult == DownloadResult.Failure)
+                        return true;
+                }
+                return false;
+            }
+        }
+
+        public event Action OnComplete;
 
         public class Settings
         {
@@ -89,6 +134,7 @@ namespace SekaiTools.UI.Downloader
             for (int i = 0; i < downloadFiles.Length; i++)
             {
                 DownloadFileInfo downloadFileInfo = downloadFiles[i];
+                DownloaderLogItem downloaderLogItem = new DownloaderLogItem(DateTime.Now, downloadFileInfo);
                 string fileName = Path.GetFileName(downloadFileInfo.savePath);
                 yield return null;
 
@@ -108,6 +154,9 @@ namespace SekaiTools.UI.Downloader
                         if (File.Exists(downloadFileInfo.savePath))
                         {
                             messageArea.AddLine($"{fileName} 已存在，跳过");
+                            downloaderLogItem.endTime = DateTime.Now;
+                            downloaderLogItem.downloadResult = DownloadResult.PassExist;
+                            downloaderLog.Add(downloaderLogItem);
                             continue;
                         }
                         break;
@@ -144,6 +193,8 @@ namespace SekaiTools.UI.Downloader
                             if (t == retryTimes - 1)
                             {
                                 messageArea.AddLine($"{fileName} 超出最大重试次数");
+                                downloaderLogItem.error = getRequest.error;
+                                downloaderLogItem.downloadResult = DownloadResult.Failure;
                                 if (File.Exists(downloadFileInfo.savePath))
                                     File.Delete(downloadFileInfo.savePath);
                             }
@@ -156,15 +207,18 @@ namespace SekaiTools.UI.Downloader
                                 File.Delete(downloadFileInfo.savePath);
                             File.Copy(tempFilePath, downloadFileInfo.savePath);
                             messageArea.AddLine($"{fileName} 下载完成");
+                            downloaderLogItem.downloadResult = DownloadResult.Complete;
                             currentGetRequest = null;
                             break;
                         }
                         currentGetRequest = null;
                     }
                 }
+                downloaderLog.Add(downloaderLogItem);
             }
             perecntBar.priority = 1;
             perecntBar.info = "已完成";
+            OnComplete();
             yield break;
         }
     }

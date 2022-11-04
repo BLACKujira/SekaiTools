@@ -1,8 +1,12 @@
+[English](README.md) / [日本語](README.ja.md)
+
+---
+
 # Live2D Cubism Core
 
 This folder contains platform-specific library files.
 
-**If you encounter exceptions upon first import, restart Unity**
+**If you encounter exceptions upon first import, restart Unity.**
 
 ## Library List
 
@@ -12,7 +16,8 @@ This folder contains platform-specific library files.
 | Android | ARMv7 | Android/armeabi-v7a |   |
 | Android | x86 | Android/x86 |   |
 | Android | x86_64 | Android/x86_64 |   |
-| Emscripten |   | Experimental/Emscripten | bitcode |
+| Emscripten |  | Experimental/Emscripten/latest | bitcode(upstream LLVM wasm backend) |
+| Emscripten |  | Experimental/Emscripten/1_38_48 | bitcode(fastcomp backend) |
 | iOS | ARM64 | iOS/xxx-iphoneos | iOS Devices |
 | iOS | x86_64 | iOS/xxx-iphonesimulator | iOS Simulator |
 | Linux | x86_64 | Linux/x86_64 |   |

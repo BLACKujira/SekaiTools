@@ -11,6 +11,7 @@ namespace SekaiTools.UI
     public class Window : MonoBehaviour, IEventSystemHandler
     {
         public MonoBehaviour controlScript;
+        public bool mainCameraRender = false;
 
         public ParentWindowEffect parentWindowEffect = ParentWindowEffect.Hide;
         public ParentWindowRaycast parentWindowRaycast = ParentWindowRaycast.Disable;
@@ -39,6 +40,11 @@ namespace SekaiTools.UI
         private void Awake()
         {
             Canvas.sortingOrder = windowCount++;
+            if (mainCameraRender)
+            {
+                Canvas.worldCamera = CameraController.MainCamera;
+                gameObject.layer = 0;
+            }
         }
 
         /// <summary>

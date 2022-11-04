@@ -1,4 +1,5 @@
 using SekaiTools.SekaiViewerInterface;
+using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
@@ -15,6 +16,8 @@ namespace SekaiTools.UI
         public Text lastUpdateTimeText;
         public Text infoText;
         public Button updateButton;
+
+        public event Action OnTableUpdated;
 
         public string savePath => Path.Combine(EnvPath.sekai_master_db_diff, masterName + ".json");
         public string url => $"{SekaiViewer.MasterUrl}/{masterName}.json";
@@ -74,6 +77,7 @@ namespace SekaiTools.UI
                         File.Delete(savePath);
                     File.Copy(tempFilePath, savePath);
                     infoText.text = "更新完成";
+                    OnTableUpdated();
                 }
             }
 

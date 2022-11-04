@@ -439,8 +439,13 @@ MonoBehaviour:
   downloadModelButton: {fileID: 8215160754011512703}
   loadModelButton: {fileID: 3388400874434593084}
   loadModelsButton: {fileID: 5629991820542533105}
+  modelDownloaderPrefab: {fileID: 3103431172899519546, guid: 9523e90d57b5efc44b6815554483c899,
+    type: 3}
   txtAnimationSet: {fileID: 2441495891596545455}
+  btnSelectAnimationSet: {fileID: 6821759809570306242}
   animationSets: {fileID: 11400000, guid: 5dda02205b79d584b81e4bbdb7461f88, type: 2}
+  anisetSelectorPrefab: {fileID: 7668009661973317727, guid: 50afd4f77fdbeb1458b3f236c845e352,
+    type: 3}
 --- !u!1 &2007609146520238391
 GameObject:
   m_ObjectHideFlags: 0
@@ -690,9 +695,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: LoadModels
+      - m_Target: {fileID: 6828210758281914037}
+        m_TargetAssemblyTypeName: SekaiTools.UI.L2DModelSelect.L2DModelSelect, Assembly-CSharp
+        m_MethodName: ChangeAnimationSet
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1330,7 +1335,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 40, y: -40}
-  m_SizeDelta: {x: -80, y: -80}
+  m_SizeDelta: {x: -80, y: -150}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8250493132436814150
 CanvasRenderer:
@@ -2072,9 +2077,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1557018167840711476}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 6828210758281914037}
+        m_TargetAssemblyTypeName: SekaiTools.UI.L2DModelManagement.L2DModelManagement,
+          Assembly-CSharp
+        m_MethodName: DownloadModel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

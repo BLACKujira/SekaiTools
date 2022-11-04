@@ -21,7 +21,17 @@ namespace SekaiTools.UI
         public void Generate(int count, Action<Button, int> initialize, Action<int> onClick)
         {
             if(generateNullButton)
-                buttonGenerator.Generate(count+1, initialize,(int id)=>{ onClick(id-1);window.Close(); });
+                buttonGenerator.Generate(count+1,
+                    (btn, id) =>
+                    {
+                        if(id>0)
+                            initialize(btn, id - 1);
+                    }, 
+                    (int id)=>
+                    { 
+                        onClick(id-1);
+                        window.Close();
+                    });
             else
                 buttonGenerator.Generate(count, initialize, (int id) => { onClick(id); window.Close(); });
         }
