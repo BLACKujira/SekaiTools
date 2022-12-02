@@ -313,13 +313,13 @@ namespace SekaiTools.UI.Radio
                         case "leo": unitStr = ConstData.units[Unit.Leoneed].name; break;
                         case "mmj": unitStr = ConstData.units[Unit.MOREMOREJUMP].name; break;
                         case "street": unitStr = ConstData.units[Unit.VividBADSQUAD].name; break;
-                        case "wonder": unitStr = ConstData.units[Unit.WonderlandsShowtime].name; break;
+                        case "wonder": unitStr = ConstData.units[Unit.WonderlandsXShowtime].name; break;
                         case "nightcode": unitStr = ConstData.units[Unit.NightCord].name; break;
                         case "vs": unitStr = ConstData.units[Unit.VirtualSinger].name; break;
                         case "vsleo": unitStr = ConstData.units[Unit.Leoneed].name + strVS; break;
                         case "vsmmj": unitStr = ConstData.units[Unit.MOREMOREJUMP].name + strVS; break;
                         case "vsstreet": unitStr = ConstData.units[Unit.VividBADSQUAD].name + strVS; break;
-                        case "vswonder": unitStr = ConstData.units[Unit.WonderlandsShowtime].name + strVS; break;
+                        case "vswonder": unitStr = ConstData.units[Unit.WonderlandsXShowtime].name + strVS; break;
                         case "vsnightcode": unitStr = ConstData.units[Unit.NightCord].name + strVS; break;
                         default: unitStr = "无法识别的组合"; break;
                     }

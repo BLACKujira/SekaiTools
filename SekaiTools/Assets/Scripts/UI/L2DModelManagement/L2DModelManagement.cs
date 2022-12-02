@@ -28,7 +28,7 @@ namespace SekaiTools.UI.L2DModelManagement
         ModelInfo currentModelInfo;
         public ModelInfo CurrentModelInfo => currentModelInfo;
 
-        protected event Action<ModelInfo> onChangeSelection;
+        protected event Action<ModelInfo> onChangeSelection = null;
 
         private void Awake()
         {
@@ -54,7 +54,7 @@ namespace SekaiTools.UI.L2DModelManagement
                 (id) =>
                 {
                     currentModelInfo = L2DModelLoader.GetModelInfo(modelList[id]);
-                    onChangeSelection(currentModelInfo);
+                    if(onChangeSelection != null) onChangeSelection(currentModelInfo);
                     infoArea.Refresh();
                 });
         }

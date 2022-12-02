@@ -19,7 +19,6 @@ namespace SekaiTools.UI.L2DModelSelect
         [Header("Settings")]
         public Window anisetSelectorPrefab;
 
-
         Action<SelectedModelInfo> onSelect;
         string selectedAnimationSetName;
 
@@ -78,6 +77,8 @@ namespace SekaiTools.UI.L2DModelSelect
             this.modelName = modelName;
             this.animationSet = animationSet;
         }
+
+        public static SelectedModelInfo Empty => new SelectedModelInfo(null, null);
     }
 
 }

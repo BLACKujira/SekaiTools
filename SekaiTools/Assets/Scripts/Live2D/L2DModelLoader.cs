@@ -7,6 +7,7 @@ using Live2D.Cubism.Viewer;
 using Live2D.Cubism.Core;
 using System.Collections.Generic;
 using System.IO;
+using SekaiTools.UI.L2DModelSelect;
 
 namespace SekaiTools.Live2D
 {
@@ -17,8 +18,12 @@ namespace SekaiTools.Live2D
     {
         public InbuiltModelSet inbuiltModelSet;
         public InbuiltAnimationSet inbuiltAnimationSet;
+        public InbuiltImageData modelPreviews;
 
         public static L2DModelLoader l2DModelLoader;
+        public static InbuiltModelSet InbuiltModelSet => l2DModelLoader.inbuiltModelSet;
+        public static InbuiltAnimationSet InbuiltAnimationSet => l2DModelLoader.inbuiltAnimationSet;
+        public static InbuiltImageData ModelPreviews => l2DModelLoader.modelPreviews;
 
         protected List<LocalModelMeta> localModelMetas = new List<LocalModelMeta>();
 
@@ -82,7 +87,7 @@ namespace SekaiTools.Live2D
             {
                 if(localModelMeta.ModelName.Equals(modelName))
                 {
-                    modelInfo.ifInbuilt = true;
+                    modelInfo.ifInbuilt = false;
                     modelInfo.modelPath = localModelMeta.modelPath;
                     return modelInfo;
                 }    
@@ -123,6 +128,33 @@ namespace SekaiTools.Live2D
             }
 
             return false;
+        }
+
+        public static Sprite GetPreview(string modelName)
+        {
+            Sprite sprite = ModelPreviews.GetValue(modelName);
+            return sprite;
+        }
+
+        public static SelectedModelInfo GetDefaultModel(int characterId)
+        {
+            string selectedModel = null;
+            foreach (var modelName in ModelList)
+            {
+                if(ConstData.IsLive2DModelOfCharacter(modelName) == characterId)
+                {
+                    selectedModel = modelName;
+                    break;
+                }    
+            }
+            if (string.IsNullOrEmpty(selectedModel))
+                return SelectedModelInfo.Empty;
+
+            L2DAnimationSet l2DAnimationSet = InbuiltAnimationSet.GetAnimationSetByModelName(selectedModel);
+            if (!l2DAnimationSet)
+                return SelectedModelInfo.Empty;
+
+            return new SelectedModelInfo(selectedModel, l2DAnimationSet.name);
         }
     }
 

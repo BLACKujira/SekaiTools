@@ -36,8 +36,15 @@ namespace SekaiTools.Live2D
             set
             {
                 _animationSet = value;
-                if (value != null) FadeController.CubismFadeMotionList = _animationSet.fadeMotionList;
-                else FadeController.enabled = false;
+                if (value != null)
+                {
+                    FadeController.CubismFadeMotionList = _animationSet.fadeMotionList;
+                }
+                else
+                {
+                    FadeController.enabled = false;
+                }
+
                 FadeController.Refresh();
             }
         }
@@ -132,12 +139,13 @@ namespace SekaiTools.Live2D
             cubismHarmonicMotionController.ResetChannels();
 
             _motionController = gameObject.AddComponent<CubismMotionController>();
-            _motionController.LayerCount = 5;
+            _motionController.LayerCount = 2;
 
             if (FadeController.CubismFadeMotionList == null)
                 FadeController.CubismFadeMotionList = new CubismFadeMotionList();
 
             gameObject.GetComponent<CubismUpdateController>().Refresh();
+
         }
 
         public void PlayVoice(AudioClip voice)
@@ -149,14 +157,12 @@ namespace SekaiTools.Live2D
         {
             if (motion != null)
             {
-                //_motionController.StopAnimation(0, 1);
-                _motionController.PlayAnimation(motion, isLoop: false, layerIndex: 1, priority: 3, speed: speed);
+                _motionController.PlayAnimation(motion, isLoop: false, layerIndex: 0,priority: 3, speed: speed);
             }
 
             if (facial != null)
             {
-                //_motionController.StopAnimation(0, 2);
-                _motionController.PlayAnimation(facial, isLoop: false, layerIndex: 2, priority: 3, speed: speed);
+                _motionController.PlayAnimation(facial, isLoop: false, layerIndex: 1, priority: 3, speed: speed);
             }
         }
         public void PlayAnimation(string motion, string facial, float speed = 1)
@@ -206,7 +212,7 @@ namespace SekaiTools.Live2D
             ParameterMouthOpenY.Value = 0;
         }
 
-        CubismParameter GetParameter(string name)
+        public CubismParameter GetParameter(string name)
         {
             if (!CubismModel) return null;
             CubismParameter[] parameters = CubismModel.Parameters;

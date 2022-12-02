@@ -104,7 +104,7 @@ namespace SekaiTools.UI
         /// </summary>
         public virtual void ReShow()
         {
-            windowController.currentWindow = this;
+            //windowController.currentWindow = this;
             if (parentWindowEffect == ParentWindowEffect.None) parentWindow.ReShow();
             gameObject.SetActive(true);
             OnReShow.Invoke();
@@ -117,6 +117,7 @@ namespace SekaiTools.UI
         {
             if (parentWindow)
             {
+                windowController.currentWindow = parentWindow;
                 switch (parentWindowEffect)
                 {
                     case ParentWindowEffect.None:

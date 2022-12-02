@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Windows.Forms;
+using SekaiTools.DecompiledClass;
+using System;
 
 namespace SekaiTools
 {
@@ -45,6 +47,39 @@ namespace SekaiTools
             return texture2D;
         }
 
+        public static DateTime UnixTimeMSToDateTime(long unixTime)
+        {
+            return DateTimeOffset.FromUnixTimeMilliseconds(unixTime).DateTime.ToLocalTime();
+        }
 
+        public static bool IsAllElemTrue(this bool[] array)
+        {
+            foreach (var elem in array)
+            {
+                if (elem == false)
+                    return false;
+            }
+            return true;
+        }
+
+        public static bool IsAllElemFalse(this bool[] array)
+        {
+            foreach (var elem in array)
+            {
+                if (elem == true)
+                    return false;
+            }
+            return true;
+        }
+
+        public static bool IsAudioFile(string fileName)
+        {
+            string extension = Path.GetExtension(fileName).ToLower();
+            if (extension.Equals(".ogg")
+                || extension.Equals(".wav")
+                || extension.Equals(".mp3"))
+                return true;
+            return false;
+        }
     }
 }

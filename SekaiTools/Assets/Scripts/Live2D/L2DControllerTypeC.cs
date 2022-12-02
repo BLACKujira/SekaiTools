@@ -25,6 +25,7 @@ namespace SekaiTools.Live2D
         readonly Vector2 modelPosition = new Vector2(-32, 0);
 
         Camera l2DCamera;
+        public Camera L2DCamera => l2DCamera;
 
         /// <summary>
         /// 显示模型（不需要提前设置）

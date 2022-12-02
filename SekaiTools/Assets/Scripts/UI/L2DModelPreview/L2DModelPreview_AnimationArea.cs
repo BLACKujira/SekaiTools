@@ -1,4 +1,5 @@
 using SekaiTools.Live2D;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -31,6 +32,10 @@ namespace SekaiTools.UI.L2DModelPreview
         public Window window => l2DModelPreview.window;
         public SekaiLive2DModel Model => l2DModelPreview.l2DController.model;
 
+        public event Action<string> OnPlayFacial;
+        public event Action<string> OnPlayMotion;
+        public event Action<AudioClip> OnPlayVoice;
+
         public void Initialize()
         {
             ResetFacial();
@@ -40,23 +45,33 @@ namespace SekaiTools.UI.L2DModelPreview
 
         public void PlayFacial()
         {
-            Model.PlayAnimation( null, facialName);
+            Model.PlayAnimation(null, facialName);
+            if(OnPlayFacial!=null) 
+                OnPlayFacial(facialName);
         }
 
         public void PlayMotion()
         {
             Model.PlayAnimation(motionName, null);
+            if (OnPlayMotion != null)
+                OnPlayMotion(motionName);
         }
 
         public void PlayVoice()
         {
-            if(audioData!=null)
+            if (audioData != null)
+            {
                 Model.PlayVoice(audioData.valueArray[0]);
+                if(OnPlayVoice!=null) 
+                    OnPlayVoice(audioData.valueArray[0]);
+            }
         }
 
         public void PlayAll()
         {
-            Model.PlayAnimation(motionName, facialName);
+            //Model.PlayAnimation(motionName, facialName);
+            PlayFacial();
+            PlayMotion();
             PlayVoice();
         }
 

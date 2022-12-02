@@ -12,8 +12,6 @@ namespace SekaiTools.UI.L2DModelManagement
         public Text txtName;
         public Text txtInfo;
         public Image imgPreview;
-        [Header("Settings")]
-        public InbuiltImageData modelPreviews;
 
         public void Refresh()
         {
@@ -24,8 +22,8 @@ namespace SekaiTools.UI.L2DModelManagement
                 return;
             }
             txtName.text = modelInfo.modelName;
-            txtInfo.text = modelInfo.ifInbuilt ? "内置模型" : $"本地模型，位置 {modelInfo.modelPath}";
-            imgPreview.sprite = modelPreviews.GetValue(modelInfo.modelName);
+            txtInfo.text = modelInfo.ifInbuilt ? "内置模型" : $"本地模型，位置{modelInfo.modelPath}";
+            imgPreview.sprite = L2DModelLoader.GetPreview(modelInfo.modelName);
 
             if (btnDelete != null)
             {
@@ -44,7 +42,7 @@ namespace SekaiTools.UI.L2DModelManagement
         {
             txtName.text = "请选择模型";
             txtInfo.text = string.Empty;
-            imgPreview.sprite = modelPreviews.spriteNull;
+            imgPreview.sprite = L2DModelLoader.GetPreview(null);
             if (btnDelete != null)
                 btnDelete.interactable = false;
         }

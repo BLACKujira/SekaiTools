@@ -1,6 +1,9 @@
 using SekaiTools.Live2D;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,10 +18,11 @@ namespace SekaiTools.UI.L2DModelPreview
         public L2DModelPreview_TransformArea transformArea;
         public L2DControllerTypeC l2DController;
         public GameObject gobjEditArea;
-        [Header("Settings")]
-        public InbuiltAnimationSet animationSet;
         [Header("Prefab")]
         public Window l2DModelSelectorPrefab;
+
+        InbuiltAnimationSet animationSet => L2DModelLoader.InbuiltAnimationSet;
+        public event Action<SekaiLive2DModel> OnModelSet;
 
         private void Awake()
         {
@@ -43,6 +47,7 @@ namespace SekaiTools.UI.L2DModelPreview
                     Refresh();
                     transformArea.ResetTransform();
                     animationArea.ResetAll();
+                    if(OnModelSet!=null) OnModelSet(model);
                 };
             });
         }
@@ -53,10 +58,30 @@ namespace SekaiTools.UI.L2DModelPreview
             gobjEditArea.SetActive(l2DController.model == null ? false : true);
         }
 
+        public void Capture()
+        {
+            RenderTexture lastTex = RenderTexture.active;
+            RenderTexture renderTex = l2DController.L2DCamera.targetTexture;
+            RenderTexture.active = renderTex;
+            Texture2D texture2D = new Texture2D(renderTex.width, renderTex.height, TextureFormat.RGBA32, false);
+            texture2D.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
+            RenderTexture.active = lastTex;
+
+            SaveFileDialog saveFileDialog = FileDialogFactory.GetSaveFileDialog(FileDialogFactory.FILTER_PNG);
+            if (l2DController.model)
+                saveFileDialog.FileName = l2DController.model.name;
+            DialogResult dialogResult = saveFileDialog.ShowDialog();
+            if (dialogResult != DialogResult.OK)
+                return;
+
+            byte[] png = texture2D.EncodeToPNG();
+            File.WriteAllBytes(saveFileDialog.FileName, png);
+        }
+
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Space))
-                animationArea.PlayAllSync();
+                animationArea.PlayAll();
         }
 
         private void OnDestroy()

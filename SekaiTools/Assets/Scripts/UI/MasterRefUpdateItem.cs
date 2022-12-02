@@ -75,6 +75,9 @@ namespace SekaiTools.UI
                 {
                     if (File.Exists(savePath))
                         File.Delete(savePath);
+                    string path = Path.GetDirectoryName(savePath);
+                    if (!Directory.Exists(path))
+                        Directory.CreateDirectory(path);
                     File.Copy(tempFilePath, savePath);
                     infoText.text = "更新完成";
                     OnTableUpdated();

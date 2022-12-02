@@ -7,6 +7,7 @@ using System.IO;
 namespace SekaiTools.Editor
 {
 
+
     public class FolderGenerator : EditorWindow
     {
         string path;

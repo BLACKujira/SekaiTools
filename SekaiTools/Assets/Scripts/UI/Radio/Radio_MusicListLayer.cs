@@ -90,7 +90,7 @@ namespace SekaiTools.UI.Radio
                 case Unit.VividBADSQUAD:
                     musicTag = MusicTag.street;
                     break;
-                case Unit.WonderlandsShowtime:
+                case Unit.WonderlandsXShowtime:
                     musicTag = MusicTag.theme_park;
                     break;
                 case Unit.NightCord:

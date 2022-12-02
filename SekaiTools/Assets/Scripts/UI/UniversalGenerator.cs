@@ -22,8 +22,8 @@ namespace SekaiTools.UI
         public void Generate(int count, Action<GameObject, int> initialize)
         {
             scorllContent.sizeDelta = direction == Direction.Vertical ?
-                new Vector2(scorllContent.sizeDelta.x, (count - 1) * distance + blank * 2) :
-                new Vector2((count - 1) * distance + blank * 2, scorllContent.sizeDelta.y);
+                new Vector2(scorllContent.sizeDelta.x, (count) * distance + blank * 2) :
+                new Vector2((count) * distance + blank * 2, scorllContent.sizeDelta.y);
             for (int i = 0; i < count; i++)
             {
                 int id = i;

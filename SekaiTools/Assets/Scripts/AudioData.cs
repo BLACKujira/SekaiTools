@@ -273,6 +273,15 @@ namespace SekaiTools
             }
         }
 
+        public SerializedAudioData(Dictionary<string, string> items)
+        {
+            this.items = new List<DataItem>();
+            foreach (var keyValuePair in items)
+            {
+                this.items.Add(new DataItem(keyValuePair.Key,keyValuePair.Value));
+            }
+        }
+
         public SerializedAudioData(string[] filePaths)
         {
             this.items = new List<DataItem>();
@@ -284,6 +293,16 @@ namespace SekaiTools
 
         public SerializedAudioData()
         {
+        }
+
+        public bool HasKey(string key)
+        {
+            foreach (var item in items)
+            {
+                if (item.name.Equals(key))
+                    return true;
+            }
+            return false;
         }
     }
 

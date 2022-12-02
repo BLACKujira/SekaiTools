@@ -9,4 +9,10 @@ namespace SekaiTools.Message
         public const string STR_ERROR = "´íÎó";
 
     }
+
+    public static class IO
+    {
+        public const string STR_SAVECOMPLETE = "±£´æÍê³É";
+
+    }
 }

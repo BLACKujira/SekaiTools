@@ -14,7 +14,7 @@ namespace SekaiTools
         Leoneed,
         MOREMOREJUMP,
         VividBADSQUAD,
-        WonderlandsShowtime,
+        WonderlandsXShowtime,
         NightCord
     }
 
@@ -62,10 +62,10 @@ namespace SekaiTools
                 new CharacterInfo(11,"東雲","彰人",new Color32(0xFF,0x77,0x22,255),(11,12),Unit.VividBADSQUAD),
                 new CharacterInfo(12,"青柳","冬弥",new Color32(0x00,0x77,0xDD,255),(5,25),Unit.VividBADSQUAD),
 
-                new CharacterInfo(13,"天馬","司",new Color32(0xFF,0xBB,0x00,255),(5,17),Unit.WonderlandsShowtime),
-                new CharacterInfo(14,"鳳","えむ",new Color32(0xFF,0x66,0xBB,255),(9,9),Unit.WonderlandsShowtime),
-                new CharacterInfo(15,"草薙","寧々",new Color32(0x33,0xDD,0x99,255),(7,20),Unit.WonderlandsShowtime),
-                new CharacterInfo(16,"神代","類",new Color32(0xBB,0x88,0xEE,255),(6,24),Unit.WonderlandsShowtime),
+                new CharacterInfo(13,"天馬","司",new Color32(0xFF,0xBB,0x00,255),(5,17),Unit.WonderlandsXShowtime),
+                new CharacterInfo(14,"鳳","えむ",new Color32(0xFF,0x66,0xBB,255),(9,9),Unit.WonderlandsXShowtime),
+                new CharacterInfo(15,"草薙","寧々",new Color32(0x33,0xDD,0x99,255),(7,20),Unit.WonderlandsXShowtime),
+                new CharacterInfo(16,"神代","類",new Color32(0xBB,0x88,0xEE,255),(6,24),Unit.WonderlandsXShowtime),
 
                 new CharacterInfo(17,"宵崎","奏",new Color32(0xBB,0x66,0x88,255),(2,10),Unit.NightCord),
                 new CharacterInfo(18,"朝比奈","まふゆ",new Color32(0x88,0x88,0xCC,255),(1,27),Unit.NightCord),
@@ -82,37 +82,37 @@ namespace SekaiTools
                 new CharacterInfo(27,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27),Unit.Leoneed),
                 new CharacterInfo(28,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27),Unit.MOREMOREJUMP),
                 new CharacterInfo(29,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27),Unit.VividBADSQUAD),
-                new CharacterInfo(30,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27),Unit.WonderlandsShowtime),
+                new CharacterInfo(30,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27),Unit.WonderlandsXShowtime),
                 new CharacterInfo(31,"初音","ミク",new Color32(0x33,0xCC,0xBB,255),(8,27),Unit.NightCord),
 
                 new CharacterInfo(32,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27),Unit.Leoneed),
                 new CharacterInfo(33,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27),Unit.MOREMOREJUMP),
                 new CharacterInfo(34,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27),Unit.VividBADSQUAD),
-                new CharacterInfo(35,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27),Unit.WonderlandsShowtime),
+                new CharacterInfo(35,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27),Unit.WonderlandsXShowtime),
                 new CharacterInfo(36,"鏡音","リン",new Color32(0xFF,0xCC,0x11,255),(12,27),Unit.NightCord),
 
                 new CharacterInfo(37,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27),Unit.Leoneed),
                 new CharacterInfo(38,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27),Unit.MOREMOREJUMP),
                 new CharacterInfo(39,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27),Unit.VividBADSQUAD),
-                new CharacterInfo(40,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27),Unit.WonderlandsShowtime),
+                new CharacterInfo(40,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27),Unit.WonderlandsXShowtime),
                 new CharacterInfo(41,"鏡音","レン",new Color32(0xFF,0xEE,0x11,255),(12,27),Unit.NightCord),
 
                 new CharacterInfo(42,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30),Unit.Leoneed),
                 new CharacterInfo(43,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30),Unit.MOREMOREJUMP),
                 new CharacterInfo(44,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30),Unit.VividBADSQUAD),
-                new CharacterInfo(45,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30),Unit.WonderlandsShowtime),
+                new CharacterInfo(45,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30),Unit.WonderlandsXShowtime),
                 new CharacterInfo(46,"巡音","ルカ",new Color32(0xFF,0xBB,0xCC,255),(1,30),Unit.NightCord),
 
                 new CharacterInfo(47,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5),Unit.Leoneed),
                 new CharacterInfo(48,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5),Unit.MOREMOREJUMP),
                 new CharacterInfo(49,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5),Unit.VividBADSQUAD),
-                new CharacterInfo(50,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5),Unit.WonderlandsShowtime),
+                new CharacterInfo(50,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5),Unit.WonderlandsXShowtime),
                 new CharacterInfo(51,"","MEIKO",new Color32(0xDD,0x44,0x44,255),(11,5),Unit.NightCord),
 
                 new CharacterInfo(52,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17),Unit.Leoneed),
                 new CharacterInfo(53,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17),Unit.MOREMOREJUMP),
                 new CharacterInfo(54,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17),Unit.VividBADSQUAD),
-                new CharacterInfo(55,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17),Unit.WonderlandsShowtime),
+                new CharacterInfo(55,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17),Unit.WonderlandsXShowtime),
                 new CharacterInfo(56,"","KAITO",new Color32(0x33,0x66,0xCC,255),(2,17),Unit.NightCord),
 
             };
@@ -153,12 +153,12 @@ namespace SekaiTools
             UnitInfo[] unitInfos =
             {
                 null,
-                new UnitInfo(1,@"バーチャル・シンガー",new Color32(0xFF,0xFF,0xFF,255)),
-                new UnitInfo(2,@"Leo/need",new Color32(0x44,0x55,0xDD,255)),
-                new UnitInfo(3,@"MORE MORE JUMP！",new Color32(0x88,0xDD,0x44,255)),
-                new UnitInfo(4,@"Vivid BAD SQUAD",new Color32(0xEE,0x11,0x66,255)),
-                new UnitInfo(5,@"ワンダーランズ×ショウタイム",new Color32(0xFF,0x99,0x00,255)),
-                new UnitInfo(6,@"25時、ナイトコードで。",new Color32(0x88,0x44,0x99,255)),
+                new UnitInfo(1,@"バーチャル・シンガー",new Color32(0xFF,0xFF,0xFF,255),"vs"),
+                new UnitInfo(2,@"Leo/need",new Color32(0x44,0x55,0xDD,255),"l/n"),
+                new UnitInfo(3,@"MORE MORE JUMP！",new Color32(0x88,0xDD,0x44,255),"mmj"),
+                new UnitInfo(4,@"Vivid BAD SQUAD",new Color32(0xEE,0x11,0x66,255),"vbs"),
+                new UnitInfo(5,@"ワンダーランズ×ショウタイム",new Color32(0xFF,0x99,0x00,255),"wxs"),
+                new UnitInfo(6,@"25時、ナイトコードで。",new Color32(0x88,0x44,0x99,255),"25时"),
             };
 
             public UnitInfo this[Unit unit]
@@ -177,12 +177,14 @@ namespace SekaiTools
             public readonly string name;
 
             public readonly Color32 color;
+            public readonly string abbr;
 
-            public UnitInfo(int id, string name, Color32 color)
+            public UnitInfo(int id, string name, Color32 color,string abbr)
             {
                 this.id = id;
                 this.name = name;
                 this.color = color;
+                this.abbr = abbr;
             }
         }
 
@@ -303,7 +305,7 @@ namespace SekaiTools
                     case Unit.VividBADSQUAD:
                         offset = 2;
                         break;
-                    case Unit.WonderlandsShowtime:
+                    case Unit.WonderlandsXShowtime:
                         offset = 3;
                         break;
                     case Unit.NightCord:
@@ -322,6 +324,7 @@ namespace SekaiTools
             else
                 return virtualSingerID;
         }
+        public static int GetUnitVirtualSinger(int virtualSingerID, UnitType unitType) => GetUnitVirtualSinger(virtualSingerID, unitType.ToUnit());
 
         /// <summary>
         /// 将5个SEKAI的VS的ID合并到原始VS上,不适用于Scenario
@@ -383,7 +386,7 @@ namespace SekaiTools
             else if (id <= 4) return Unit.Leoneed;
             else if (id <= 8) return Unit.MOREMOREJUMP;
             else if (id <= 12) return Unit.VividBADSQUAD;
-            else if (id <= 16) return Unit.WonderlandsShowtime;
+            else if (id <= 16) return Unit.WonderlandsXShowtime;
             else if (id <= 20) return Unit.NightCord;
             else if (id <= 26) return Unit.VirtualSinger;
             else if(id<=56)
@@ -393,7 +396,7 @@ namespace SekaiTools
                     case 0:return Unit.Leoneed;
                     case 1:return Unit.MOREMOREJUMP;
                     case 2:return Unit.VividBADSQUAD;
-                    case 3:return Unit.WonderlandsShowtime;
+                    case 3:return Unit.WonderlandsXShowtime;
                     case 4:return Unit.NightCord;
                     default:return Unit.none;
                 }
@@ -434,7 +437,48 @@ namespace SekaiTools
                 return true;
             return false;
         }
+
+        public static Unit ToUnit(this UnitType unitType)
+        {
+            switch (unitType)
+            {
+                case UnitType.none:
+                    return Unit.none;
+                case UnitType.piapro:
+                    return Unit.VirtualSinger;
+                case UnitType.theme_park:
+                    return Unit.WonderlandsXShowtime;
+                case UnitType.idol:
+                    return Unit.MOREMOREJUMP;
+                case UnitType.street:
+                    return Unit.VividBADSQUAD;
+                case UnitType.light_sound:
+                    return Unit.Leoneed;
+                case UnitType.school_refusal:
+                    return Unit.NightCord;
+                case UnitType.any:
+                    return Unit.none;
+                default:
+                    return Unit.none;
+            }
+        }
+
+        public static UnitType ToUnitType(int unitId)
+        {
+            switch (unitId)
+            {
+                case 1:return UnitType.piapro;
+                case 2:return UnitType.light_sound;
+                case 3:return UnitType.idol;
+                case 4:return UnitType.street;
+                case 5:return UnitType.theme_park;
+                case 6:return UnitType.school_refusal;
+                default: return UnitType.none;
+            }
+        }
+
     }
+
 
     [Serializable]
     public class EventStoryInfo

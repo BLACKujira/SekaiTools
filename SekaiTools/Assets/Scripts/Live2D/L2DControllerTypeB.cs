@@ -30,30 +30,42 @@ namespace SekaiTools.Live2D
         Camera l2DCameraL;
         Camera l2DCameraR;
 
+        public class Settings
+        {
+            public SekaiLive2DModel[] models;
+        }
+
         public void SetModel(SekaiLive2DModel model, Character character)
         {
+            if (live2DModels[(int)character])
+                Destroy(live2DModels[(int)character].gameObject);
             live2DModels[(int)character] = model;
         }
-        public void SetModels()
-        {
-            //TODO 重置此函数
-            throw new NotImplementedException();
-            //for (int i = 1; i < 27; i++)
-            //{
-            //    foreach (var model in L2DModelLoader.ModelList)
-            //    {
-            //        if (model.Contains(((Character)i).ToString()))
-            //        {
-            //            live2DModels[i] = model;
-            //            break;
-            //        }
-            //    }
-            //}
-        }
+        //public void SetModels()
+        //{
+        //    TODO 重置此函数
+        //    throw new NotImplementedException();
+        //    for (int i = 1; i < 27; i++)
+        //    {
+        //        foreach (var model in L2DModelLoader.ModelList)
+        //        {
+        //            if (model.Contains(((Character)i).ToString()))
+        //            {
+        //                live2DModels[i] = model;
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
 
         public void SetModel(SekaiLive2DModel model, int talkerId)
         {
             SetModel(model, (Character)talkerId);
+        }
+
+        public void Initialize(Settings settings)
+        {
+            live2DModels = settings.models;
         }
 
         public SekaiLive2DModel ShowModelLeft(Character character)
@@ -82,6 +94,9 @@ namespace SekaiTools.Live2D
             modelR.gameObject.SetActive(true);
             return sekaiLive2DModel;
         }
+
+        public SekaiLive2DModel ShowModelLeft(int characterID) => ShowModelLeft((Character)characterID);
+        public SekaiLive2DModel ShowModelRight(int characterID) => ShowModelRight((Character)characterID);
 
         public SekaiLive2DModel HideModelLeft()
         {
@@ -180,7 +195,11 @@ namespace SekaiTools.Live2D
             Destroy(l2DCameraR.gameObject);
             renderTextureL.Release();
             renderTextureR.Release();
-            ResetAllModels();
+            //ResetAllModels();
+            foreach (var sekaiLive2DModel in live2DModels)
+            {
+                Destroy(sekaiLive2DModel.gameObject);
+            }
         }
 
         public void ResetAllModels()

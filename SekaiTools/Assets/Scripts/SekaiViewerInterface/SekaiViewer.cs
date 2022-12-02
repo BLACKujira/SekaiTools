@@ -23,7 +23,7 @@ namespace SekaiTools.SekaiViewerInterface
     {
         public static ServerRegion serverRegion = ServerRegion.jp;
         public static MasterSever masterSever = MasterSever.ww;
-        public static AssetSever assetSever = AssetSever.ww;
+        public static AssetSever assetSever = AssetSever.minio;
 
         public static string MasterUrl => Url.MasterUrl[masterSever, serverRegion];
         public static string AssetUrl => Url.AssetUrl[assetSever, serverRegion];

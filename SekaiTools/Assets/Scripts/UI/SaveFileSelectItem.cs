@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -8,6 +9,9 @@ namespace SekaiTools.UI
     public class SaveFileSelectItem : PathSelectItem
     {
         public string fileFilter = "All(*.*) | *.*";
+
+        public override event Action<string> onPathSelect;
+
         public override void SelectPath()
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -20,6 +24,9 @@ namespace SekaiTools.UI
             if (dialogResult != DialogResult.OK) return;
 
             pathInputField.text = saveFileDialog.FileName;
+
+            if (onPathSelect != null)
+                onPathSelect(SelectedPath);
         }
     }
 }

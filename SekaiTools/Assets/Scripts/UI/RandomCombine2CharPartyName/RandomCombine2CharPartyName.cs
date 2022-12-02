@@ -244,6 +244,19 @@ namespace SekaiTools.UI.RandomCombine2CharPartyName
         {
             int[] rdmCharOrder = GetRdmCharOrder();
             List<HashSet<int>> availableSequences = GetAvailableSequence_Ver2();
+                //new List<HashSet<int>>
+                //{
+                //    new HashSet<int>(){14, 2 },
+                //    new HashSet<int>(){15, 17 },
+                //    new HashSet<int>(){10, 5 },
+                //    new HashSet<int>(){11, 20 },
+                //    new HashSet<int>(){3, 16 },
+                //    new HashSet<int>(){1, 8 },
+                //    new HashSet<int>(){12, 4 },
+                //    new HashSet<int>(){19, 9 },
+                //    new HashSet<int>(){13, 18 },
+                //    new HashSet<int>(){6, 7 },
+                //};
             if (availableSequences == null)
             {
                 WindowController.ShowMessage(Message.Error.STR_ERROR, "未能找到符合条件的序列");
