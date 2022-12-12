@@ -59,7 +59,7 @@ namespace SekaiTools.UI.SysL2DSelect
             string strMuti = (mergedSystemLive2D.IsSingle ? string.Empty : $"(+{mergedSystemLive2D.masterSystemLive2Ds.Count-1})");
             txtInfo.text = 
 $@"ID {mergedSystemLive2D.masterSystemLive2Ds[0].id} {strMuti} 组合 {ConstData.units[mergedSystemLive2D.UnitType.ToUnit()].abbr}  权重 {mergedSystemLive2D.Weight}
-起始 {ExtensionTools.UnixTimeMSToDateTime(mergedSystemLive2D.masterSystemLive2Ds[0].publishedAt):yy:MM:dd} 截止 {ExtensionTools.UnixTimeMSToDateTime(mergedSystemLive2D.masterSystemLive2Ds[0].closedAt):yy:MM:dd} {strMuti}
+起始 {ExtensionTools.UnixTimeMSToDateTimeTST(mergedSystemLive2D.masterSystemLive2Ds[0].publishedAt):yy:MM:dd} 截止 {ExtensionTools.UnixTimeMSToDateTimeTST(mergedSystemLive2D.masterSystemLive2Ds[0].closedAt):yy:MM:dd} {strMuti}
 语音 {mergedSystemLive2D.AssetbundleName} - {mergedSystemLive2D.Voice}";
         }
     }

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace SekaiTools.UI.SysL2DShowPlayer
         public Text text;
         [Header("Settings")]
         public float secPerWord;
+        public float fadeOutTime;
 
         string serif;
         public string Serif
@@ -31,17 +33,33 @@ namespace SekaiTools.UI.SysL2DShowPlayer
 
         public void Play()
         {
+            StopAllCoroutines();
             StartCoroutine(CoPlay());
         }
 
         IEnumerator CoPlay()
         {
+            Color color = text.color;
+            color.a = 1;
+            text.color = color;
+
             string showWords = serif.Replace("\\n", "\n");
             for (int i = 0; i < showWords.Length + 1; i++)
             {
                 text.text = showWords.Substring(0, i);
                 yield return new WaitForSeconds(secPerWord);
             }
+        }
+
+        public void FadeOut()
+        {
+            StopAllCoroutines();
+            text.DOFade(0,fadeOutTime).OnComplete(()=>
+            {
+                Color color = text.color;
+                color.a = 1;
+                text.color = color;
+            });
         }
     }
 }

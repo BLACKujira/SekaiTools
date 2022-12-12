@@ -19,8 +19,8 @@ namespace SekaiTools.UI.L2DModelManagement
         public void Initialize(string modelName)
         {
             textName.text = modelName;
-            int charId = ConstData.IsLive2DModelOfCharacter(modelName);
-            if(charId>=1&&charId<=27)
+            int charId = ConstData.IsLive2DModelOfCharacter(modelName, false);
+            if(charId>=1&&charId<=56)
             {
                 characterIcon.sprite = iconSet.icons[charId];
                 imageCharColor.color = ConstData.characters[charId].imageColor;

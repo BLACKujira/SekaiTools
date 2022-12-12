@@ -2,8 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
+using Button = UnityEngine.UI.Button;
 
 namespace SekaiTools.UI.Downloader
 {
@@ -61,13 +64,25 @@ namespace SekaiTools.UI.Downloader
         }
     }
 
+    public class DownloadResultCount
+    {
+        public int countFailure = 0;
+        public int countComplete = 0;
+        public int countPassExist = 0;
+        public int countPassSameHash = 0;
+
+        public int CountPass => countPassExist + countPassSameHash;
+    }
 
     public class Downloader : MonoBehaviour
     {
         public Window window;
         [Header("Components")]
+        public Text txtDownload;
         public Downloader_PerecntBar perecntBar;
         public MessageAreaTypeA messageArea;
+        public List<Button> logViewButtons;
+        public List<Button> logSaveButtons;
         [Header("Settings")]
         public float retryWaitTime = 3;
         public int retryTimes = 5;
@@ -76,7 +91,8 @@ namespace SekaiTools.UI.Downloader
         DownloadFileInfo[] downloadFiles;
         List<DownloaderLogItem> downloaderLog = new List<DownloaderLogItem>();
         bool isDone = false;
-        
+        bool disableLogView = false;
+
         public bool IsDone => isDone;
         public DownloaderLogItem[] DownloaderLog => downloaderLog.ToArray();
         public bool HasError
@@ -100,6 +116,7 @@ namespace SekaiTools.UI.Downloader
             public int retryTimes = 5;
             public ExistingFileProcessingMode existingFileProcessingMode = ExistingFileProcessingMode.Override;
             public DownloadFileInfo[] downloadFiles;
+            public bool disableLogView = false;
         }
 
         public void Initialize(Settings settings)
@@ -108,6 +125,19 @@ namespace SekaiTools.UI.Downloader
             retryTimes = settings.retryTimes;
             existingFileProcessingMode = settings.existingFileProcessingMode;
             downloadFiles = settings.downloadFiles;
+            disableLogView = settings.disableLogView;
+
+            if(settings.disableLogView)
+            {
+                foreach (var button in logViewButtons)
+                {
+                    button.interactable = false;
+                }
+            }
+            foreach (var button in logSaveButtons)
+            {
+                button.interactable = false;
+            }
 
             window.OnClose.AddListener(() =>
             {
@@ -131,6 +161,7 @@ namespace SekaiTools.UI.Downloader
         UnityWebRequest currentGetRequest = null;
         IEnumerator IDownload()
         {
+            RefreshTextDownload();
             for (int i = 0; i < downloadFiles.Length; i++)
             {
                 DownloadFileInfo downloadFileInfo = downloadFiles[i];
@@ -138,6 +169,7 @@ namespace SekaiTools.UI.Downloader
                 string fileName = Path.GetFileName(downloadFileInfo.savePath);
                 yield return null;
 
+                RefreshTextDownload();
                 perecntBar.priority = (float)i / downloadFiles.Length;
                 perecntBar.info = $"正在下载 {Path.GetFileName(downloadFileInfo.savePath)}";
 
@@ -205,6 +237,9 @@ namespace SekaiTools.UI.Downloader
                         {
                             if (File.Exists(downloadFileInfo.savePath))
                                 File.Delete(downloadFileInfo.savePath);
+                            string saveFolder = Path.GetDirectoryName(downloadFileInfo.savePath);
+                            if (!Directory.Exists(saveFolder))
+                                Directory.CreateDirectory(saveFolder);
                             File.Copy(tempFilePath, downloadFileInfo.savePath);
                             messageArea.AddLine($"{fileName} 下载完成");
                             downloaderLogItem.downloadResult = DownloadResult.Complete;
@@ -214,12 +249,139 @@ namespace SekaiTools.UI.Downloader
                         currentGetRequest = null;
                     }
                 }
+                downloaderLogItem.endTime = DateTime.Now;
                 downloaderLog.Add(downloaderLogItem);
             }
+            RefreshTextDownload();
             perecntBar.priority = 1;
             perecntBar.info = "已完成";
-            OnComplete();
+            OnComplete?.Invoke();
+            if (!disableLogView)
+            {
+                foreach (var button in logSaveButtons)
+                {
+                    button.interactable = true;
+                }
+            }
+
             yield break;
+        }
+
+        private void RefreshTextDownload()
+        {
+            DownloadResultCount downloadResultCount = GetDownloadResultCount();
+            txtDownload.text = $"下载 成功{downloadResultCount.countComplete} 跳过{downloadResultCount.CountPass} 失败{downloadResultCount.countFailure} / {downloadFiles.Length}个文件";
+        }
+
+        public void ViewErrorLog()
+        {
+            WindowController.ShowLog("错误日志", GetLog(true));
+        }
+
+        public void ViewLog()
+        {
+            WindowController.ShowLog("下载日志", GetLog(true));
+        }
+
+        public void SaveLog()
+        {
+            SaveFileDialog saveFileDialog
+                = FileDialogFactory.GetSaveFileDialog(FileDialogFactory.FILTER_TXT);
+            DialogResult dialogResult = saveFileDialog.ShowDialog();
+            if (dialogResult != DialogResult.OK)
+                return;
+
+            File.WriteAllText(saveFileDialog.FileName, GetLog(false));
+        }
+
+        public string GetLog(bool onlyShowError)
+        {
+            List<string> outStrs = new List<string>();
+            foreach (var logItem in downloaderLog)
+            {
+                if (onlyShowError&&logItem.downloadResult == DownloadResult.Complete)
+                    continue;
+                switch (logItem.downloadResult)
+                {
+                    case DownloadResult.Null:
+                        break;
+                    case DownloadResult.Failure:
+                        outStrs.Add($"[{logItem.endTime:T}] 下载失败 {logItem.error}\n{logItem.downloadFileInfo.url}");
+                        break;
+                    case DownloadResult.Complete:
+                        outStrs.Add($"[{logItem.endTime:T}] 下载完成\n{logItem.downloadFileInfo.url}");
+                        break;
+                    case DownloadResult.PassExist:
+                        outStrs.Add($"[{logItem.endTime:T}] 已存在，跳过\n{logItem.downloadFileInfo.url}");
+                        break;
+                    case DownloadResult.PassSameHash:
+                        outStrs.Add($"[{logItem.endTime:T}] hash相同，跳过\n{logItem.downloadFileInfo.url}");
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return string.Join("\n", outStrs);
+        }
+
+        public void EnableLogView()
+        {
+            disableLogView = false;
+            foreach (var button in logViewButtons)
+            {
+                button.interactable = true;
+            }
+            if(isDone)
+            {
+                foreach (var button in logSaveButtons)
+                {
+                    button.interactable = true;
+                }
+            }
+        }
+
+        public void DisableLogView()
+        {
+            disableLogView = true;
+            foreach (var button in logViewButtons)
+            {
+                button.interactable = false;
+            }
+            if (isDone)
+            {
+                foreach (var button in logSaveButtons)
+                {
+                    button.interactable = false;
+                }
+            }
+        }
+
+        public DownloadResultCount GetDownloadResultCount()
+        {
+            DownloadResultCount downloadResultCount = new DownloadResultCount();
+            foreach (var downloaderLogItem in downloaderLog)
+            {
+                switch (downloaderLogItem.downloadResult)
+                {
+                    case DownloadResult.Null:
+                        break;
+                    case DownloadResult.Failure:
+                        downloadResultCount.countFailure++;
+                        break;
+                    case DownloadResult.Complete:
+                        downloadResultCount.countComplete++;
+                        break;
+                    case DownloadResult.PassExist:
+                        downloadResultCount.countPassExist++;
+                        break;
+                    case DownloadResult.PassSameHash:
+                        downloadResultCount.countPassSameHash++;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return downloadResultCount;
         }
     }
 }

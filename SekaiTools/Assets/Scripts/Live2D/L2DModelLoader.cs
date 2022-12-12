@@ -39,10 +39,15 @@ namespace SekaiTools.Live2D
                 return modelList.ToArray();
             }
         }
+        public static string ModelFolder => $"{EnvPath.Assets}/live2d/model";
 
         private void Awake()
         {
             l2DModelLoader = this;
+            if(Directory.Exists(ModelFolder))
+            {
+                AddLocalModels(ModelFolder);
+            }
         }
 
         public static L2DModelLoaderObjectBase LoadModel(string modelName)
@@ -111,6 +116,25 @@ namespace SekaiTools.Live2D
         public static void AddLocalModel(string modelPath)
         {
             l2DModelLoader.localModelMetas.Add(new LocalModelMeta(modelPath));
+            l2DModelLoader.localModelMetas.Sort((x,y)=>x.ModelName.CompareTo(y.ModelName));
+        }
+
+        public static void AddLocalModels(string modelFolder)
+        {
+            List<string> files = new List<string>();
+            foreach (var dir in Directory.GetDirectories(modelFolder))
+            {
+                foreach (var file in Directory.GetFiles(dir))
+                {
+                    if (file.EndsWith(".model3.json"))
+                        files.Add(file);
+                }
+            }
+            foreach (var file in files)
+            {
+                if(!HasModel(Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(file))))
+                    AddLocalModel(file);
+            }
         }
 
         public static bool HasModel(string modelName)
@@ -141,12 +165,25 @@ namespace SekaiTools.Live2D
             string selectedModel = null;
             foreach (var modelName in ModelList)
             {
-                if(ConstData.IsLive2DModelOfCharacter(modelName) == characterId)
+                if (ConstData.IsLive2DModelOfCharacter(modelName) == characterId)
                 {
                     selectedModel = modelName;
                     break;
-                }    
+                }
             }
+
+            if(characterId>=27&&characterId<=56)
+            {
+                foreach (var modelName in ModelList)
+                {
+                    if (ConstData.IsLive2DModelOfCharacter(modelName,false) == characterId)
+                    {
+                        selectedModel = modelName;
+                        break;
+                    }
+                }
+            }
+
             if (string.IsNullOrEmpty(selectedModel))
                 return SelectedModelInfo.Empty;
 
@@ -238,7 +275,6 @@ namespace SekaiTools.Live2D
     {
         public IEnumerator LoadModel(CubismModel prefab)
         {
-            Debug.Log(1);
             model = Object.Instantiate(prefab).gameObject.AddComponent<SekaiLive2DModel>();
             model.name = prefab.name;
 

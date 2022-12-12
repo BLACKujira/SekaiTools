@@ -47,9 +47,21 @@ namespace SekaiTools
             return texture2D;
         }
 
+        /// <summary>
+        /// 注意时区问题
+        /// </summary>
+        /// <param name="unixTime"></param>
+        /// <returns></returns>
         public static DateTime UnixTimeMSToDateTime(long unixTime)
         {
-            return DateTimeOffset.FromUnixTimeMilliseconds(unixTime).DateTime.ToLocalTime();
+            return DateTimeOffset.FromUnixTimeMilliseconds(unixTime).DateTime;
+        }
+
+        public static DateTime UnixTimeMSToDateTimeTST(long unixTime)
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(unixTime);
+            TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
+            return TimeZoneInfo.ConvertTime(dateTimeOffset, timeZoneInfo).DateTime;
         }
 
         public static bool IsAllElemTrue(this bool[] array)

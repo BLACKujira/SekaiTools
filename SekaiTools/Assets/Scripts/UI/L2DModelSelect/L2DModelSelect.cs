@@ -61,8 +61,8 @@ namespace SekaiTools.UI.L2DModelSelect
                     else
                     {
                         selectedAnimationSetName = l2DAnimationSetArray[id].name;
-                        txtAnimationSet.text = string.IsNullOrEmpty(selectedAnimationSetName) ? "无" : selectedAnimationSetName;
                     }
+                    txtAnimationSet.text = string.IsNullOrEmpty(selectedAnimationSetName) ? "无" : selectedAnimationSetName;
                 });
         }
     }

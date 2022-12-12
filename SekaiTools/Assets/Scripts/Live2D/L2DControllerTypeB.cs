@@ -195,11 +195,7 @@ namespace SekaiTools.Live2D
             Destroy(l2DCameraR.gameObject);
             renderTextureL.Release();
             renderTextureR.Release();
-            //ResetAllModels();
-            foreach (var sekaiLive2DModel in live2DModels)
-            {
-                Destroy(sekaiLive2DModel.gameObject);
-            }
+            ResetAllModels();
         }
 
         public void ResetAllModels()

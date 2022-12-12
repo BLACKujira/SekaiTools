@@ -36,6 +36,8 @@ namespace SekaiTools.SekaiViewerInterface.Utils
                                 return Env.VITE_JSON_DOMAIN_MASTER + "/sekai-master-db-cn-diff";
                             case ServerRegion.en:
                                 return Env.VITE_JSON_DOMAIN_MASTER + "/sekai-master-db-en-diff";
+                            case ServerRegion.kr:
+                                return Env.VITE_JSON_DOMAIN_MASTER + "/sekai-master-db-kr-diff";
                             default:
                                 throw new ServerNotFoundException();
                         }

@@ -36,6 +36,12 @@ namespace SekaiTools.UI.L2DModelPreview
             L2DModelSelect.L2DModelSelect l2DModelSelect = window.OpenWindow<L2DModelSelect.L2DModelSelect>(l2DModelSelectorPrefab);
             l2DModelSelect.Initialize((smi) =>
             {
+                if(string.IsNullOrEmpty(smi.modelName))
+                {
+                    WindowController.ShowMessage(Message.Error.STR_ERROR, "您没有选择模型");
+                    return;
+                }
+
                 L2DModelLoaderObjectBase l2DModelLoaderObjectBase = L2DModelLoader.LoadModel(smi.modelName);
                 WindowController.ShowNowLoadingCenter("正在加载模型", l2DModelLoaderObjectBase).OnFinish+=
                 ()=>

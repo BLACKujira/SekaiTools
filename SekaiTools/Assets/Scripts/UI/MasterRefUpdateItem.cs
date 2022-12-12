@@ -1,4 +1,5 @@
 using SekaiTools.SekaiViewerInterface;
+using SekaiTools.SekaiViewerInterface.Utils;
 using System;
 using System.Collections;
 using System.IO;
@@ -11,7 +12,7 @@ namespace SekaiTools.UI
     public class MasterRefUpdateItem : MonoBehaviour
     {
         public string masterName;
-
+        public ServerRegion serverRegion = ServerRegion.jp;
         public Text nameText;
         public Text lastUpdateTimeText;
         public Text infoText;
@@ -19,8 +20,8 @@ namespace SekaiTools.UI
 
         public event Action OnTableUpdated;
 
-        public string savePath => Path.Combine(EnvPath.sekai_master_db_diff, masterName + ".json");
-        public string url => $"{SekaiViewer.MasterUrl}/{masterName}.json";
+        public string savePath => Path.Combine(EnvPath.Sekai_master_db_diff[serverRegion], masterName + ".json");
+        public string url => $"{Url.MasterUrl[SekaiViewer.masterSever, serverRegion]}/{masterName}.json";
 
         private void Awake()
         {
@@ -31,6 +32,29 @@ namespace SekaiTools.UI
 
         public void Refresh()
         {
+            string masterName = this.masterName;
+            if(serverRegion!=ServerRegion.jp)
+            {
+                switch (serverRegion)
+                {
+                    case ServerRegion.jp:
+                        break;
+                    case ServerRegion.tw:
+                        masterName += "（繁中）";
+                        break;
+                    case ServerRegion.cn:
+                        masterName += "（简中）";
+                        break;
+                    case ServerRegion.en:
+                        masterName += "（英文）";
+                        break;
+                    case ServerRegion.kr:
+                        masterName += "（韩文）";
+                        break;
+                    default:
+                        break;
+                }
+            }
             nameText.text = masterName;
             lastUpdateTimeText.text =
                 File.Exists(savePath) ?
@@ -80,7 +104,7 @@ namespace SekaiTools.UI
                         Directory.CreateDirectory(path);
                     File.Copy(tempFilePath, savePath);
                     infoText.text = "更新完成";
-                    OnTableUpdated();
+                    OnTableUpdated?.Invoke();
                 }
             }
 

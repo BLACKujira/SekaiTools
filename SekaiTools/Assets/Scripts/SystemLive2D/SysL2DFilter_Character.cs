@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace SekaiTools.SystemLive2D
 {
@@ -17,7 +18,7 @@ namespace SekaiTools.SystemLive2D
         {
             IEnumerable<MergedSystemLive2D> enumerable = 
                 from MergedSystemLive2D sysL2D in listIn
-                where characterIdMask[sysL2D.CharacterId] == true
+                where characterIdMask[sysL2D.RawCharacterId] == true
                 select sysL2D;
             return new List<MergedSystemLive2D>(enumerable);
         }

@@ -32,8 +32,11 @@ namespace SekaiTools.UI.SysL2DShowEditorInitialize
                                    createdData.SavePath = str;
                                RefreshDataInfo();
                            };
-            file_SaveData.onPathSelect += setSaveDataPath;
-            file_SaveData.onPathReset += setSaveDataPath;
+            if (file_SaveData)
+            {
+                file_SaveData.onPathSelect += setSaveDataPath;
+                file_SaveData.onPathReset += setSaveDataPath;
+            }
             file_LoadData.onPathSelect += (str) =>
              {
                  string json = File.ReadAllText(str);
@@ -56,7 +59,7 @@ namespace SekaiTools.UI.SysL2DShowEditorInitialize
         {
             SysL2DSelect.SysL2DSelect sysL2DSelect = 
                 WindowController.windowController.currentWindow.OpenWindow<SysL2DSelect.SysL2DSelect>(sysL2DSelectorPrefab);
-            sysL2DSelect.Initialize((data) =>
+            sysL2DSelect.Initialize(createdData,(data) =>
             {
                 createdData = data;
                 createdData.SavePath = file_SaveData.SelectedPath;
@@ -67,6 +70,9 @@ namespace SekaiTools.UI.SysL2DShowEditorInitialize
 
         void RefreshDataInfo()
         {
+            if (txt_DataInfo == null)
+                return;
+
             if(createdData == null)
             {
                 txt_DataInfo.text = "Çë´´½¨´æµµ";

@@ -72,13 +72,14 @@ namespace SekaiTools.UI.L2DModelDownloader
             Downloader.Downloader downloaderIter1 = window.OpenWindow<Downloader.Downloader>(downloaderPrefab);
             Downloader.Downloader.Settings settingsIter1 = new Downloader.Downloader.Settings();
             settingsIter1.downloadFiles = new DownloadFileInfo[] { downloadFileInfoIter1 };
+            settingsIter1.disableLogView = true;
             downloaderIter1.Initialize(settingsIter1);
             downloaderIter1.OnComplete += () =>
             {
                 if(downloaderIter1.HasError)
                 {
+                    downloaderIter1.EnableLogView();
                     WindowController.ShowMessage(Message.Error.STR_ERROR, "获取模型信息失败");
-                    downloaderIter1.window.Close();
                     return;
                 }
                 downloaderIter1.window.Close();
@@ -114,14 +115,15 @@ namespace SekaiTools.UI.L2DModelDownloader
                 Downloader.Downloader downloaderIter2 = window.OpenWindow<Downloader.Downloader>(downloaderPrefab);
                 Downloader.Downloader.Settings settingsIter2 = new Downloader.Downloader.Settings();
                 settingsIter2.downloadFiles = downloadFileInfos.ToArray();
+                settingsIter2.disableLogView = true;
                 downloaderIter2.Initialize(settingsIter2);
                 downloaderIter2.OnComplete +=
                 ()=>
                 {
                     if (downloaderIter2.HasError)
                     {
+                        downloaderIter2.EnableLogView();
                         WindowController.ShowMessage(Message.Error.STR_ERROR, "下载模型失败");
-                        downloaderIter2.window.Close();
                         return;
                     }
                     downloaderIter2.window.Close();

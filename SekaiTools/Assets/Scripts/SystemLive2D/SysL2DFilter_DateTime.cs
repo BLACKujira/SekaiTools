@@ -23,7 +23,7 @@ namespace SekaiTools.SystemLive2D
                 {
                     foreach (var msL2d in sysL2d.masterSystemLive2Ds)
                     {
-                        DateTime publishedAt = ExtensionTools.UnixTimeMSToDateTime(msL2d.publishedAt);
+                        DateTime publishedAt = ExtensionTools.UnixTimeMSToDateTimeTST(msL2d.publishedAt);
                         if (publishedAt > dateTimeStart && publishedAt < dateTimeEnd)
                             return true;
                     }

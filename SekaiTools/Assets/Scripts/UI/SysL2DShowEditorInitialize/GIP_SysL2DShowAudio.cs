@@ -107,7 +107,7 @@ namespace SekaiTools.UI.SysL2DShowEditorInitialize
             {
                 foreach (var folder in directories)
                 {
-                    if(folder.StartsWith(sysL2DShow.systemLive2D.AssetbundleName))
+                    if(folder.Equals(sysL2DShow.systemLive2D.AssetbundleName) || folder.Equals($"{sysL2DShow.systemLive2D.AssetbundleName}_rip"))
                     {
                         foreach (var file in files[folder])
                         {
@@ -145,11 +145,20 @@ namespace SekaiTools.UI.SysL2DShowEditorInitialize
             Downloader.Downloader.Settings settings = new Downloader.Downloader.Settings();
             settings.existingFileProcessingMode = ExistingFileProcessingMode.Pass;
             settings.downloadFiles = downloadFileInfos.ToArray();
+            settings.disableLogView = true;
 
             downloader.Initialize(settings);
             downloader.OnComplete += () =>
             {
-                downloader.window.Close();
+                if(downloader.HasError)
+                {
+                    downloader.EnableLogView();
+                    WindowController.ShowMessage(Message.Error.STR_ERROR, "存在未能下载的文件，创建的音频资料不包括这些文件");
+                }
+                else
+                {
+                    downloader.window.Close();
+                }
                 SaveFileDialog saveFileDialog = FileDialogFactory.GetSaveFileDialog(FileDialogFactory.FILTER_AUD);
                 saveFileDialog.FileName = Path.GetFileName(Path.ChangeExtension(sysL2DShowData.SavePath, ".aud"));
                 DialogResult dialogResult = saveFileDialog.ShowDialog();

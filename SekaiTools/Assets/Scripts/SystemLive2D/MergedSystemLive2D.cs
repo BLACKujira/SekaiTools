@@ -8,7 +8,20 @@ namespace SekaiTools.SystemLive2D
     [System.Serializable]
     public class MergedSystemLive2D
     {
-        public int CharacterId => masterSystemLive2Ds[0].characterId;
+        public int CharacterId
+        {
+            get
+            {
+                int characterId = masterSystemLive2Ds[0].characterId;
+                if (characterId >= 21 && characterId <= 56)
+                {
+                    return ConstData.GetUnitVirtualSinger(characterId, masterSystemLive2Ds[0].UnitType);
+                }
+                return characterId;
+            }
+        }
+        public int RawCharacterId => masterSystemLive2Ds[0].characterId;
+
         public string Unit => masterSystemLive2Ds[0].unit;
         public string Serif => masterSystemLive2Ds[0].serif;
         public string AssetbundleName => masterSystemLive2Ds[0].assetbundleName;
@@ -25,7 +38,7 @@ namespace SekaiTools.SystemLive2D
 
         public static bool CanMerge(MasterSystemLive2D a, MasterSystemLive2D b)
         {
-            return a.assetbundleName.Equals(b.assetbundleName) && a.voice.Equals(b.voice);
+            return a.serif.Equals(b.serif) && a.assetbundleName.Equals(b.assetbundleName) && a.voice.Equals(b.voice);
         }
 
         public bool CanMerge(MasterSystemLive2D masterSystemLive2D)

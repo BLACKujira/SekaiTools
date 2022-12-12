@@ -120,7 +120,7 @@ namespace SekaiTools.Live2D
             _audioSource = gameObject.AddComponent<AudioSource>();
             _audioSource.playOnAwake = false;
 
-            gameObject.AddComponent<CubismMouthController>().BlendMode = CubismParameterBlendMode.Additive;
+            gameObject.AddComponent<CubismMouthController>().BlendMode = CubismParameterBlendMode.Override;
             CubismAudioMouthInput cubismAudioMouthInput = gameObject.AddComponent<CubismAudioMouthInput>();
             cubismAudioMouthInput.AudioInput = _audioSource;
             cubismAudioMouthInput.Smoothing = 1;

@@ -36,7 +36,7 @@ namespace SekaiTools.UI.RadioInitialize
 
         public void Initialize()
         {
-            folder_Cards.defaultPath = $"{EnvPath.assets}/character/member";
+            folder_Cards.defaultPath = $"{EnvPath.Assets}/character/member";
             folder_Cards.ResetPath();
             stringList_Extensions.Initialize(extensions);
         }

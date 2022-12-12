@@ -8,14 +8,14 @@ namespace SekaiTools.UI
     public class ToggleGroupValueLoader : MonoBehaviour
     {
         public List<Toggle> toggles = new List<Toggle>();
-        public int value
+        public int Value
         {
             get
             {
                 for (int i = 0; i < toggles.Count; i++)
                 {
                     Toggle toggle = toggles[i];
-                    if (toggle.isOn) return i;
+                    if (toggle&&toggle.isOn) return i;
                 }
                 return -1;
             }

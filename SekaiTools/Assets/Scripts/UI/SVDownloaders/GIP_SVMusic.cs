@@ -29,7 +29,7 @@ namespace SekaiTools.UI.SVDownloaders
 
         public void Initialize()
         {
-            saveFolder.defaultPath = $"{EnvPath.assets}/music/long";
+            saveFolder.defaultPath = $"{EnvPath.Assets}/music/long";
             saveFolder.ResetPath();
         }
 

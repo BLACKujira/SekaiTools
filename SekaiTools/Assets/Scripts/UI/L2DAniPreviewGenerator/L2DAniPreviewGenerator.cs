@@ -84,9 +84,11 @@ namespace SekaiTools.UI.L2DAniPreviewGenerator
             set { if (mode == Mode.Motion) modelScale_Motion = value; else modelScale_Facial = value; }
         }
 
+        public SekaiLive2DModel currentModel = null;
+
         private void Awake()
         {
-            //animationSets = new List<L2DAnimationSet>(inbuiltAnimationSet.l2DAnimationSets);
+            animationSets = new List<L2DAnimationSet>(L2DModelLoader.InbuiltAnimationSet.L2DAnimationSetArray);
             Initialize();
             SetToggleGroupModel();
             SetToggleGroupAnimation();
@@ -94,38 +96,63 @@ namespace SekaiTools.UI.L2DAniPreviewGenerator
 
         void SetToggleGroupModel()
         {
-            //List<SekaiLive2DModel> modelList = ModelLoader.models;
-            //groupModel.Generate(modelList.Count,
-            //    (Toggle toggle, int id) => {
-            //        ToggleWithIconAndColor toggleWithIconAndColor = toggle.GetComponent<ToggleWithIconAndColor>();
-            //        toggleWithIconAndColor.SetIcon(toggleIconSet.icons[ConstData.IsLive2DModelOfCharacter(modelList[id].name)]);
-            //        toggleWithIconAndColor.SetLabel(modelList[id].name);
-            //    },
-            //    (bool value,int id)=>{
-            //        if(value)
-            //        {
-            //            ResetPositionAndScale();
-            //            l2DController.ShowModel(ModelLoader.models[id]);
-            //            if (!toggleMotionMode.isOn) toggleMotionMode.isOn = true;
-            //            Refresh();
-            //        }
-            //    }
-            //);
+            string[] modelList = L2DModelLoader.ModelList;
+            groupModel.Generate(modelList.Length,
+                (Toggle toggle, int id) =>
+                {
+                    ToggleWithIconAndColor toggleWithIconAndColor = toggle.GetComponent<ToggleWithIconAndColor>();
+                    int charId = ConstData.IsLive2DModelOfCharacter(modelList[id], false);
+                    if (charId != 0)
+                    {
+                        toggleWithIconAndColor.SetIcon(toggleIconSet.icons[charId]);
+                    }
+                    else
+                    {
+                        toggleWithIconAndColor.icon.color = Color.clear;
+                    }
+                    toggleWithIconAndColor.SetLabel(modelList[id]);
+                },
+                (bool value, int id) =>
+                {
+                    if (value)
+                    {
+                        l2DController.HideModel();
+                        if (currentModel) Destroy(currentModel.gameObject);
+                        L2DModelLoaderObjectBase l2DModelLoaderObjectBase = L2DModelLoader.LoadModel(modelList[id]);
+                        WindowController.ShowNowLoadingCenter(Message.Info.STR_NOW_LOADING_L2DMODEL, l2DModelLoaderObjectBase)
+                        .OnFinish += () =>
+                         {
+                             currentModel = l2DModelLoaderObjectBase.Model;
+                             l2DController.ShowModel(currentModel);
+                             ResetPositionAndScale();
+                             if (!toggleMotionMode.isOn) toggleMotionMode.isOn = true;
+                             Refresh();
+                         };
+                    }
+                }
+            );
         }
         void SetToggleGroupAnimation()
         {
             groupAnimation.Generate(animationSets.Count,
                 (Toggle toggle, int id) => {
                     ToggleWithIconAndColor toggleWithIconAndColor = toggle.GetComponent<ToggleWithIconAndColor>();
-                    if (id >= 0 && id < 27)
-                        toggleWithIconAndColor.SetIcon(toggleIconSet.icons[id+1]);
+                    int charId = ConstData.IsLive2DModelOfCharacter(animationSets[id].name);
+                    if (charId != 0)
+                    {
+                        toggleWithIconAndColor.SetIcon(toggleIconSet.icons[charId]);
+                    }
                     else
-                        toggleWithIconAndColor.SetIcon(toggleIconSet.icons[0]);
+                    {
+                        toggleWithIconAndColor.icon.color = Color.clear;
+                    }
                     toggleWithIconAndColor.SetLabel(animationSets[id].name);
                 },
                 (bool value, int id) => {
                     if (value)
+                    {
                         animationSet = animationSets[id];
+                    }
                 }
             );
         }
@@ -268,6 +295,12 @@ namespace SekaiTools.UI.L2DAniPreviewGenerator
         {
             if (Directory.Exists(savePathInputField.text)) applyButton.interactable = true;
             else applyButton.interactable = false;
+        }
+
+        public void OnDestroy()
+        {
+            if (currentModel)
+                Destroy(currentModel.gameObject);
         }
     }
 }

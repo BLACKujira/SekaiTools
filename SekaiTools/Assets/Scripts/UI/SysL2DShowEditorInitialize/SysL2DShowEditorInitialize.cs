@@ -53,7 +53,7 @@ namespace SekaiTools.UI.SysL2DShowEditorInitialize
             if(!string.IsNullOrEmpty(errors))
             {
                 WindowController.ShowLog(Message.Error.STR_ERROR, errors);
-                yield break; ;
+                yield break;
             }
 
             btnApply.interactable = false;

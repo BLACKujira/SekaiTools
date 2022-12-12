@@ -188,14 +188,35 @@ namespace SekaiTools
             }
         }
 
-        public static int IsLive2DModelOfCharacter(string name)
+        public static int IsLive2DModelOfCharacter(string name, bool mergeVirtualSinger = true)
         {
             for (int i = 1; i < 27; i++)
             {
                 string value = i.ToString("00")+((Character)i).ToString();
                 if (name.StartsWith(value))
                 {
-                    return i;
+                    if (mergeVirtualSinger)
+                        return i;
+                    else
+                    {
+                        if (i >= 21 && i <= 26)
+                        {
+                            string[] array = name.Split('_');
+                            if (array.Length < 2) return i;
+                            else
+                            {
+                                int[] ids = SeparateVirtualSinger(i);
+                                if (array[1].StartsWith("band")) return ids[1];
+                                else if (array[1].StartsWith("idol")) return ids[2];
+                                else if (array[1].StartsWith("street")) return ids[3];
+                                else if (array[1].StartsWith("wonder")) return ids[4];
+                                else if (array[1].StartsWith("night")) return ids[5];
+                                else return i;
+                            }
+                        }
+                        else
+                            return i;
+                    }
                 }
             }
             return 0;

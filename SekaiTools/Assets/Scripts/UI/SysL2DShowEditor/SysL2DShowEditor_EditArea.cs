@@ -13,16 +13,18 @@ namespace SekaiTools.UI.SysL2DShowEditor
         [Header("Components")]
         public Image imgCharIcon;
         public Text txtBaseInfo;
-        public Text txtOriText;
+        public InputField infOriText;
         public InputField infTraText;
         public Text txtVoice;
         public Text txtTimeRange;
         public InputField infTimeOverride;
+        public Button btnPlayVoice;
         [Header("Settings")]
         public IconSet charIconSet;
 
         SysL2DShow sysL2DShow;
         public SysL2DShow SysL2DShow => sysL2DShow;
+        AudioData AudioData => sysL2DShowEditor.player.AudioData;
 
         private void Awake()
         {
@@ -34,48 +36,17 @@ namespace SekaiTools.UI.SysL2DShowEditor
         {
             this.sysL2DShow = sysL2DShow;
 
-            if (sysL2DShow.systemLive2D.CharacterId == 21)
-            {
-                int iconId = 21;
-                switch (sysL2DShow.systemLive2D.UnitType)
-                {
-                    case DecompiledClass.UnitType.none:
-                        break;
-                    case DecompiledClass.UnitType.piapro:
-                        break;
-                    case DecompiledClass.UnitType.theme_park:
-                        iconId = 30;
-                        break;
-                    case DecompiledClass.UnitType.idol:
-                        iconId = 28;
-                        break;
-                    case DecompiledClass.UnitType.street:
-                        iconId = 29;
-                        break;
-                    case DecompiledClass.UnitType.light_sound:
-                        iconId = 27;
-                        break;
-                    case DecompiledClass.UnitType.school_refusal:
-                        iconId = 31;
-                        break;
-                    case DecompiledClass.UnitType.any:
-                        break;
-                }
-                imgCharIcon.sprite = charIconSet.icons[iconId];
-            }
-            else
-            {
-                imgCharIcon.sprite = charIconSet.icons[sysL2DShow.systemLive2D.CharacterId];
-            }
+            imgCharIcon.sprite = charIconSet.icons[sysL2DShow.systemLive2D.CharacterId];
             txtBaseInfo.text =
 $@"ID {string.Join("、 ",sysL2DShow.systemLive2D.masterSystemLive2Ds.Select((msl2d)=>msl2d.id.ToString()))}
 表情 {sysL2DShow.systemLive2D.Expression}  动作 {sysL2DShow.systemLive2D.Motion}";
-            txtOriText.text = sysL2DShow.systemLive2D.Serif;
+            infOriText.text = sysL2DShow.systemLive2D.Serif;
             infTraText.text = sysL2DShow.translationText;
             txtVoice.text = $"{sysL2DShow.systemLive2D.AssetbundleName} - {sysL2DShow.systemLive2D.Voice}";
+            btnPlayVoice.interactable = AudioData.ContainsValue($"{sysL2DShow.systemLive2D.AssetbundleName}-{sysL2DShow.systemLive2D.Voice}");
             txtTimeRange.text = string.Join("\n", 
                 sysL2DShow.systemLive2D.masterSystemLive2Ds
-                .Select((msl2d) => $"{ExtensionTools.UnixTimeMSToDateTime(msl2d.publishedAt):D} 到 {ExtensionTools.UnixTimeMSToDateTime(msl2d.publishedAt):D}"));
+                .Select((msl2d) => $"{ExtensionTools.UnixTimeMSToDateTimeTST(msl2d.publishedAt):D} 到 {ExtensionTools.UnixTimeMSToDateTimeTST(msl2d.closedAt):D}"));
             infTimeOverride.text = sysL2DShow.dateTimeOverrideText;
         }
     }

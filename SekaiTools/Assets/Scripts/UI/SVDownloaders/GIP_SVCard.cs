@@ -36,7 +36,7 @@ namespace SekaiTools.UI.SVDownloaders
 
         public void Initialize()
         {
-            folderSelectItem.defaultPath = $"{EnvPath.assets}/character/member";
+            folderSelectItem.defaultPath = $"{EnvPath.Assets}/character/member";
             folderSelectItem.ResetPath();
         }
     }

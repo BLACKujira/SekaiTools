@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SekaiTools.SekaiViewerInterface
 {
-    public enum ServerRegion { jp , tw , cn , en}
+    public enum ServerRegion { jp , tw , cn , en , kr }
 
 
     [System.Serializable]

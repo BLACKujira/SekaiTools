@@ -95,7 +95,7 @@ namespace SekaiTools.UI.RadioInitialize
             file_unitNames.defaultPath = Path.Combine(EnvPath.Inbuilt, "UnitNameCSV.txt");
             file_unitNames.ResetPath();
 
-            folder_SVMusic.defaultPath = $"{EnvPath.assets}/music/long";
+            folder_SVMusic.defaultPath = $"{EnvPath.Assets}/music/long";
             folder_SVMusic.ResetPath();
 
             stringList_Extensions.Initialize(extensions);

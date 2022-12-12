@@ -30,11 +30,12 @@ namespace SekaiTools.UI.SysL2DSelect
 
         Action<SysL2DShowData> onApply = null; 
 
-        public void Initialize(Action<SysL2DShowData> onApply)
+        public void Initialize(SysL2DShowData initData, Action<SysL2DShowData> onApply)
         {
             this.onApply = onApply;
             RefreshTable();
             filteredSystemLive2Ds = mergedSystemLive2Ds;
+            if (initData != null) selectSystemLive2Ds = initData.sysL2DShows;
 
             masterRefUpdateItem.OnTableUpdated += () =>
             {
@@ -43,6 +44,7 @@ namespace SekaiTools.UI.SysL2DSelect
             };
 
             Refresh_Addable();
+            Refresh_InData();
         }
 
         private void RefreshTable()

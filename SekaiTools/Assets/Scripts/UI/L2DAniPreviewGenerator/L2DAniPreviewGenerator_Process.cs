@@ -129,7 +129,7 @@ namespace SekaiTools.UI.L2DAniPreviewGenerator
         {
             Screen.SetResolution(originScreenSize.x, originScreenSize.y, ifFullScreen);
             l2DAniPreviewGenerator.l2DController.ShowModel(originModel);
-            if (cloneModel) Destroy(cloneModel);
+            if (cloneModel) Destroy(cloneModel.gameObject);
             l2DAniPreviewGenerator.ChangeModeToMotion();
             l2DAniPreviewGenerator.Refresh();
             card.ResetTextAndColor();

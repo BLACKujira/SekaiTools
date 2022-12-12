@@ -34,6 +34,7 @@ namespace SekaiTools
         public const string FILTER_NCS = "NicknameCountShowcase (*.ncs)|*.ncs|Others (*.*)|*.*";
         public const string FILTER_SS = "Spine场景 (*.ss)|*.ss|Others (*.*)|*.*";
         public const string FILTER_SAS = "Spine动画展示场景 (*.sas)|*.sas|Others (*.*)|*.*";
-        public const string FILTER_SlS = "系统Live2D展示场景 (*.sis)|*.sis|Others (*.*)|*.*";
+        public const string FILTER_SLS = "系统Live2D展示场景 (*.sls)|*.sls|Others (*.*)|*.*";
+        public const string FILTER_TXT = ".txt|*.txt";
     }
 }

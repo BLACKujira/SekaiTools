@@ -9,7 +9,6 @@ namespace SekaiTools.SystemLive2D
     public class SysL2DShowData : ISaveData
     {
         public List<SysL2DShow> sysL2DShows;
-
         public int[] AppearCharacters
         {
             get

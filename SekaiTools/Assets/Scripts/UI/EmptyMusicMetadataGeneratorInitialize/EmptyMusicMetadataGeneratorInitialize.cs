@@ -16,7 +16,7 @@ namespace SekaiTools.UI.EmptyMusicMetadataGeneratorInitialize
 
         private void Awake()
         {
-            gIP_PathSelect_Output.pathSelectItems[0].defaultPath = $"{EnvPath.output}\\EmptyMusicMetadata.txt";
+            gIP_PathSelect_Output.pathSelectItems[0].defaultPath = $"{EnvPath.Output}\\EmptyMusicMetadata.txt";
             gIP_PathSelect_Output.pathSelectItems[0].ResetPath();
         }
 

@@ -81,20 +81,7 @@ namespace SekaiTools.UI.L2DModelManagement
             if (dialogResult != DialogResult.OK) return;
             string selectedPath = folderBrowserDialog.SelectedPath;
 
-            List<string> files = new List<string>();
-            foreach (var dir in Directory.GetDirectories(selectedPath))
-            {
-                foreach (var file in Directory.GetFiles(dir))
-                {
-                    if (file.EndsWith(".model3.json"))
-                        files.Add(file);
-                }
-            }
-
-            foreach (var file in files)
-            {
-                L2DModelLoader.AddLocalModel(file);
-            }
+            L2DModelLoader.AddLocalModels(selectedPath);
 
             Refresh();
         }

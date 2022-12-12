@@ -16,10 +16,10 @@ namespace SekaiTools.UI.BPMDataCSVGeneratorInitialize
 
         private void Awake()
         {
-            gIP_PathSelect_Input.pathSelectItems[0].defaultPath = $"{EnvPath.assets}\\music\\music_score";
+            gIP_PathSelect_Input.pathSelectItems[0].defaultPath = $"{EnvPath.Assets}\\music\\music_score";
             gIP_PathSelect_Input.pathSelectItems[0].ResetPath();
 
-            gIP_PathSelect_Output.pathSelectItems[0].defaultPath = $"{EnvPath.output}\\MusicBPMCSV.txt";
+            gIP_PathSelect_Output.pathSelectItems[0].defaultPath = $"{EnvPath.Output}\\MusicBPMCSV.txt";
             gIP_PathSelect_Output.pathSelectItems[0].ResetPath();
         }
 
