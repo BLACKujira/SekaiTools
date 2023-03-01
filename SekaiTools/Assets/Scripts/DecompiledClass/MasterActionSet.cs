@@ -12,6 +12,9 @@ namespace SekaiTools.DecompiledClass
         public string scriptId;
         public string actionSetType;
         public string scenarioId;
+        public int specialSeasonId;
         public int[] characterIds;
+        public long archivePublishedAt;
+        public int releaseConditionId;
     }
 }

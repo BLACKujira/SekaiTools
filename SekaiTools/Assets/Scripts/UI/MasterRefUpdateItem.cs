@@ -18,10 +18,22 @@ namespace SekaiTools.UI
         public Text infoText;
         public Button updateButton;
 
+
+        public string TableName
+        {
+            get => nameText.text;
+            set
+            {
+                masterName = value;
+                infoText.text = string.Empty;
+                Refresh();
+            }
+        }
+
         public event Action OnTableUpdated;
 
-        public string savePath => Path.Combine(EnvPath.Sekai_master_db_diff[serverRegion], masterName + ".json");
-        public string url => $"{Url.MasterUrl[SekaiViewer.masterSever, serverRegion]}/{masterName}.json";
+        public string SavePath => Path.Combine(EnvPath.Sekai_master_db_diff[serverRegion], masterName + ".json");
+        public string Url => $"{SekaiViewerInterface.Utils.Url.MasterUrl[SekaiViewer.masterSever, serverRegion]}/{masterName}.json";
 
         private void Awake()
         {
@@ -57,14 +69,22 @@ namespace SekaiTools.UI
             }
             nameText.text = masterName;
             lastUpdateTimeText.text =
-                File.Exists(savePath) ?
-                "上次更新 " + File.GetLastAccessTime(savePath).ToString() :
+                File.Exists(SavePath) ?
+                "上次更新 " + File.GetLastWriteTime(SavePath).ToString() :
                 "数据表不存在，请更新数据表";
         }
 
         public void UpdateMaster()
         {
             StartCoroutine(IUpdateMaster());
+        }
+
+        public Coroutine UpdateMasterOn(MonoBehaviour updateOn = null)
+        {
+            if(updateOn != null)
+                return updateOn.StartCoroutine(IUpdateMaster());
+            else
+                return StartCoroutine(IUpdateMaster());
         }
 
         private void OnDestroy()
@@ -83,7 +103,7 @@ namespace SekaiTools.UI
                 && File.Exists(tempFilePath))
                 File.Delete(tempFilePath);
             tempFilePath = Path.GetTempFileName();
-            using (UnityWebRequest getRequest = UnityWebRequest.Get(url))
+            using (UnityWebRequest getRequest = UnityWebRequest.Get(Url))
             {
                 getRequest.downloadHandler = new DownloadHandlerFile(tempFilePath, false);
                 getRequest.SendWebRequest();
@@ -97,12 +117,12 @@ namespace SekaiTools.UI
                 }
                 else
                 {
-                    if (File.Exists(savePath))
-                        File.Delete(savePath);
-                    string path = Path.GetDirectoryName(savePath);
+                    if (File.Exists(SavePath))
+                        File.Delete(SavePath);
+                    string path = Path.GetDirectoryName(SavePath);
                     if (!Directory.Exists(path))
                         Directory.CreateDirectory(path);
-                    File.Copy(tempFilePath, savePath);
+                    File.Copy(tempFilePath, SavePath);
                     infoText.text = "更新完成";
                     OnTableUpdated?.Invoke();
                 }

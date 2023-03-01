@@ -13,6 +13,7 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
     /// <summary>
     /// 互动语音播放器/编辑器的初始化窗口
     /// </summary>
+    [Obsolete]
     public class CutinScenePlayerInitialize : MonoBehaviour
     {
         public Window window;
@@ -119,7 +120,7 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
         {
             if(openWindow.controlScript is CutinScenePlayer.CutinScenePlayer)
             {
-                CutinScenePlayer.CutinScenePlayer.CutinScenePlayerSettings cutinScenePlayerSettings = new CutinScenePlayer.CutinScenePlayer.CutinScenePlayerSettings();
+                CutinScenePlayer.CutinScenePlayer.Settings cutinScenePlayerSettings = new CutinScenePlayer.CutinScenePlayer.Settings();
                 cutinScenePlayerSettings.audioData = audioArea.audioData;
                 cutinScenePlayerSettings.cutinSceneData = cutinSceneData;
                 cutinScenePlayerSettings.sekaiLive2DModels = modelArea.sekaiLive2DModels;
@@ -129,7 +130,7 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
             }
             else if(openWindow.controlScript is CutinSceneEditor.CutinSceneEditor)
             {
-                CutinSceneEditor.CutinSceneEditor.CutinSceneEditorSettings cutinSceneEditorSettings = new CutinSceneEditor.CutinSceneEditor.CutinSceneEditorSettings();
+                CutinSceneEditor.CutinSceneEditor.Settings cutinSceneEditorSettings = new CutinSceneEditor.CutinSceneEditor.Settings();
                 cutinSceneEditorSettings.audioData = audioArea.audioData;
                 cutinSceneEditorSettings.cutinSceneData = cutinSceneData;
                 cutinSceneEditorSettings.sekaiLive2DModels = modelArea.sekaiLive2DModels;

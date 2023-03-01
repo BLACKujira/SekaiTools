@@ -11,12 +11,13 @@ namespace SekaiTools.UI.Transition
 {
     public abstract class Transition01Base : Transition
     {
-        public float removeBGPartAfter = 10;
-        public BackGroundPart triBurstPrefab;
+        public float removeAfter = 10;
+        public GameObject triBurstPrefab;
         public Image whiteImagePrefab;
+        public RawImage transitionImagePrefab;
 
         public BackGroundController BackGroundController { get => BackGroundController.backGroundController; }
-        protected List<BackGroundPart> currentBGParts = new List<BackGroundPart>();
+        protected List<GameObject> transitionObjects = new List<GameObject>();
 
         public override TransitionYieldInstruction StartTransition(IEnumerator changeCoroutine)
         {
@@ -46,16 +47,16 @@ namespace SekaiTools.UI.Transition
 
         protected abstract IEnumerator Transition(IEnumerator changeCoroutine, Action changeAction, TransitionYieldInstruction transitionYieldInstruction);
         
-        protected IEnumerator TransitionBase(IEnumerator changeCoroutine, Action changeAction, BackGroundPart backGroundPart, TransitionYieldInstruction transitionYieldInstruction)
+        protected IEnumerator TransitionBase(IEnumerator changeCoroutine, Action changeAction, GameObject transitionObject, TransitionYieldInstruction transitionYieldInstruction)
         {
-            List<BackGroundPart> bgps = new List<BackGroundPart>(currentBGParts);
-            foreach (var bgp in currentBGParts)
+            transitionObjects = new List<GameObject>();
+            foreach (var gobj in transitionObjects)
             {
-                if (!bgp)
-                    bgps.Remove(bgp);
+                if (gobj) Destroy(gobj);
             }
-            currentBGParts = bgps;
-            currentBGParts.Add(backGroundPart);
+            transitionObjects.Add(transitionObject);
+
+            RawImage transitionImage = Instantiate(transitionImagePrefab, targetTransform);
 
             Image whiteImage = Instantiate(whiteImagePrefab, targetTransform);
             whiteImage.color = new Color(1, 1, 1, 0);
@@ -69,17 +70,18 @@ namespace SekaiTools.UI.Transition
 
             yield return new WaitForSeconds(transitionTime / 2);
             Destroy(whiteImage.gameObject);
-            yield return new WaitForSeconds(removeBGPartAfter - transitionTime);
-            BackGroundController.RemoveDecoration(backGroundPart);
+            yield return new WaitForSeconds(removeAfter - transitionTime);
+            Destroy(transitionImage.gameObject);
+            Destroy(transitionObject);
         }
 
         public override void Abort()
         {
-            foreach (var backGroundPart in currentBGParts)
+            foreach (var gobj in transitionObjects)
             {
-                if (backGroundPart) BackGroundController.RemoveDecoration(backGroundPart);
+                if(gobj) Destroy(gobj);
             }
-            currentBGParts = new List<BackGroundPart>();
+            transitionObjects = new List<GameObject>();
         }
     }
 
@@ -104,9 +106,8 @@ namespace SekaiTools.UI.Transition
 
         protected override IEnumerator Transition(IEnumerator changeCoroutine, Action changeAction, TransitionYieldInstruction transitionYieldInstruction)
         {
-            BackGroundPart backGroundPart = BackGroundController.AddDecoration(triBurstPrefab);
-            backGroundPart.disableRemove = true;
-            yield return TransitionBase(changeCoroutine, changeAction, backGroundPart,transitionYieldInstruction);
+            GameObject transitionObject = Instantiate(triBurstPrefab);
+            yield return TransitionBase(changeCoroutine, changeAction, transitionObject,transitionYieldInstruction);
         }
     }
 }

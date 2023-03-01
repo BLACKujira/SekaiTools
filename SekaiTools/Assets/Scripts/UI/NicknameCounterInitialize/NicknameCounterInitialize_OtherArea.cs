@@ -10,7 +10,7 @@ namespace SekaiTools.UI.NicknameCounterInitialize
 {
     public class NicknameCounterInitialize_OtherArea : MonoBehaviour
     {
-        public NicknameCounterInitialize nicknameCounterInitialize;
+        public NicknameCounterInitialize_Old nicknameCounterInitialize;
         [Header("Components")]
         public UniversalGenerator universalGenerator;
         [Header("Prefab")]

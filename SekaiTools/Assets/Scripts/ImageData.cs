@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -13,6 +14,7 @@ namespace SekaiTools
     {
         Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
         Dictionary<Sprite, string> paths = new Dictionary<Sprite, string>();
+        Dictionary<string, string> abstractValues = new Dictionary<string, string>();
 
         public ImageData()
         {
@@ -20,10 +22,10 @@ namespace SekaiTools
 
         public ImageData(string savePath)
         {
-            this.savePath = savePath;
+            this.SavePath = savePath;
         }
 
-        public Sprite[] valueArray 
+        public Sprite[] ValueArray
         {
             get
             {
@@ -36,15 +38,13 @@ namespace SekaiTools
             }
         }
 
-        public string savePath { get; set; }
+        public string SavePath { get; set; }
 
-        public KeyValuePair<Sprite, string>[] valuePathPairArray
-        {
-            get
-            {
-                return new List<KeyValuePair<Sprite, string>>(paths).ToArray();
-            }
-        }
+        public KeyValuePair<Sprite, string>[] ValuePathPairArray => new List<KeyValuePair<Sprite, string>>(paths).ToArray();
+
+        public KeyValuePair<string, string>[] AbstractValuePathPairArray => new List<KeyValuePair<string, string>>(abstractValues).ToArray();
+
+        public string[] AbstractValueArray => abstractValues.Select(kvp => kvp.Key).ToArray();
 
         public IEnumerator LoadFile(params string[] files)
         {
@@ -75,20 +75,27 @@ namespace SekaiTools
                     break;
             }
             if (!flag) yield break;
-            string url = ConstData.WebRequestLocalFileHead + file;
-            using (UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(url))
+            if (File.Exists(file))
             {
-                yield return webRequest.SendWebRequest();
-                if (webRequest.isHttpError || webRequest.isNetworkError)
+                string url = ConstData.WebRequestLocalFileHead + file;
+                using (UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(url))
                 {
-                    yield break;
+                    yield return webRequest.SendWebRequest();
+                    if (webRequest.isHttpError || webRequest.isNetworkError)
+                    {
+                        yield break;
+                    }
+                    Texture2D texture = DownloadHandlerTexture.GetContent(webRequest);
+                    texture.name = Path.GetFileNameWithoutExtension(file);
+                    Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
+                    sprite.name = string.IsNullOrEmpty(name) ? texture.name : name;
+                    sprites[sprite.name] = sprite;
+                    paths[sprite] = file;
                 }
-                Texture2D texture = DownloadHandlerTexture.GetContent(webRequest);
-                texture.name = Path.GetFileNameWithoutExtension(file);
-                Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
-                sprite.name = texture.name;
-                sprites[sprite.name] = sprite;
-                paths[sprite] = file;
+            }
+            else
+            {
+                abstractValues[name] = file;
             }
         }
         IEnumerator LoadFile(SerializedImageData.DataItem imageDataItem)
@@ -104,10 +111,18 @@ namespace SekaiTools
 
         public bool RemoveValue(string name)
         {
-            if (!sprites.ContainsKey(name)) return false;
-            paths.Remove(sprites[name]);
-            sprites.Remove(name);
-            return true;
+            if (sprites.ContainsKey(name))
+            {
+                paths.Remove(sprites[name]);
+                sprites.Remove(name);
+                return true;
+            }
+            if (abstractValues.ContainsKey(name))
+            {
+                abstractValues.Remove(name);
+                return true;
+            }
+            return false;
         }
 
         public bool RemoveValue(Sprite value)
@@ -121,6 +136,7 @@ namespace SekaiTools
         public bool AppendValue(Sprite value, string savePath = null)
         {
             if (sprites.ContainsKey(value.name)) return false;
+            if (abstractValues.ContainsKey(value.name)) abstractValues.Remove(value.name);
             sprites[value.name] = value;
             paths[value] = savePath;
             return true;
@@ -140,9 +156,9 @@ namespace SekaiTools
 
         public void SaveData()
         {
-            SerializedImageData serializedImageData = new SerializedImageData(paths);
+            SerializedImageData serializedImageData = new SerializedImageData(paths, abstractValues);
             string json = JsonUtility.ToJson(serializedImageData, true);
-            File.WriteAllText(savePath, json);
+            File.WriteAllText(SavePath, json);
         }
 
         public bool ContainsValue(string name)
@@ -150,37 +166,136 @@ namespace SekaiTools
             return sprites.ContainsKey(name);
         }
 
-        [System.Serializable]
-        public class SerializedImageData
+        public int RemoveUnusedValue(IEnumerable<string> keys)
         {
-            [System.Serializable]
-            public class DataItem
+            int count = 0;
+            Sprite[] valueArray = this.ValueArray;
+            foreach (var sprite in valueArray)
             {
-                public string name;
-                public string path;
-
-                public DataItem(KeyValuePair<Sprite, string> keyValuePair)
+                if (!keys.Contains(sprite.name))
                 {
-                    this.name = keyValuePair.Key.name;
-                    this.path = keyValuePair.Value;
-                }
-
-                public DataItem(string name, string path)
-                {
-                    this.name = name;
-                    this.path = path;
+                    RemoveValue(sprite);
+                    count++;
                 }
             }
-            public List<DataItem> items = new List<DataItem>();
-
-            public SerializedImageData(Dictionary<Sprite, string> items)
+            string[] oldAbstractValues = abstractValues.Select(value => value.Key).ToArray();
+            foreach (var key in oldAbstractValues)
             {
-                this.items = new List<DataItem>();
-                foreach (var keyValuePair in items)
+                if(!keys.Contains(key)) 
                 {
-                    this.items.Add(new DataItem(keyValuePair));
+                    RemoveValue(key);
+                    count++;
                 }
             }
+            return count;
+        }
+
+        public bool AppendAbstractValue(string value, string savePath = null)
+        {
+            if (abstractValues.ContainsKey(value) || sprites.ContainsKey(value)) return false;
+            abstractValues[value] = savePath;
+            return true;
+        }
+
+        public bool ContainsAbstractValue(string name)
+        {
+            return abstractValues.ContainsKey(name);
+        }
+    }
+
+    [System.Serializable]
+    public class SerializedImageData
+    {
+        [System.Serializable]
+        public class DataItem
+        {
+            public string name;
+            public string path;
+
+            public DataItem(KeyValuePair<Sprite, string> keyValuePair)
+            {
+                this.name = keyValuePair.Key.name;
+                this.path = keyValuePair.Value;
+            }
+
+            public DataItem(string name, string path)
+            {
+                this.name = name;
+                this.path = path;
+            }
+        }
+        public List<DataItem> items = new List<DataItem>();
+
+        public SerializedImageData(Dictionary<Sprite, string> items, Dictionary<string, string> abstractValues)
+        {
+            this.items = new List<DataItem>();
+            foreach (var keyValuePair in items)
+            {
+                this.items.Add(new DataItem(keyValuePair));
+            }
+            foreach (var keyValuePair in abstractValues)
+            {
+                this.items.Add(new DataItem(keyValuePair.Key, keyValuePair.Value));
+            }
+        }
+
+        public SerializedImageData(Dictionary<string, string> items)
+        {
+            this.items = new List<DataItem>();
+            foreach (var keyValuePair in items)
+            {
+                this.items.Add(new DataItem(keyValuePair.Key, keyValuePair.Value));
+            }
+        }
+
+        public bool HasKey(string key)
+        {
+            foreach (var item in items)
+            {
+                if (item.name.Equals(key))
+                    return true;
+            }
+            return false;
+        }
+
+        public static SerializedImageData LoadData(string serializedData)
+        {
+            return JsonUtility.FromJson<SerializedImageData>(serializedData);
+        }
+
+        public Dictionary<string, string> GetDictionary()
+        {
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            foreach (var item in items)
+            {
+                dictionary[item.name] = item.path;
+            }
+            return dictionary;
+        }
+
+        public MediaMatchInfo GetImageMatchInfo(IEnumerable<string> requireKeys)
+        {
+            Dictionary<string, string> dictionary = GetDictionary();
+            MediaMatchInfo audioMatchInfo = new MediaMatchInfo();
+            foreach (var key in requireKeys)
+            {
+                if (dictionary.ContainsKey(key))
+                {
+                    if (File.Exists(dictionary[key]))
+                    {
+                        audioMatchInfo.matchcing++;
+                    }
+                    else
+                    {
+                        audioMatchInfo.missingFile++;
+                    }
+                }
+                else
+                {
+                    audioMatchInfo.missingKey++;
+                }
+            }
+            return audioMatchInfo;
         }
     }
 }

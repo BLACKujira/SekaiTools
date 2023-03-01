@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,6 +46,8 @@ namespace SekaiTools.UI.Transition
         public abstract ConfigUIItem[] configUIItems { get; }
 
         public abstract void Abort();
+
+        public virtual string DefaultSerializedTransition => string.Empty;
     }
 
     /// <summary>

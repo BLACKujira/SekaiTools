@@ -232,7 +232,7 @@ namespace SekaiTools.UI.Radio
                 DOTween.To(() => bgCardName.Alpha, (value) => bgCardName.Alpha = value, 1, fadeTime);
                 textCardName.DOFade(1, fadeTime);
 
-                switchableImage.ChangeImage(imageData.valueArray[0]).OnCompleteFadeOut((so,sn)=>
+                switchableImage.ChangeImage(imageData.ValueArray[0]).OnCompleteFadeOut((so,sn)=>
                 {
                     if (so)
                     {

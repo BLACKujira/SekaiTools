@@ -85,7 +85,7 @@ namespace SekaiTools.UI.Radio
                 return new SerifQueryResult(-1, -1, serifQueryInfo, new List<NicknameCountMatrix>());
             }
 
-            List<NicknameCountMatrix> processCountMatrices = new List<NicknameCountMatrix>(nicknameCountData.nicknameCountMatrices);
+            List<NicknameCountMatrix> processCountMatrices = new List<NicknameCountMatrix>(nicknameCountData.NicknameCountMatrices);
             QueryProcess(charA, charB, serifQueryInfo.filters, ref processCountMatrices);
             return new SerifQueryResult(charA, charB, serifQueryInfo, processCountMatrices);
         }

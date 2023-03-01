@@ -10,8 +10,8 @@ namespace SekaiTools.UI.NicknameCountShowcase
         [Header("Components")]
         public Image imageLeft;
         public Image imageRight;
-        public Image imageBGLeft;
-        public Image imageBGRight;
+        public Image[] imageBGLeft;
+        public Image[] imageBGRight;
         public Text textTotal;
         public Text textLeftCount;
         public Text textRightCount;
@@ -23,8 +23,14 @@ namespace SekaiTools.UI.NicknameCountShowcase
             imageLeft.sprite = iconSet.icons[leftId];
             imageRight.sprite = iconSet.icons[rightId];
 
-            imageBGLeft.color = ConstData.characters[leftId].imageColor;
-            imageBGRight.color = ConstData.characters[rightId].imageColor;
+            foreach (Image image in imageBGLeft) 
+            {
+                image.color = ConstData.characters[leftId].imageColor;
+            }
+            foreach (Image image in imageBGRight)
+            {
+                image.color = ConstData.characters[rightId].imageColor;
+            }
 
             textLeftCount.text = countLeft.ToString("000");
             textRightCount.text = countRight.ToString("000");

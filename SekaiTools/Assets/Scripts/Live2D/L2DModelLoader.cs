@@ -8,6 +8,8 @@ using Live2D.Cubism.Core;
 using System.Collections.Generic;
 using System.IO;
 using SekaiTools.UI.L2DModelSelect;
+using System;
+using Object = UnityEngine.Object;
 
 namespace SekaiTools.Live2D
 {
@@ -26,6 +28,11 @@ namespace SekaiTools.Live2D
         public static InbuiltImageData ModelPreviews => l2DModelLoader.modelPreviews;
 
         protected List<LocalModelMeta> localModelMetas = new List<LocalModelMeta>();
+
+        IEnumerator ILoadModel(L2DModelLoaderObjectBase l2DModelLoaderObjectBase)
+        {
+            yield return l2DModelLoaderObjectBase;
+        }
 
         public static string[] ModelList
         {
@@ -50,7 +57,7 @@ namespace SekaiTools.Live2D
             }
         }
 
-        public static L2DModelLoaderObjectBase LoadModel(string modelName)
+        public static L2DModelLoaderObjectBase LoadModel(string modelName, Action<SekaiLive2DModel> onComplete = null)
         {
             foreach (var sekaiLive2DModel in l2DModelLoader.inbuiltModelSet.inbuiltModelPrefabs)
             {
@@ -58,7 +65,7 @@ namespace SekaiTools.Live2D
                 {
                     L2DModelLoaderObjectInbuilt l2DModelLoaderObject = new L2DModelLoaderObjectInbuilt();
                     l2DModelLoader.StartCoroutine(
-                        l2DModelLoaderObject.LoadModel(sekaiLive2DModel));
+                        l2DModelLoaderObject.LoadModel(sekaiLive2DModel,onComplete));
                     return l2DModelLoaderObject;
                 }
             }
@@ -69,12 +76,22 @@ namespace SekaiTools.Live2D
                 {
                     L2DModelLoaderObjectFile l2DModelLoaderObject = new L2DModelLoaderObjectFile();
                     l2DModelLoader.StartCoroutine(
-                        l2DModelLoaderObject.LoadModel(localModelMeta.modelPath));
+                        l2DModelLoaderObject.LoadModel(localModelMeta.modelPath,onComplete));
                     return l2DModelLoaderObject;
                 }
             }
 
             return null;
+        }
+
+        public static L2DModelLoaderObjectBase LoadModel(SelectedModelInfo selectedModelInfo, Action<SekaiLive2DModel> onComplete = null)
+        {
+            return LoadModel(selectedModelInfo.modelName, (model) =>
+            {
+                if(model!=null)
+                    model.AnimationSet = InbuiltAnimationSet.GetAnimationSet(selectedModelInfo.animationSet);
+                onComplete?.Invoke(model);
+            });
         }
 
         public static ModelInfo GetModelInfo(string modelName)
@@ -236,7 +253,7 @@ namespace SekaiTools.Live2D
 
     public class L2DModelLoaderObjectFile : L2DModelLoaderObjectBase
     {
-        public IEnumerator LoadModel(string path)
+        public IEnumerator LoadModel(string path,Action<SekaiLive2DModel> onComplete = null)
         {
             CubismModel3Json modelJson = CubismModel3Json.LoadAtPath(path, CubismViewerIo.LoadAsset);
             CubismModel model = modelJson.ToModel(true);
@@ -268,12 +285,14 @@ namespace SekaiTools.Live2D
 
             this.model = sekaiLive2DModel;
             _keepWaiting = false;
+
+            onComplete?.Invoke(sekaiLive2DModel);
         }
     }
 
     public class L2DModelLoaderObjectInbuilt : L2DModelLoaderObjectBase
     {
-        public IEnumerator LoadModel(CubismModel prefab)
+        public IEnumerator LoadModel(CubismModel prefab,Action<SekaiLive2DModel> onComplete = null)
         {
             model = Object.Instantiate(prefab).gameObject.AddComponent<SekaiLive2DModel>();
             model.name = prefab.name;
@@ -296,6 +315,8 @@ namespace SekaiTools.Live2D
             model.gameObject.SetActive(false);
 
             _keepWaiting = false;
+
+            onComplete?.Invoke(model);
         }
     }
 

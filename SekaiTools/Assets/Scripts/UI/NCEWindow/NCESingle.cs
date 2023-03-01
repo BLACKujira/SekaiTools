@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using SekaiTools.Count;
+using UnityEngine.UI;
 
 namespace SekaiTools.UI.NCEWindow
 {
-    public class NCESingle : MonoBehaviour
+    public class NCESingle : NCEBase
     {
         public Window window;
         [Header("Components")]
@@ -14,21 +14,25 @@ namespace SekaiTools.UI.NCEWindow
         public VerticalLayoutGroup verticalLayoutGroup;
         public Image countNumberBG;
         public Text countNumber;
+        public Text lblStoryName;
+        public Text lblPublishedAt;
         public Toggle toggleScreening;
         [Header("Prefab")]
         public NCESingle_TalkLogItem talkLogItemPrefab;
         public NCESingle_TalkLogItem talkLogItemEmptyPrefab;
 
-        NicknameCountMatrix nicknameCountMatrix;
-        int talkerId;
-        int nameId;
-        List<NCESingle_TalkLogItem> talkLogItems = new List<NCESingle_TalkLogItem>();
+        protected NicknameCountMatrix nicknameCountMatrix;
+        protected int talkerId;
+        protected int nameId;
+        protected List<NCESingle_TalkLogItem> talkLogItems = new List<NCESingle_TalkLogItem>();
 
-        public void Initialize(NicknameCountMatrix nicknameCountMatrix, int talkerId,int nameId)
+        public void Initialize(NicknameCountMatrix nicknameCountMatrix, int talkerId, int nameId, StoryDescriptionGetter storyDescriptionGetter)
         {
             this.nicknameCountMatrix = nicknameCountMatrix;
             this.talkerId = talkerId;
             this.nameId = nameId;
+            if (lblStoryName != null) lblStoryName.text = storyDescriptionGetter.GetStroyDescription(nicknameCountMatrix.storyType, nicknameCountMatrix.fileName);
+            if (lblPublishedAt != null) lblPublishedAt.text = $"剧情开始时间 {nicknameCountMatrix.PublishedAt}";
             countNumberBG.color = ConstData.characters[talkerId].imageColor;
             Refresh();
         }
@@ -56,8 +60,10 @@ namespace SekaiTools.UI.NCEWindow
                 talkLogItems.Add(talkLogItem);
             }
             if (talkLogItems.Count == 0) talkLogItems.Add(Instantiate(talkLogItemEmptyPrefab, contentTransform));
+
             verticalLayoutGroup.enabled = false;
             verticalLayoutGroup.enabled = true;
+
             RefreshCountNumber();
         }
     }

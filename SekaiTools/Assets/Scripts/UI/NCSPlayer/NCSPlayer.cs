@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using SekaiTools.UI.NicknameCountShowcase;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,7 +21,7 @@ namespace SekaiTools.UI.NCSPlayer
             }
         }
 
-        public void Initialize(NCSPlayer_Player.Settings settings)
+        public void Initialize(NCSPlayerBase.Settings settings)
         {
             player.Initialize(settings);
         }

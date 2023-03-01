@@ -8,7 +8,7 @@ namespace SekaiTools.UI.GenericInitializationParts
     public class GIP_MasterRefUpdate : MonoBehaviour, IGenericInitializationPart
     {
         MasterRefUpdateCheck masterRefUpdateCheck;
-        MasterRefUpdateCheck MasterRefUpdateCheck
+        public MasterRefUpdateCheck MasterRefUpdateCheck
         {
             get
             {
@@ -26,5 +26,7 @@ namespace SekaiTools.UI.GenericInitializationParts
             else
                 return null;
         }
+
+        public void SetMasterRefUpdateItems(params IEnumerable<string>[] tableNames) => MasterRefUpdateCheck.SetMasterRefUpdateItems(tableNames);
     }
 }

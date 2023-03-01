@@ -14,7 +14,7 @@ namespace SekaiTools.UI.KizunaScenePlayer
     {
         [Header("Components")]
         public KizunaScenePlayerBase_Player_MainBase mainArea;
-        public TalkWindow talkWindow;
+        public RectTransform rtTalkWindow;
         public L2DControllerTypeB l2DController;
         public KizunaScenePlayer_BGController bGController;
         [Header("Settings")]
@@ -28,6 +28,7 @@ namespace SekaiTools.UI.KizunaScenePlayer
         public float waitTime_Scene;
         public float gridFadeTime = 1.5f;
         public float minHoldTime;
+        public CutinScenePlayerSet cutinPlayerSet;
         [Header("Exception")]
         public MonoBehaviour _exceptionPrinter;
 
@@ -37,9 +38,23 @@ namespace SekaiTools.UI.KizunaScenePlayer
         [NonSerialized] public ImageData imageData;
         [NonSerialized] public KizunaSceneDataBase kizunaSceneData;
 
-        public void Initialize()
+        TalkWindow talkWindow;
+
+        public void Initialize(KizunaSceneEditor.KizunaSceneEditor.Settings settings)
         {
-            if(mainArea is KizunaScenePlayer_Player_Main)
+            audioData = settings.audioData;
+            imageData = settings.imageData;
+            kizunaSceneData = settings.kizunaSceneData;
+            l2DController.live2DModels = settings.sekaiLive2DModels;
+            l2DController.ResetAllModels();
+            l2DController.FadeOutAll(0);
+            bGController.Initialize(settings.backGroundParts);
+
+            CutinScenePlayerSet_Item cutinScenePlayerSet_Item
+                = cutinPlayerSet.GetItem(kizunaSceneData.cutinPlayerType) ?? cutinPlayerSet.DefaultItem;
+            talkWindow = Instantiate(cutinScenePlayerSet_Item.player.talkWindow, rtTalkWindow);
+
+            if (mainArea is KizunaScenePlayer_Player_Main)
             {
                 ((KizunaScenePlayer_Player_Main)mainArea).Initialize(imageData);
             }
@@ -83,7 +98,6 @@ namespace SekaiTools.UI.KizunaScenePlayer
 
         IEnumerator IPlayScene(KizunaSceneBase scene)
         {
-
             bGController.SetScene(scene);
             l2DController.HideModelAll();
             l2DController.ShowModelLeft((Character)scene.charAID);
@@ -95,8 +109,6 @@ namespace SekaiTools.UI.KizunaScenePlayer
 
             l2DController.modelL.StopAllAnimation();
             l2DController.modelR.StopAllAnimation();
-
-            l2DController.FadeInAll();
 
             //播放动画
             try
@@ -116,8 +128,11 @@ namespace SekaiTools.UI.KizunaScenePlayer
                 exceptionPrinter.PrintException(ex);
             }
 
+            yield return new WaitForSeconds(.15f);
+            l2DController.FadeInAll(.25f);
+
             //展开成就牌子
-            if(scene is KizunaScene)
+            if (scene is KizunaScene)
             {
                 ((KizunaScenePlayer_Player_Main)mainArea).SetScene((KizunaScene)scene);
             }
@@ -152,11 +167,11 @@ namespace SekaiTools.UI.KizunaScenePlayer
                     {
                         if (cutinScene.charFirstID==scene.charAID&&cutinScene.charSecondID==scene.charBID)
                         {
-                            yield return IPlayCutinScene(cutinScene, l2DController.modelL, l2DController.modelR);
+                            yield return IPlayCutinScene(cutinScene, l2DController.modelL, l2DController.modelR, true);
                         }
                         else
                         {
-                            yield return IPlayCutinScene(cutinScene, l2DController.modelR, l2DController.modelL);
+                            yield return IPlayCutinScene(cutinScene, l2DController.modelR, l2DController.modelL, true);
                         }
                     }
                     else
@@ -171,10 +186,12 @@ namespace SekaiTools.UI.KizunaScenePlayer
                         yield return IPlayCutinScene(cutinScene, l2DController.modelL, l2DController.modelR);
                     }
                     talkWindow.Clear();
+                    if(i== scene.cutinScenes.Count-1)
+                        talkWindow.Close();
                     l2DController.FadeOutAll();
                     yield return new WaitForSeconds(waitTime_Scene);
                 }
-                talkWindow.Close();
+
                 bGController.FadeInGrid(gridFadeTime);
             }
             else
@@ -186,7 +203,7 @@ namespace SekaiTools.UI.KizunaScenePlayer
             }
 
         }
-        IEnumerator IPlayCutinScene(CutinScene scene, SekaiLive2DModel modelL, SekaiLive2DModel modelR)
+        IEnumerator IPlayCutinScene(CutinScene scene, SekaiLive2DModel modelL, SekaiLive2DModel modelR,bool firstScene = false)
         {
 
             #region 播放互动语音
@@ -201,7 +218,7 @@ namespace SekaiTools.UI.KizunaScenePlayer
             }
             try
             {
-                modelR.PlayAnimation(scene.talkData_First.motionCharSecond, scene.talkData_First.facialCharSecond, Mathf.Infinity);
+                modelR.PlayAnimation(scene.talkData_First.motionCharSecond, scene.talkData_First.facialCharSecond, firstScene?1:Mathf.Infinity);
             }
             catch (SekaiException ex)
             {

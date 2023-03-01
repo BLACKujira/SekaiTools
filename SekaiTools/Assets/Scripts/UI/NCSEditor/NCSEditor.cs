@@ -6,6 +6,7 @@ using SekaiTools.Count.Showcase;
 using UnityEngine.UI;
 using SekaiTools.Count;
 using System.IO;
+using SekaiTools.UI.MessageLayer;
 
 namespace SekaiTools.UI.NCSEditor
 {
@@ -14,29 +15,18 @@ namespace SekaiTools.UI.NCSEditor
         public Window window;
         [Header("Components")]
         public UniversalGenerator universalGenerator;
-        [Header("Setting")]
+        public MessageLayerBase messageLayer;
+        public SaveTipCloseWindowButton saveTipCloseWindowButton;
         [Header("Prefab")]
         public Window itemSelectorWindow;
         public GameObject addItemButton;
 
-        public NCSSceneSet nCSSceneSet => GlobalData.globalData.nCSSceneSet;
+        public NCSSceneSet NCSSceneSet => GlobalData.globalData.nCSSceneSet;
 
-        private void Awake()
+        public override void Initialize(Settings settings)
         {
-            countData = NicknameCountData.Load(@"D:\BackUp\220528\0");
-            audioData = new AudioData(@"D:\BackUp\220528\0\save.aud");
-            NowLoadingTypeA nowLoadingTypeA = WindowController.windowController.currentWindow.OpenWindow<NowLoadingTypeA>(WindowController.windowController.nowLoadingTypeAWindow);
-            nowLoadingTypeA.OnFinish += () => 
-            {
-                showcase = Count.Showcase.NicknameCountShowcase.LoadData(@"D:\BackUp\220528\0\save.ncs");
-                Initialize(showcase); 
-            };
-            nowLoadingTypeA.StartProcess(audioData.LoadData(File.ReadAllText(audioData.savePath)));
-        }
-
-        public void Initialize(Count.Showcase.NicknameCountShowcase showcase)
-        {
-            this.showcase = showcase;
+            base.Initialize(settings);
+            saveTipCloseWindowButton.Initialize(() => showcase.SavePath);
             Refresh();
         }
 
@@ -55,17 +45,19 @@ namespace SekaiTools.UI.NCSEditor
                  button.onClick.AddListener(() =>
                  {
                      UniversalSelector universalSelector = window.OpenWindow<UniversalSelector>(itemSelectorWindow);
-                     universalSelector.Generate(nCSSceneSet.nCSScenes.Count,
+                     universalSelector.Generate(NCSSceneSet.nCSScenes.Count,
                          (btn, id) =>
                          {
                              var nCSSceneSelector_Item = btn.GetComponent<NCSSceneSelector.NCSSceneSelector_Item>();
-                             nCSSceneSelector_Item.Initialize(nCSSceneSet.nCSScenes[id]);
+                             nCSSceneSelector_Item.Initialize(NCSSceneSet.nCSScenes[id]);
                          },
                          (id) =>
                          {
-                             NCSScene nCSScene = showcase.AddScene(nCSSceneSet.nCSScenes[id]);
+                             NCSScene nCSScene = showcase.AddScene(NCSSceneSet.nCSScenes[id]);
                              nCSScene.Initialize(this);
                              nCSScene.NewData();
+                             nCSScene.Refresh();
+                             nCSScene.gameObject.SetActive(false);
                              universalSelector.window.Close();
                              Refresh();
                          });
@@ -75,27 +67,30 @@ namespace SekaiTools.UI.NCSEditor
 
         public void Save()
         {
-            AudioData audioData = new AudioData(this.audioData.savePath);
+            HashSet<string> audioKeys = new HashSet<string>();
+            HashSet<string> imageKeys = new HashSet<string>();
+
             foreach (var scene in showcase.scenes)
             {
                 scene.nCSSceneSettings = scene.nCSScene.GetSaveData();
 
-                IAudioFileReference audioFileReference = scene.nCSScene as IAudioFileReference;
-                if (audioFileReference!=null)
+                if (scene.nCSScene is IAudioFileReference audioFileReference)
                 {
-                    scene.nCSScene.player = this;
-                    foreach (var keyValuePair in audioFileReference.audioFiles)
-                    {
-                        audioData.AppendValue(keyValuePair.Key, keyValuePair.Value);
-                    }
+                    audioKeys.UnionWith(audioFileReference.RequireAudioKeys);
+                }
+                if(scene.nCSScene is IImageFileReference imageFileReference) 
+                {
+                    imageKeys.UnionWith(imageFileReference.RequireImageKeys);
                 }
             }
-            this.audioData = audioData;
+            audioData.RemoveUnusedValue(audioKeys);
+            imageData.RemoveUnusedValue(imageKeys);
 
             showcase.SaveData();
-            this.audioData.SaveData();
+            audioData.SaveData();
+            imageData.SaveData();
 
-            Debug.Log("保存完成");
+            messageLayer.ShowMessage(Message.IO.STR_SAVECOMPLETE);
         }
     }
 }

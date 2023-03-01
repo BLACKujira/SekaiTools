@@ -40,7 +40,8 @@ namespace SekaiTools
         public static readonly int layerLive2D = 8;
         public static readonly int layerBackGround = 9;
         public static readonly string defaultSpineAnimation = "pose_default";
-        public static string saveDataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games","SekaiTools");
+        public static long GamePublishedAt = 1601391600000;
+        [Obsolete("use EnvPath.Config")] public static string SaveDataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Games", "SekaiTools");
 
         public class Characters
         {
@@ -289,6 +290,41 @@ namespace SekaiTools
             if (!int.TryParse(nameArray[2], out int chapter)) return null;
             return new UnitStoryInfo(nameArray[0], season, chapter);
         }
+        public static CutinVoiceInfo IsCutinVoice(string name)
+        {
+            string[] nameArray = name.Split('_');
+            if (nameArray.Length < 5) return null;
+            if (!nameArray[0].Equals("system")) return null;
+            if(nameArray[1].Equals("bondscp"))
+            {
+                if (nameArray.Length < 6) return null;
+                if (!(int.TryParse(nameArray[2], out int charFId) && int.TryParse(nameArray[3], out int charSId))) return null;
+                if (!(nameArray[4].Equals("first") || nameArray[4].Equals("second"))) return null;
+                if (!int.TryParse(nameArray[5].Substring(0, 1), out int index)) return null;
+                return new CutinVoiceInfo(nameArray[1], charFId, charSId, nameArray[4], index);
+            }
+            else if(nameArray[1].Equals("commoncp"))
+            {
+                if (!int.TryParse(nameArray[2], out int charId)) return null;
+                int charFId = 0;
+                int charSId = 0;
+                if(nameArray[3].Equals("first"))
+                {
+                    charFId = charId;
+                }
+                else if(nameArray[3].Equals("second"))
+                {
+                    charSId = charId;
+                }
+                else
+                {
+                    return null;
+                }
+                if (!int.TryParse(nameArray[4].Substring(0, 1), out int index)) return null;
+                return new CutinVoiceInfo(nameArray[1], charFId, charSId, nameArray[3], index);
+            }
+            return null;
+        }
 
         public static readonly string[] characterNames_Roman =
         {
@@ -498,8 +534,23 @@ namespace SekaiTools
             }
         }
 
+        /// <summary>
+        /// 如果其中一个角色ID是虚拟歌手，并且另一个角色ID是原创角色，则将虚拟歌手的ID换为原创角色所属组合的虚拟歌手
+        /// </summary>
+        /// <param name="charId1"></param>
+        /// <param name="charId2"></param>
+        public static void ConvergeVirtualSingerToCharacter(ref int charAID, ref int charBID)
+        {
+            if ((charAID >= 1 && charAID <= 20) && (charBID >= 21 && charBID <= 26))
+            {
+                charBID = ConstData.GetUnitVirtualSinger(charBID, ConstData.characters[charAID].unit);
+            }
+            else if ((charBID >= 1 && charBID <= 20) && (charAID >= 21 && charAID <= 26))
+            {
+                charAID = ConstData.GetUnitVirtualSinger(charAID, ConstData.characters[charBID].unit);
+            }
+        }
     }
-
 
     [Serializable]
     public class EventStoryInfo
@@ -520,6 +571,8 @@ namespace SekaiTools
         public int charId;
         public int cardId;
         public int chapter;
+
+        public string AssetbundleName => $"res{charId.ToString("000")}_no{cardId.ToString("000")}";
 
         public CardStoryInfo(int charId, int cardId, int chapter)
         {
@@ -544,7 +597,80 @@ namespace SekaiTools
         }
     }
 
-    public enum StoryType
-    { UnitStory, EventStory, CardStory, MapTalk, LiveTalk, OtherStory }
+    [Serializable]
+    public class CutinVoiceInfo
+    {
+        public string type;
+        public int charFirstId;
+        public int charSecondId;
+        public string order;
+        public int index;
 
+        public CutinVoiceType Type => Enum.TryParse(type, out CutinVoiceType outType) ? outType : CutinVoiceType.none;
+        public CutinVoiceOrder Order => Enum.TryParse(order, out CutinVoiceOrder outType) ? outType : CutinVoiceOrder.none;
+
+        public string StandardizeName
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case CutinVoiceType.none:
+                        return null;
+                    case CutinVoiceType.commoncp:
+                        return $"system_commoncp_{(Order==CutinVoiceOrder.second?charSecondId:charFirstId):000}_{order}_{index}";
+                    case CutinVoiceType.bondscp:
+                        return $"system_bondscp_{charFirstId:000}_{charSecondId:000}_{order}_{index}";
+                    default:
+                        return null;
+                }
+            }
+        }
+
+        public CutinVoiceInfo(string type, int charFirstId, int charSecondId, string order, int index)
+        {
+            this.type = type;
+            this.charFirstId = charFirstId;
+            this.charSecondId = charSecondId;
+            this.order = order;
+            this.index = index;
+        }
+
+        public CutinVoiceInfo(CutinVoiceType type, int charFirstId, int charSecondId, CutinVoiceOrder order, int index)
+        {
+            this.type = type.ToString();
+            this.charFirstId = charFirstId;
+            this.charSecondId = charSecondId;
+            this.order = order.ToString();
+            this.index = index;
+        }
+    }
+
+    public enum CutinVoiceType
+    { none,commoncp, bondscp }
+    public enum CutinVoiceOrder
+    { none,first, second }
+
+    public enum StoryType
+    { UnitStory, EventStory, CardStory, MapTalk, LiveTalk, OtherStory, SystemVoice }
+
+    public interface IAudioFileReference
+    {
+        /// <summary>
+        /// Key:AudioKey Value:Path
+        /// </summary>
+        HashSet<string> RequireAudioKeys { get; }
+    }
+    public interface IImageFileReference
+    {
+        /// <summary>
+        /// Key:ImageKey Value:Path
+        /// </summary>
+        HashSet<string> RequireImageKeys { get; }
+    }
+
+    public interface ILive2DReferenceCharacter
+    {
+        int l2dReferenceCharacterID { get; }
+    }
 }

@@ -50,8 +50,10 @@ namespace SekaiTools.UI
             WaitForSeconds waitForSeconds = new WaitForSeconds(wordInterval);
             for (int i = 0; i < words.Length + 1 || i < translation.Length + 1; i++)
             {
-                if (!string.IsNullOrEmpty(words)) wordsLabel.text = words.Substring(0, Mathf.Min(i, words.Length));
-                if (!string.IsNullOrEmpty(translation)) translationLabel.text = translation.Substring(0, Mathf.Min(i, translation.Length));
+                if (!string.IsNullOrEmpty(words) && wordsLabel)
+                    wordsLabel.text = words.Substring(0, Mathf.Min(i, words.Length));
+                if (!string.IsNullOrEmpty(translation)&& translationLabel) 
+                    translationLabel.text = translation.Substring(0, Mathf.Min(i, translation.Length));
                 yield return waitForSeconds;
             }
             IfEndShowWords = true;

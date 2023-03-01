@@ -61,9 +61,9 @@ namespace SekaiTools.UI.L2DModelPreview
         {
             if (audioData != null)
             {
-                Model.PlayVoice(audioData.valueArray[0]);
+                Model.PlayVoice(audioData.ValueArray[0]);
                 if(OnPlayVoice!=null) 
-                    OnPlayVoice(audioData.valueArray[0]);
+                    OnPlayVoice(audioData.ValueArray[0]);
             }
         }
 
@@ -169,7 +169,7 @@ namespace SekaiTools.UI.L2DModelPreview
                 }
                 else
                 {
-                    txtVoice.text = audioData.valueArray[0].name;
+                    txtVoice.text = audioData.ValueArray[0].name;
                     btnPlayVoice.interactable = true;
                 }
             }

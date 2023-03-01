@@ -21,13 +21,7 @@ namespace SekaiTools.DecompiledClass
         public int? character3dId5;
         public int? character3dId6;
         [IgnoreMember]
-        public VirtualLiveSetlistType VirtualLiveSetlistType
-        {
-            get
-            {
-                return default;
-            }
-        }
+        public VirtualLiveSetlistType VirtualLiveSetlistType => (VirtualLiveSetlistType)Enum.Parse(typeof(VirtualLiveSetlistType), virtualLiveSetlistType);
 
         [IgnoreMember]
         public int[] Character3dIds

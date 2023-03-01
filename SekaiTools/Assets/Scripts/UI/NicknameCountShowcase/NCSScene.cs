@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using SekaiTools.Count;
 using UnityEngine;
-using SekaiTools.Count;
 
 namespace SekaiTools.UI.NicknameCountShowcase
 {
@@ -28,17 +26,14 @@ namespace SekaiTools.UI.NicknameCountShowcase
         {
             return holdTime.ToString();
         }
-        public virtual void LoadData(string serialisedData)
+        public virtual void LoadData(string serializedData)
         {
-            holdTime = float.Parse(serialisedData);
+            holdTime = float.Parse(serializedData);
         }
-        public virtual void NewData()
-        {
-
-        }
+        public virtual void NewData() { }
         public virtual ConfigUIItem[] configUIItems => new ConfigUIItem[]
             {new ConfigUIItem_Float("持续时间","scene",()=>holdTime,(value)=>holdTime = value)};
-        public virtual string information => $"持续时间 {holdTime.ToString("0.00")}";
+        public virtual string Information => $"持续时间 {holdTime:0.00}";
 
         public virtual void Initialize(NCSPlayerBase player)
         {

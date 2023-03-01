@@ -30,26 +30,15 @@ namespace SekaiTools.UI.NicknameSetting
             if (imageGlobal.gameObject.activeSelf) imageGlobal.gameObject.SetActive(false);
         }
 
-        static bool RegexCheck(string pattern)
-        {
-            if (string.IsNullOrEmpty(pattern)) return false;
-            try
-            {
-                new Regex(pattern);
-            }
-            catch { return false; }
-            return true;
-        }
-
         public void Initialize(string startText,Action<string> setText)
         {
             inputField.text = startText;
 
-            if (!RegexCheck(startText)) SetErrorMode();
+            if (!ExtensionTools.RegexCheck(startText)) SetErrorMode();
 
             inputField.onValueChanged.AddListener((string str) =>
             {
-                if (RegexCheck(str))
+                if (ExtensionTools.RegexCheck(str))
                 {
                     SetDefaultMode();
                     if(setText!=null) setText(str);

@@ -20,7 +20,8 @@ namespace SekaiTools
 
         public static string Assets => Path.Combine(AssetFolder, "assets");
         public static string Output => Path.Combine(MasterFolder, "output");
-        public static string Inbuilt => Path.Combine(MasterFolder, "Inbuilt");
+        public static string Inbuilt => Path.Combine(MasterFolder, "inbuilt");
+        public static string Config => Path.Combine(MasterFolder, "config");
 
         public static T[] GetTable<T>(string tableName,ServerRegion sr = ServerRegion.jp)
         {

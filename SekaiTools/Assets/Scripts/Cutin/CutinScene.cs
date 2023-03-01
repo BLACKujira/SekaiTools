@@ -22,8 +22,13 @@ namespace SekaiTools.Cutin
             this.charFirstID = charFirstID;
             this.charSecondID = charSecondID;
             this.dataID = dataID;
+            talkData_First = new TalkData();
+            talkData_First.talkVoice = new CutinVoiceInfo(CutinVoiceType.bondscp, charFirstID, charSecondID, CutinVoiceOrder.first, dataID).StandardizeName;
+            talkData_Second = new TalkData();
+            talkData_Second.talkVoice = new CutinVoiceInfo(CutinVoiceType.bondscp, charFirstID, charSecondID, CutinVoiceOrder.second, dataID).StandardizeName;
         }
 
+        [System.Obsolete]
         public CutinScene(CutinSceneData.CutinSceneInfoBase cutinSceneInfo)
         {
             this.charFirstID = cutinSceneInfo.charFirstID;

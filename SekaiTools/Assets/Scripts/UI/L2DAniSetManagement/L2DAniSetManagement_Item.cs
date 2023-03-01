@@ -63,7 +63,7 @@ namespace SekaiTools.UI.L2DAniSetManagement
         }
         public void RefreshInfo()
         {
-            inputFieldPath.text = animationSet.previewSet == null?"无预览":animationSet.previewSet.savePath;
+            inputFieldPath.text = animationSet.previewSet == null?"无预览":animationSet.previewSet.SavePath;
             int availablePreviewCount = animationSet.GetAvailablePreviewCount();
             int animationCount = animationSet.animations.Count;
             textMissing.text = $"{animationCount-availablePreviewCount}/{animationCount} 缺失";

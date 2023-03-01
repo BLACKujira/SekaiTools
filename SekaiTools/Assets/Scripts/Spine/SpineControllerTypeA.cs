@@ -271,7 +271,7 @@ namespace SekaiTools.Spine
         public SpineScene GetSaveData()
         {
             SpineScene spineScene = new SpineScene();
-            spineScene.spineLayerID = 1;//TODO 获取图层ID
+            spineScene.spineLayerID = BackGroundController.backGroundController.GetPartLayerOfType("SpineLayer");//TODO 获取图层ID
             List<SpineScene.SpineObject> spineObjects = new List<SpineScene.SpineObject>();
             for (int i = 0; i < models.Count; i++)
             {

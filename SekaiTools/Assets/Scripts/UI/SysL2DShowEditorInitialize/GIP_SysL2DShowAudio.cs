@@ -30,23 +30,27 @@ namespace SekaiTools.UI.SysL2DShowEditorInitialize
         public void Awake()
         {
             file_LoadData.defaultPath = string.Empty;
-            file_LoadData.onPathReset += (_) =>
-            {
-                serializedAudioData = null;
-                RefreshDataInfo();
-            };
-            file_LoadData.onPathSelect += (path) =>
-            {
-                try
+            file_LoadData.onPathChange.AddListener(
+                (path) =>
                 {
-                    serializedAudioData = JsonUtility.FromJson<SerializedAudioData>(File.ReadAllText(path));
-                }
-                catch
-                {
-                    serializedAudioData = null;
-                }
-                RefreshDataInfo();
-            };
+                    if(string.IsNullOrEmpty(path))
+                    {
+                        serializedAudioData = null;
+                        RefreshDataInfo();
+                    }
+                    else
+                    {
+                        try
+                        {
+                            serializedAudioData = JsonUtility.FromJson<SerializedAudioData>(File.ReadAllText(path));
+                        }
+                        catch
+                        {
+                            serializedAudioData = null;
+                        }
+                        RefreshDataInfo();
+                    }
+                });
             RefreshDataInfo();
         }
 
@@ -192,8 +196,9 @@ namespace SekaiTools.UI.SysL2DShowEditorInitialize
                 }
                 else
                 {
-                    SysL2DShowData.AudioMatchInfo audioMatchInfo = sysL2DShowData.GetAudioMatchInfo(serializedAudioData);
-                    txt_DataInfo.text = $"共{sysL2DShowData.sysL2DShows.Count}个片段中，{audioMatchInfo.matchingCount}个语音匹配，{audioMatchInfo.missingCount}个语音缺失";
+                    MediaMatchInfo audioMatchInfo = serializedAudioData.GetAudioMatchInfo(sysL2DShowData.sysL2DShows
+                        .Select((show) => $"{show.systemLive2D.AssetbundleName}-{show.systemLive2D.Voice}"));
+                    txt_DataInfo.text = $"共{sysL2DShowData.sysL2DShows.Count}个片段中，{audioMatchInfo.matchcing}个语音匹配，{audioMatchInfo.missingKey}个语音缺失，{audioMatchInfo.missingKey}个语音文件丢失";
                 }
             }
         }

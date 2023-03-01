@@ -14,24 +14,35 @@ namespace SekaiTools.UI.CutinSceneEditor
     {
         public Window window;
         [Header("Components")]
+        public RectTransform playerTf;
         public CutinScenePlayer_Player player;
         public CutinSceneEditor_EditArea editArea;
         public CutinSceneEditor_Scroll scroll;
         public AudioSource audioPlayer;
+        public SaveTipCloseWindowButton saveTipCloseWindowButton;
         public MessageLayer.MessageLayerBase messageLayer;
+        [Header("Settings")]
+        public CutinScenePlayerSet playerSet;
         [Header("Prefabs")]
         public Window playerWindow;
+        public Window gswPrefab;
 
         [NonSerialized] public AudioData audioData;
         [NonSerialized] public CutinSceneData cutinSceneData;
         [NonSerialized] public CutinScene currentCutinScene;
 
-        public void Initialize(CutinSceneEditorSettings settings)
+        Settings settings;
+        public Settings EditorSettings => settings;
+
+        public void Initialize(Settings settings)
         {
+            this.settings = settings;
             audioData = settings.audioData;
-            player.audioData = settings.audioData;
             cutinSceneData = settings.cutinSceneData;
-            player.l2DController.live2DModels = settings.sekaiLive2DModels;
+
+            saveTipCloseWindowButton.Initialize(() => cutinSceneData.SavePath);
+
+            ChangePlayer(settings.cutinSceneData.playerType);
 
             scroll.Generate(cutinSceneData, (CutinScene cutinScene) =>
             { editArea.SetScene(cutinScene); currentCutinScene = cutinScene; });
@@ -50,8 +61,9 @@ namespace SekaiTools.UI.CutinSceneEditor
             player.Play();
         }
 
-        public class CutinSceneEditorSettings : CutinScenePlayerSettings
+        public class Settings : CutinScenePlayer.CutinScenePlayer.Settings
         {
+
         }
 
         public void Save()
@@ -62,13 +74,39 @@ namespace SekaiTools.UI.CutinSceneEditor
 
         public void OpenPlayerWindow()
         {
-            CutinScenePlayerSettings cutinScenePlayerSettings = new CutinScenePlayerSettings();
+            CutinScenePlayer.CutinScenePlayer.Settings cutinScenePlayerSettings = new CutinScenePlayer.CutinScenePlayer.Settings();
             cutinScenePlayerSettings.audioData = audioData;
             cutinScenePlayerSettings.cutinSceneData = new CutinSceneData(currentCutinScene);
             cutinScenePlayerSettings.sekaiLive2DModels = player.l2DController.live2DModels;
         
             CutinScenePlayer.CutinScenePlayer cutinScenePlayer = window.OpenWindow<CutinScenePlayer.CutinScenePlayer>(playerWindow);
             cutinScenePlayer.Initialize(cutinScenePlayerSettings);
+        }
+
+        public void OpenConfWindow()
+        {
+            GeneralSettingsWindow.GeneralSettingsWindow generalSettingsWindow = window.OpenWindow<GeneralSettingsWindow.GeneralSettingsWindow>(gswPrefab);
+            generalSettingsWindow.Initialize(
+                new ConfigUIItem[]
+                {
+                    new ConfigUIItem_CutinScenePlayer
+                        ("播放器样式","播放器",
+                            ()=>cutinSceneData.playerType,
+                            (value) => 
+                            { 
+                                cutinSceneData.playerType = value;
+                                ChangePlayer(value);
+                            })
+                });
+        }
+
+        void ChangePlayer(string key)
+        {
+            CutinScenePlayerSet_Item cutinScenePlayerSet_Item = playerSet.GetItem(key) ?? playerSet.DefaultItem;
+            if (player) Destroy(player);
+            player = Instantiate(cutinScenePlayerSet_Item.player, playerTf);
+            player.audioData = settings.audioData;
+            player.l2DController.live2DModels = settings.sekaiLive2DModels;
         }
     }
 }

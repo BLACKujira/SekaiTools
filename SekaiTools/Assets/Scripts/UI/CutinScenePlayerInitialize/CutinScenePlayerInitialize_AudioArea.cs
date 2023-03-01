@@ -41,7 +41,7 @@ namespace SekaiTools.UI.CutinScenePlayerInitialize
 
         public void Initialize(CutinSceneData cutinSceneData)
         {
-            audioDataPath.text = audioData?.savePath ?? "无音频资料";
+            audioDataPath.text = audioData?.SavePath ?? "无音频资料";
             if (cutinSceneData != null && audioData != null)
             {
                 CutinSceneData.AudioMatchingCount audioMatchingCount = cutinSceneData.CountMatching(audioData);

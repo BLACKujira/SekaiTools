@@ -8,6 +8,7 @@ namespace SekaiTools.Kizuna
 {
     public abstract class KizunaSceneDataBase :ISaveData
     {
+        public string cutinPlayerType = "default";
         public abstract KizunaSceneBase[] kizunaSceneBaseArray { get; }
 
         public KizunaSceneBase this[Vector2Int vector2Int]
@@ -24,8 +25,23 @@ namespace SekaiTools.Kizuna
             }
         }
 
-
         public string SavePath { get; set; }
+
+        public CutinSceneData CutinSceneData
+        {
+            get
+            {
+                List<CutinScene> cutinScenes = new List<CutinScene>();
+                foreach (var kizunaSceneBase in kizunaSceneBaseArray)
+                {
+                    cutinScenes.AddRange(kizunaSceneBase.cutinScenes);
+                }
+
+                CutinSceneData cutinSceneData = new CutinSceneData(cutinScenes);
+                cutinSceneData.SavePath = Path.ChangeExtension(SavePath, ".csd");
+                return cutinSceneData;
+            }
+        }
 
         public SerializedAudioData StandardizeAudioData(SerializedAudioData serializedAudioData)
         {
@@ -48,7 +64,7 @@ namespace SekaiTools.Kizuna
 
         public void StandardizeAudioData(AudioData audioData)
         {
-            AudioClip[] valueArray = audioData.valueArray;
+            AudioClip[] valueArray = audioData.ValueArray;
             foreach (var value in valueArray)
             {
                 CutinSceneData.CutinSceneInfo cutinSceneInfo = CutinSceneData.IsCutinVoice(value.name);
@@ -92,20 +108,31 @@ namespace SekaiTools.Kizuna
                 audioMatchingCount += new CutinSceneData(kizunaScene.cutinScenes).CountMatching(audioData);
             }
             return audioMatchingCount;
-        }        
+        }
 
-        public int[] CountAppearCharacters()
+        public int[] AppearCharacters
         {
-            HashSet<int> appearCharacters = new HashSet<int>();
-            foreach (var kizunaScene in kizunaSceneBaseArray)
+            get
             {
-                appearCharacters.Add(kizunaScene.charAID);
-                appearCharacters.Add(kizunaScene.charBID);
-            }
+                HashSet<int> appearCharacters = new HashSet<int>();
+                foreach (var kizunaScene in kizunaSceneBaseArray)
+                {
+                    appearCharacters.Add(kizunaScene.charAID);
+                    appearCharacters.Add(kizunaScene.charBID);
+                }
 
-            List<int> list = new List<int>(appearCharacters);
-            list.Sort();
-            return list.ToArray();
+                List<int> list = new List<int>(appearCharacters);
+                list.Sort();
+                return list.ToArray();
+            }
+        }
+
+        public void AddCutinScenes(CutinSceneData cutinSceneData)
+        {
+            foreach (var kizunaSceneBase in kizunaSceneBaseArray)
+            {
+                kizunaSceneBase.AddCutinScenes(cutinSceneData);
+            }
         }
 
         public KizunaSceneDataBase LoadData(string savePath)
@@ -116,7 +143,6 @@ namespace SekaiTools.Kizuna
 
     public class KizunaSceneData : KizunaSceneDataBase
     {
-
         public List<KizunaScene> kizunaScenes = new List<KizunaScene>();
 
         public override KizunaSceneBase[] kizunaSceneBaseArray => kizunaScenes.ToArray();
@@ -135,15 +161,16 @@ namespace SekaiTools.Kizuna
             }
         }
 
-
         public KizunaSceneData(Vector2Int[] bonds)
         {
             foreach (var bond in bonds)
             {
                 KizunaScene kizunaScene = new KizunaScene(bond.x, bond.y);
-                kizunaScene.textSpriteLv1 = new BondsHonorWordInfo(bond.x, bond.y, 1, 1).StandardizedName;
-                kizunaScene.textSpriteLv2 = new BondsHonorWordInfo(bond.x, bond.y, 2, 1).StandardizedName;
-                kizunaScene.textSpriteLv3 = new BondsHonorWordInfo(bond.x, bond.y, 3, 1).StandardizedName;
+                int x = ConstData.MergeVirtualSinger(bond.x);
+                int y = ConstData.MergeVirtualSinger(bond.y);
+                kizunaScene.textSpriteLv1 = new BondsHonorWordInfo(x, y, 1, 1).StandardizedName;
+                kizunaScene.textSpriteLv2 = new BondsHonorWordInfo(x, y, 2, 1).StandardizedName;
+                kizunaScene.textSpriteLv3 = new BondsHonorWordInfo(x, y, 3, 1).StandardizedName;
                 kizunaScenes.Add(kizunaScene);
             }
         }
@@ -232,7 +259,7 @@ namespace SekaiTools.Kizuna
         public ImageMatchingCount CountImageMatching(ImageData imageData)
         {
             ImageMatchingCount imageMatchingCount = new ImageMatchingCount(kizunaScenes.ToArray());
-            Sprite[] valueArray = imageData.valueArray;
+            Sprite[] valueArray = imageData.ValueArray;
             foreach (var value in valueArray)
             {
                 BondsHonorWordInfo bondsHonorWordInfo = BondsHonorWordInfo.IsBondsHonorWord(value.name);

@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using DG.Tweening;
 
 namespace SekaiTools.UI.NicknameCountShowcase
@@ -10,11 +9,6 @@ namespace SekaiTools.UI.NicknameCountShowcase
     {
         [Header("Components")]
         public NCSScene_Love_Item[] items = new NCSScene_Love_Item[20];
-
-        public override ConfigUIItem[] configUIItems => new ConfigUIItem[]
-            {
-                new ConfigUIItem_Float("持续时间","scene",()=>holdTime,(value)=>holdTime = value)
-            };
 
         public override void Refresh()
         {

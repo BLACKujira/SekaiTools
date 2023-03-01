@@ -49,42 +49,42 @@ namespace SekaiTools.UI.CutinSceneEditor
             {
                 cutinScene.talkData_First.facialCharFirst = str;
                 SetScene(cutinScene);
-            }, cutinSceneEditor.window);
+            });
             button_SF_CF_M.Initialize((string str) =>
             {
                 cutinScene.talkData_First.motionCharFirst = str;
                 SetScene(cutinScene);
-            }, cutinSceneEditor.window);
+            });
             button_SF_CS_F.Initialize((string str) =>
             {
                 cutinScene.talkData_First.facialCharSecond = str;
                 SetScene(cutinScene);
-            }, cutinSceneEditor.window);
+            });
             button_SF_CS_M.Initialize((string str) =>
             {
                 cutinScene.talkData_First.motionCharSecond = str;
                 SetScene(cutinScene);
-            }, cutinSceneEditor.window);
+            });
             button_SS_CF_F.Initialize((string str) =>
             {
                 cutinScene.talkData_Second.facialCharFirst = str;
                 SetScene(cutinScene);
-            }, cutinSceneEditor.window);
+            });
             button_SS_CF_M.Initialize((string str) =>
             {
                 cutinScene.talkData_Second.motionCharFirst = str;
                 SetScene(cutinScene);
-            }, cutinSceneEditor.window);
+            });
             button_SS_CS_F.Initialize((string str) =>
             {
                 cutinScene.talkData_Second.facialCharSecond = str;
                 SetScene(cutinScene);
-            }, cutinSceneEditor.window);
+            });
             button_SS_CS_M.Initialize((string str) =>
             {
                 cutinScene.talkData_Second.motionCharSecond = str;
                 SetScene(cutinScene);
-            }, cutinSceneEditor.window);
+            });
 
             playAudioButton_F.onClick.AddListener(() => cutinSceneEditor.PlayAudioClip(cutinScene.talkData_First.talkVoice));
             playAudioButton_S.onClick.AddListener(() => cutinSceneEditor.PlayAudioClip(cutinScene.talkData_Second.talkVoice));
@@ -98,9 +98,8 @@ namespace SekaiTools.UI.CutinSceneEditor
         public void SetScene(CutinScene cutinScene)
         {
             this.cutinScene = cutinScene;
-            throw new System.NotImplementedException();
-            L2DAnimationSet animationSetFirst = null;//inbuiltAnimationSet.l2DAnimationSets[cutinScene.charFirstID];
-            L2DAnimationSet animationSetSecond = null;//inbuiltAnimationSet.l2DAnimationSets[cutinScene.charSecondID];
+            L2DAnimationSet animationSetFirst = cutinSceneEditor.player.l2DController.live2DModels[cutinScene.charFirstID].AnimationSet;
+            L2DAnimationSet animationSetSecond = cutinSceneEditor.player.l2DController.live2DModels[cutinScene.charSecondID].AnimationSet;
 
             button_SF_CF_F.L2DAnimationSelectButton.SetAnimation(animationSetFirst, cutinScene.talkData_First.facialCharFirst);
             button_SF_CF_M.L2DAnimationSelectButton.SetAnimation(animationSetFirst, cutinScene.talkData_First.motionCharFirst);

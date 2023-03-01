@@ -36,6 +36,17 @@ namespace SekaiTools.Kizuna
                 && ConstData.MergeVirtualSinger(charAID) == ConstData.MergeVirtualSinger(this.charBID)) return true;
             return false;
         }
+
+        public void AddCutinScenes(CutinSceneData cutinSceneData)
+        {
+            foreach (var cutinScene in cutinSceneData.cutinScenes)
+            {
+                if(IsKizunaOf(cutinScene))
+                {
+                    cutinScenes.Add(cutinScene);
+                }
+            }
+        }
     }
 
     /// <summary>

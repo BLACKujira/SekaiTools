@@ -39,8 +39,8 @@ namespace SekaiTools.Count.Showcase
         public NCSScene AddScene(NCSScene nCSScenePrefab)
         {
             NCSScene nCSScene = GameObject.Instantiate(nCSScenePrefab);
-            nCSScene.name = nCSScenePrefab.name;
             nCSScene.gameObject.SetActive(false);
+            nCSScene.name = nCSScenePrefab.name;
             scenes.Add(new Scene(nCSScene));
             return nCSScene;
         }
@@ -62,6 +62,17 @@ namespace SekaiTools.Count.Showcase
                 {
                     scene.InstantiateScene();
                     scene.nCSScene.gameObject.SetActive(false);
+                }
+            }
+        }
+
+        public void DestroyScenes()
+        {
+            foreach (var scene in scenes)
+            {
+                if (scene.nCSScene != null)
+                {
+                    scene.DestroyScene();
                 }
             }
         }
@@ -90,7 +101,20 @@ namespace SekaiTools.Count.Showcase
             {
                 nCSScene = GameObject.Instantiate(GlobalData.globalData.nCSSceneSet.GetValue(nCSSceneType));
                 nCSScene.name = nCSSceneType;
-                nCSScene.LoadData(nCSSceneSettings);
+                try
+                {
+                    nCSScene.LoadData(nCSSceneSettings);
+                }
+                catch(System.Exception ex)
+                {
+                    Debug.LogError($"设置读取失败 {ex}");
+                }
+            }
+
+            public void DestroyScene()
+            {
+                if(nCSScene != null)
+                    GameObject.Destroy(nCSScene.gameObject);
             }
         }
     }

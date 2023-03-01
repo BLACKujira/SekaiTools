@@ -17,6 +17,10 @@ namespace SekaiTools.UI.GeneralSettingsWindow
         public GSW_Item_SpineScene item_SpineScene_Prefab;
         public GSW_Item_ResetSpineScene item_ResetSpineScene_Prefab;
         public GSW_Item_StringList item_StringListLong_Prefab;
+        public GSW_Item_CutinScenePlayer item_CutinScenePlayer_Prefab;
+        public GSW_Item_Unit item_Unit_Prefab;
+        public GSW_Item_Int item_Int_Prefab;
+        public GSW_Item_DateTime item_DateTime_Prefab;
 
         public override (Type type, GSW_Item item)[] typeDictionary => 
             new (Type type, GSW_Item item)[]
@@ -29,7 +33,11 @@ namespace SekaiTools.UI.GeneralSettingsWindow
                 (typeof(ConfigUIItem_Live2dAnimation),item_Live2dAnimation_Prefab),
                 (typeof(ConfigUIItem_SpineScene),item_SpineScene_Prefab),
                 (typeof(ConfigUIItem_ResetSpineScene),item_ResetSpineScene_Prefab),
-                (typeof(ConfigUIItem_StringListLong),item_StringListLong_Prefab)
+                (typeof(ConfigUIItem_StringListLong),item_StringListLong_Prefab),
+                (typeof(ConfigUIItem_CutinScenePlayer),item_CutinScenePlayer_Prefab),
+                (typeof(ConfigUIItem_Unit),item_Unit_Prefab),
+                (typeof(ConfigUIItem_Int),item_Int_Prefab),
+                (typeof(ConfigUIItem_DateTime),item_DateTime_Prefab)
             };
     }
 }

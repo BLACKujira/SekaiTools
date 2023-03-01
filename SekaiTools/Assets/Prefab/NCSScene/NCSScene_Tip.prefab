@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7020174006224159399}
-  - component: {fileID: 1795803727509908905}
+  - component: {fileID: 6206773532457345938}
   m_Layer: 5
   m_Name: NCSScene_Tip
   m_TagString: Untagged
@@ -38,7 +38,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1795803727509908905
+--- !u!114 &6206773532457345938
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,13 +47,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1795803727509908910}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df4a7819f3c6cc74d9ab695a4f40620f, type: 3}
+  m_Script: {fileID: 11500000, guid: 25ed65293a7345b40b8c6768804073f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   itemName: "\u7EDF\u8BA1\u8303\u56F4"
-  description: "\uFF08\u672A\u5B8C\u6210\uFF09\u663E\u793A\u7EDF\u8BA1\u8303\u56F4"
+  description: "\u663E\u793A\u7EDF\u8BA1\u8303\u56F4"
   preview: {fileID: 21300000, guid: a6e0ce65696d2524790147cdbf0541b7, type: 3}
   holdTime: 10
+  imgEvLogo: {fileID: 4875513720696136687}
+  txtTip: {fileID: 4875513720949396333}
+  requireEvIconKey: 
 --- !u!1 &4875513719986070768
 GameObject:
   m_ObjectHideFlags: 0
@@ -114,6 +117,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8000001, b: 0.7372549, a: 1}
   m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -197,6 +201,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -271,6 +276,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.011764707, g: 0.7843138, b: 0.72156864, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -345,11 +351,12 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3e6b18992aa7bda489ac64dfb6f8bce5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 81e3856a913b0f64695ae088eb6edb27, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -419,6 +426,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.2784314, g: 0.2784314, b: 0.34509805, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -436,8 +444,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1.2
-  m_Text: "\t\t\u7EDF\u8BA1\u8303\u56F4\uFF1A\u4ECE\u5F00\u670D\u5230\u7B2C57\u6B21\u6D3B\u52A8\u300C\u3064\u306A\u3050Painful
-    Hope\u300D\u7684\u6D3B\u52A8\u5267\u60C5\u3001\n\u5730\u56FE\u5BF9\u8BDD\u3001\u5361\u9762\u5267\u60C5\u3001Live\u5BF9\u8BDD\uFF1B\u4EE5\u53CA\u4E3B\u7EBF\u5267\u60C5\u3001\u81EA\u6211\u4ECB\u7ECD\u3001\n\u4E00\u5468\u5E74\u7279\u522B\u5267\u60C5\u53CA2022\u611A\u4EBA\u8282\u7279\u522B\u5267\u60C5\u3002"
+  m_Text: "\u7EDF\u8BA1\u8303\u56F4\uFF1A\u4ECE\u5F00\u670D\u5230\u7B2C{ev.id}\u6B21\u6D3B\u52A8\u300C{ev.name}\u300D\u7684\u6D3B\u52A8\u5267\u60C5\u3001\n\u5730\u56FE\u5BF9\u8BDD\u3001\u5361\u9762\u5267\u60C5\u3001Live\u5BF9\u8BDD\uFF1B\u4EE5\u53CA\u4E3B\u7EBF\u5267\u60C5\u3001\u81EA\u6211\u4ECB\u7ECD\u3001\n\u4E00\u5468\u5E74\u7279\u522B\u5267\u60C5\u53CA2022\u611A\u4EBA\u8282\u7279\u522B\u5267\u60C5\u3002"
 --- !u!1 &4875513721734634865
 GameObject:
   m_ObjectHideFlags: 0
@@ -498,6 +505,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

@@ -9,13 +9,14 @@ using Button = UnityEngine.UI.Button;
 
 namespace SekaiTools.UI.FilterGenerator
 {
+    [Obsolete("Use CoupleCombiner instead")]
     public class FilterGenerator : MonoBehaviour
     {
         public Window window;
         public HashSet<Vector2Int> bonds = new HashSet<Vector2Int>();
         public ButtonGenerator buttonGenerator;
         public List<Toggle> toggles;
-        public int[] selectedIDs 
+        public int[] SelectedIDs 
         { 
             get 
             {
@@ -28,7 +29,7 @@ namespace SekaiTools.UI.FilterGenerator
                 return ids.ToArray();
             }
         }
-        public Vector2Int[] selectedBonds
+        public Vector2Int[] SelectedBonds
         {
             get
             {
@@ -56,7 +57,7 @@ namespace SekaiTools.UI.FilterGenerator
         public void CombineAndAddToList()
         {
             List<Vector2Int> bonds = new List<Vector2Int>();
-            int[] selectedIDs = this.selectedIDs;
+            int[] selectedIDs = this.SelectedIDs;
             for (int i = 0; i < selectedIDs.Length; i++)
             {
                 for (int j = i+1; j < selectedIDs.Length; j++)
@@ -78,7 +79,7 @@ namespace SekaiTools.UI.FilterGenerator
         public void Initialize(Vector2Int[] vector2Ints = null, Action<Vector2Int[]> onClose = null)
         {
             if(vector2Ints != null) bonds = new HashSet<Vector2Int>(vector2Ints);
-            if(onClose != null) window.OnClose.AddListener(() => { onClose(selectedBonds); });
+            if(onClose != null) window.OnClose.AddListener(() => { onClose(SelectedBonds); });
 
             InitializeButtons();
         }
@@ -124,7 +125,7 @@ namespace SekaiTools.UI.FilterGenerator
             InitializeButtons();
         }
 
-        [System.Serializable]
+        [Serializable]
         public class SaveData
         {
             public List<Vector2Int> bonds;

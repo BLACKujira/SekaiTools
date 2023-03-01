@@ -10,8 +10,6 @@ namespace SekaiTools.UI
     {
         public string fileFilter = "All(*.*) | *.*";
 
-        public override event Action<string> onPathSelect;
-
         public override void SelectPath()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -25,8 +23,7 @@ namespace SekaiTools.UI
 
             pathInputField.text = openFileDialog.FileName;
 
-            if (onPathSelect != null)
-                onPathSelect(SelectedPath);
+            onPathChange.Invoke(SelectedPath);
         }
     }
 }

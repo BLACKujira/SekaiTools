@@ -6,7 +6,7 @@ using SekaiTools.UI.Modifier;
 
 namespace SekaiTools.UI.BackGround
 {
-    public class BGModifier_HDRColorParticle : BGModifierBase,IHDRColor
+    public class BGModifier_HDRColorParticle : BGModifierBase , IHDRColor
     {
         [Header("Target")]
         public List<HDRColorParticle> targetHDRColorParticles;

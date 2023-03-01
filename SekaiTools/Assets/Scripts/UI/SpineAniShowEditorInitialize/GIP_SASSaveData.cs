@@ -7,11 +7,9 @@ using UnityEngine.UI;
 
 namespace SekaiTools.UI.SpineAniShowEditorInitialize
 {
-    public class GIP_SASSaveData : MonoBehaviour , IGenericInitializationPart
+    public class GIP_SASSaveData : GIP_CreateOrSaveData
     {
         [Header("Components")]
-        public SaveFileSelectItem file_SaveData;
-        public LoadFileSelectItem file_LoadData;
         public Text txt_Template;
         public Image img_Template;
         [Header("Settings")]
@@ -20,35 +18,13 @@ namespace SekaiTools.UI.SpineAniShowEditorInitialize
         public Window templateSelectorPrefab;
 
         TextAsset selectedTemplate;
-        bool ifNewFile = true;
 
-        public string SelectedDataPath => ifNewFile ? file_SaveData.SelectedPath : file_LoadData.SelectedPath;
-        public bool IfNewFile => ifNewFile;
         public TextAsset SelectedTemplate => selectedTemplate;
 
         private void Awake()
         {
             SetSelectedTemplate(0);
         }
-
-        public string CheckIfReady()
-        {
-            if(ifNewFile&&string.IsNullOrEmpty(file_SaveData.SelectedPath))
-            {
-                return GenericInitializationCheck.GetErrorString("目录错误", "无效的目录");
-            }
-            else if (!ifNewFile)
-            {
-                if(string.IsNullOrEmpty(file_LoadData.SelectedPath))
-                    return GenericInitializationCheck.GetErrorString("目录错误", "无效的目录");
-                if(!File.Exists(file_LoadData.SelectedPath))
-                    return GenericInitializationCheck.GetErrorString("目录错误", "文件不存在");
-            }
-            return null;
-        }
-
-        public void SwitchMode_Create() => ifNewFile = true;
-        public void SwitchMode_Load() => ifNewFile = false;
 
         public void SelectTemplate()
         {

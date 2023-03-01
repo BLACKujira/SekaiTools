@@ -24,10 +24,10 @@ namespace SekaiTools.UI.KizunaSceneEditor
 
         private void Awake()
         {
-            l2DAnimationSelectButtonLF.Initialize((str) => { kizunaSceneEditor.currentKizunaScene.facialA = str; RefreshAnimation(); }, kizunaSceneEditor.window);
-            l2DAnimationSelectButtonLM.Initialize((str) => { kizunaSceneEditor.currentKizunaScene.motionA = str; RefreshAnimation(); }, kizunaSceneEditor.window);
-            l2DAnimationSelectButtonRF.Initialize((str) => { kizunaSceneEditor.currentKizunaScene.facialB = str; RefreshAnimation(); }, kizunaSceneEditor.window);
-            l2DAnimationSelectButtonRM.Initialize((str) => { kizunaSceneEditor.currentKizunaScene.motionB = str; RefreshAnimation(); }, kizunaSceneEditor.window);
+            l2DAnimationSelectButtonLF.Initialize((str) => { kizunaSceneEditor.currentKizunaScene.facialA = str; RefreshAnimation(); });
+            l2DAnimationSelectButtonLM.Initialize((str) => { kizunaSceneEditor.currentKizunaScene.motionA = str; RefreshAnimation(); });
+            l2DAnimationSelectButtonRF.Initialize((str) => { kizunaSceneEditor.currentKizunaScene.facialB = str; RefreshAnimation(); });
+            l2DAnimationSelectButtonRM.Initialize((str) => { kizunaSceneEditor.currentKizunaScene.motionB = str; RefreshAnimation(); });
         }
 
         public void SetData(KizunaSceneBase kizunaScene)

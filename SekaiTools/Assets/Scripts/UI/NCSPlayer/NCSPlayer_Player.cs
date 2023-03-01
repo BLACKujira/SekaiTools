@@ -18,15 +18,6 @@ namespace SekaiTools.UI.NCSPlayer
         [Header("Settings")]
         public float waitTimeSafe = .3f;
 
-
-        public void Initialize(Settings settings)
-        {
-            countData = settings.countData;
-            audioData = settings.audioData;
-            live2DModels = settings.live2DModels;
-            showcase = settings.showcase;
-        }
-
         public void Play()
         {
             StopAllCoroutines();
@@ -44,11 +35,10 @@ namespace SekaiTools.UI.NCSPlayer
                 if (scene.changeBackGround)
                     BackGroundController.backGroundController.Load(scene.backGround);
 
-                scene.InstantiateScene();
                 scene.nCSScene.gameObject.SetActive(true);
-                scene.nCSScene.Initialize(this);
                 scene.nCSScene.Refresh();
                 scene.nCSScene.transform.SetParent(targetTransformScene);
+                scene.nCSScene.rectTransform.localScale = Vector2.one;
                 scene.nCSScene.rectTransform.anchoredPosition = Vector2.zero;
 
                 yield return new WaitForSeconds(scene.nCSScene.holdTime);
@@ -69,14 +59,6 @@ namespace SekaiTools.UI.NCSPlayer
                     Destroy(scene.nCSScene.gameObject);
                 }
             }
-        }
-
-        public class Settings
-        {
-            public NicknameCountData countData;
-            public Count.Showcase.NicknameCountShowcase showcase;
-            public SekaiLive2DModel[] live2DModels;
-            public AudioData audioData;
         }
     }
 }

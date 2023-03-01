@@ -40,6 +40,7 @@ namespace SekaiTools.SystemLive2D
             public int missingCount = 0;
         }
 
+        [System.Obsolete]
         public AudioMatchInfo GetAudioMatchInfo(SerializedAudioData serializedAudioData)
         {
             AudioMatchInfo audioMatchInfo = new AudioMatchInfo();

@@ -1,11 +1,7 @@
-﻿using System.Collections;
+﻿using SekaiTools.UI.BackGround;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using SekaiTools.Count;
-using SekaiTools.Count.Showcase;
-using SekaiTools.UI.NicknameCountShowcase;
-using SekaiTools.UI.BackGround;
 
 namespace SekaiTools.UI.NCSEditor
 {
@@ -44,8 +40,9 @@ namespace SekaiTools.UI.NCSEditor
             this.nCSEditor = nCSEditor;
 
             #region  button event
-            buttonRemove.onClick.AddListener(() => 
+            buttonRemove.onClick.AddListener(() =>
             {
+                scene.DestroyScene();
                 nCSEditor.showcase.scenes.Remove(scene);
                 nCSEditor.Refresh();
             });
@@ -96,7 +93,7 @@ namespace SekaiTools.UI.NCSEditor
             #endregion
 
             textItemName.text = scene.nCSScene.itemName;
-            textDescription.text = scene.nCSScene.information;
+            textDescription.text = scene.nCSScene.Information;
             imagePreview.sprite = scene.nCSScene.preview;
 
             toggleBgOn.isOn = scene.changeBackGround;
@@ -128,7 +125,7 @@ namespace SekaiTools.UI.NCSEditor
                         nCSEditor.Refresh();
                     });
             });
-            if (scene.transition == null||string.IsNullOrEmpty(scene.transition.type)) buttonTrEdit.interactable = false;
+            if (scene.transition == null || string.IsNullOrEmpty(scene.transition.type)) buttonTrEdit.interactable = false;
             buttonTrChange.onClick.AddListener(() =>
             {
                 UniversalSelector universalSelector = nCSEditor.window.OpenWindow<UniversalSelector>(transitionSelectWindowPrefab);
@@ -141,7 +138,7 @@ namespace SekaiTools.UI.NCSEditor
                 },
                 (int id) =>
                 {
-                    scene.transition = new Transition.SerializedTransition(transitions[id].name, string.Empty);
+                    scene.transition = new Transition.SerializedTransition(transitions[id].name, GlobalData.globalData.transitionSet.transitions[id].DefaultSerializedTransition);
                     nCSEditor.Refresh();
                 });
             });

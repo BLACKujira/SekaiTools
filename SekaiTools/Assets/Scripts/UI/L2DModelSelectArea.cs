@@ -75,5 +75,7 @@ namespace SekaiTools.UI
             this.keyOverride = keyOverride;
             this.defaultModel = defaultModel;
         }
+
+        public L2DModelSelectArea_ItemSettings(int characterId) : this(characterId, characterId.ToString(),$"{characterId:00} {ConstData.characters[characterId].Name}") { }
     }
 }

@@ -103,7 +103,7 @@ namespace SekaiTools.UI.KizunaScenePlayerInitialize
 
         public void Refresh()
         {
-            pathInputField.text = imageData == null? "请新建或读取资料" : imageData.savePath;
+            pathInputField.text = imageData == null? "请新建或读取资料" : imageData.SavePath;
             textMatching.text = (imageMatchingCount == null ? "-/-" : $"{imageMatchingCount.matching}/{imageMatchingCount?.CountAll}") + " 匹配";
             textMissing.text = (imageMatchingCount == null ? "-/-" : $"{imageMatchingCount.missing}/{imageMatchingCount?.CountAll}") + " 缺失";
             if (kizunaScenePlayerInitialize.kizunaSceneData != null) UnlockButtons();

@@ -79,7 +79,7 @@ namespace SekaiTools.UI.NicknameSetting
                             nicknameSetting_Block_Item.Initialize(nicknameCharacter.nickNames[newId], (string str) => { nicknameCharacter.nickNames[newId] = str; });
                             nicknameSetting_Block_Item.removeButton.onClick.AddListener(() =>
                             {
-                                nicknameGlobal.nickNames.RemoveAt(newId);
+                                nicknameCharacter.nickNames.RemoveAt(newId);
                                 Refresh();
                             });
                         }

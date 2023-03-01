@@ -14,10 +14,11 @@ namespace SekaiTools.UI.NicknameSetting
 
         [HideInInspector] public NicknameSet targetSet;
         [HideInInspector] public NicknameSet cloneSet;
-        [HideInInspector] public event Action onApply;
+        [HideInInspector] public Action<bool> onApply;
 
-        public void Initialize(NicknameSet nicknameSetGlobal)
+        public void Initialize(NicknameSet nicknameSetGlobal, Action<bool> onApply)
         {
+            this.onApply = onApply;
             targetSet = nicknameSetGlobal;
             cloneSet = targetSet.Clone();
             for (int i = 1; i < blocks.Length; i++)
@@ -26,8 +27,9 @@ namespace SekaiTools.UI.NicknameSetting
             }
         }
 
-        public void Initialize(NicknameSet nicknameSetGlobal, NicknameSet nicknameSetCharacter)
+        public void Initialize(NicknameSet nicknameSetGlobal, NicknameSet nicknameSetCharacter, Action<bool> onApply)
         {
+            this.onApply = onApply;
             targetSet = nicknameSetCharacter;
             cloneSet = targetSet.Clone();
             for (int i = 1; i < blocks.Length; i++)
@@ -38,10 +40,18 @@ namespace SekaiTools.UI.NicknameSetting
 
         public void Apply()
         {
-            targetSet.ReplaceValue(cloneSet);
-            targetSet.SaveData();
+            bool saveSuccess = true;
+            try
+            {
+                targetSet.ReplaceValue(cloneSet);
+                targetSet.SaveData();
+            }
+            catch
+            {
+                saveSuccess = false;
+            }
             window.Close();
-            onApply();
+            onApply(saveSuccess);
         }
     }
 }

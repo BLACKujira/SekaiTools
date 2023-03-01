@@ -35,11 +35,8 @@ namespace SekaiTools.UI
         public GraphicRaycaster GraphicRaycaster { get { if (!graphicRaycaster) graphicRaycaster = GetComponent<GraphicRaycaster>(); return graphicRaycaster; } }
         public Canvas Canvas { get { if (!canvas) canvas = GetComponent<Canvas>();return canvas; } }
 
-        static int windowCount = 0;
-
         private void Awake()
         {
-            Canvas.sortingOrder = windowCount++;
             if (mainCameraRender)
             {
                 Canvas.worldCamera = CameraController.MainCamera;
@@ -54,6 +51,7 @@ namespace SekaiTools.UI
         public virtual void Initialize(Window parentWindow)
         {
             this.parentWindow = parentWindow;
+            Canvas.sortingOrder = parentWindow.Canvas.sortingOrder + 1;
         }
 
         /// <summary>
@@ -163,11 +161,12 @@ namespace SekaiTools.UI
         /// 打开一个不需要操作控制脚本的窗口
         /// </summary>
         /// <param name="window"></param>
-        public void OpenWindow(Window window)
+        public MonoBehaviour OpenWindow(Window window)
         {
             Window openWindow = Instantiate(window);
             openWindow.Initialize(this);
             openWindow.Show();
+            return openWindow.controlScript;
         }
 
         public void ShowMessageBox(string title, string message, Action onClose = null)
@@ -180,11 +179,6 @@ namespace SekaiTools.UI
         {
             MessageBox.MessageBox messageBox = OpenWindow<MessageBox.MessageBox>(WindowController.windowController.logWindow);
             messageBox.Initialize(title, log, onClose);
-        }
-
-        private void OnDestroy()
-        {
-            windowCount--;
         }
     }
 }

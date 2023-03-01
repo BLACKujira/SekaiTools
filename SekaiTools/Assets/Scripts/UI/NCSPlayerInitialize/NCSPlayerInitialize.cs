@@ -1,7 +1,7 @@
 ﻿using SekaiTools.UI.GenericInitializationParts;
 using SekaiTools.UI.NCSPlayer;
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using UnityEngine;
@@ -32,8 +32,8 @@ namespace SekaiTools.UI.NCSPlayerInitialize
             string fileName = openFileDialog.FileName;
             nicknameCountShowcase = Count.Showcase.NicknameCountShowcase.LoadData(fileName,false);
             string audioDataPath = Path.ChangeExtension(fileName, ".aud");
-            if (File.Exists(audioDataPath))
-                audioArea.Load(audioDataPath);
+            if (File.Exists(audioDataPath)) throw new NotImplementedException();
+                //audioArea.Load(audioDataPath);
             l2dArea.Initialize(nicknameCountShowcase.charactersRequireL2d);
             ncdArea.Load(Path.GetDirectoryName(audioDataPath));
 
@@ -45,7 +45,7 @@ namespace SekaiTools.UI.NCSPlayerInitialize
         {
             NCSPlayer_Player.Settings settings = new NCSPlayer_Player.Settings();
             settings.showcase = nicknameCountShowcase;
-            settings.countData = ncdArea.nicknameCountData;
+            settings.countData = ncdArea.NicknameCountData;
             settings.live2DModels = l2dArea.sekaiLive2DModels;
             AudioData audioData = new AudioData();
             settings.audioData = audioData;
@@ -56,7 +56,7 @@ namespace SekaiTools.UI.NCSPlayerInitialize
                 nCSPlayer.Initialize(settings);
             };
             
-            nowLoadingTypeA.StartProcess(audioData.LoadFile(audioArea.serializedAudioData));
+            nowLoadingTypeA.StartProcess(audioData.LoadFile(audioArea.SerializedAudioData));
         }
     }
 }

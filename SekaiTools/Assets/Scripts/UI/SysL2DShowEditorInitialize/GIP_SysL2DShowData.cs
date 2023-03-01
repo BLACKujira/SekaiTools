@@ -34,24 +34,27 @@ namespace SekaiTools.UI.SysL2DShowEditorInitialize
                            };
             if (file_SaveData)
             {
-                file_SaveData.onPathSelect += setSaveDataPath;
-                file_SaveData.onPathReset += setSaveDataPath;
+                file_SaveData.onPathChange.AddListener((path)=>setSaveDataPath(path));
             }
-            file_LoadData.onPathSelect += (str) =>
-             {
-                 string json = File.ReadAllText(str);
-                 SysL2DShowData sysL2DShowData = JsonUtility.FromJson<SysL2DShowData>(json);
-                 loadedData = sysL2DShowData;
-                 loadedData.SavePath = str;
-                 if (onDataChanged!=null) onDataChanged(loadedData);
-                 RefreshDataInfo();
-             };
-            file_LoadData.onPathReset += (_) =>
-            {
-                loadedData = null;
-                if (onDataChanged != null) onDataChanged(loadedData);
-                RefreshDataInfo();
-            };
+            file_LoadData.onPathChange.AddListener(
+                (path) =>
+                {
+                    if(string.IsNullOrEmpty(path))
+                    {
+                        loadedData = null;
+                        if (onDataChanged != null) onDataChanged(loadedData);
+                        RefreshDataInfo();
+                    }
+                    else
+                    {
+                        string json = File.ReadAllText(path);
+                        SysL2DShowData sysL2DShowData = JsonUtility.FromJson<SysL2DShowData>(json);
+                        loadedData = sysL2DShowData;
+                        loadedData.SavePath = path;
+                        if (onDataChanged != null) onDataChanged(loadedData);
+                        RefreshDataInfo();
+                    }
+                });
             RefreshDataInfo();
         }
 

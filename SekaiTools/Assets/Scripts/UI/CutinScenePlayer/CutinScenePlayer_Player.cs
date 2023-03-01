@@ -23,6 +23,7 @@ namespace SekaiTools.UI.CutinScenePlayer
         public float waitTime_Voice;
         public float waitTime_Scene;
         public float minHoldTime;
+        public float fadeOutDelay = 1.5f;
         [Header("Exception")]
         public MonoBehaviour _exceptionPrinter;
 
@@ -46,14 +47,15 @@ namespace SekaiTools.UI.CutinScenePlayer
         /// <returns></returns>
         public IEnumerator IPlay()
         {
-            talkWindow.Open();
+            if (talkWindow) talkWindow.Open();
             foreach (var scene in cutinSceneData.cutinScenes)
             {
                 yield return IPlayScene(scene);
                 yield return new WaitForSeconds(waitTime_Scene);
             }
+            yield return new WaitForSeconds(fadeOutDelay);
             l2DController.HideModelAll();
-            talkWindow.Close();
+            if (talkWindow) talkWindow.Close();
         }
         IEnumerator IPlayScene(CutinScene scene)
         {
@@ -103,7 +105,7 @@ namespace SekaiTools.UI.CutinScenePlayer
             {
                 exceptionPrinter.PrintException(ex);
             }
-            talkWindow.ShowWords(scene.talkData_First.talkText, ConstData.characters[scene.charFirstID].namae, scene.talkData_First.talkText_Translate);
+            if (talkWindow) talkWindow.ShowWords(scene.talkData_First.talkText, ConstData.characters[scene.charFirstID].namae, scene.talkData_First.talkText_Translate);
             yield return new WaitForSeconds(Mathf.Max(minHoldTime, audioData.GetValue(scene.talkData_First.talkVoice)?.length??0) + waitTime_Voice);
 
             //播放动画并试图捕获SEKAI异常
@@ -136,10 +138,10 @@ namespace SekaiTools.UI.CutinScenePlayer
             {
                 exceptionPrinter.PrintException(ex);
             }
-            talkWindow.ShowWords(scene.talkData_Second.talkText, ConstData.characters[scene.charSecondID].namae, scene.talkData_Second.talkText_Translate);
+            if (talkWindow) talkWindow.ShowWords(scene.talkData_Second.talkText, ConstData.characters[scene.charSecondID].namae, scene.talkData_Second.talkText_Translate);
             yield return new WaitForSeconds(Mathf.Max(minHoldTime, audioData.GetValue(scene.talkData_Second.talkVoice)?.length??0) + waitTime_Scene);
 
-            talkWindow.Clear();
+            if (talkWindow) talkWindow.Clear();
             l2DController.FadeOutAll();
         }
     }

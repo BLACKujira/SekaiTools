@@ -1,8 +1,6 @@
 ﻿using SekaiTools.Effect;
-using SekaiTools.UI.BackGround;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SekaiTools.UI.Transition
@@ -11,6 +9,8 @@ namespace SekaiTools.UI.Transition
     {
         [ColorUsage(true, true)]
         public Color hdrColor = new Color(2, 2, 2, 1);
+
+        public override string DefaultSerializedTransition => JsonUtility.ToJson(new SaveData(hdrColor));
 
         public override ConfigUIItem[] configUIItems => new ConfigUIItem[]
                     {
@@ -27,7 +27,7 @@ namespace SekaiTools.UI.Transition
         {
             return JsonUtility.ToJson(new SaveData(hdrColor));
         }
-        
+
         [System.Serializable]
         public class SaveData
         {
@@ -41,11 +41,10 @@ namespace SekaiTools.UI.Transition
 
         protected override IEnumerator Transition(IEnumerator changeCoroutine, Action changeAction, TransitionYieldInstruction transitionYieldInstruction)
         {
-            BackGroundPart backGroundPart = BackGroundController.AddDecoration(triBurstPrefab);
-            backGroundPart.disableRemove = true;
-            IHDRColor iHDRColor = backGroundPart.GetModifier<IHDRColor>();
+            GameObject transitionObject = Instantiate(triBurstPrefab);
+            IHDRColor iHDRColor = transitionObject.GetComponent<IHDRColor>();
             iHDRColor.hDRColor = hdrColor;
-            yield return TransitionBase(changeCoroutine, changeAction, backGroundPart,transitionYieldInstruction);
+            yield return TransitionBase(changeCoroutine, changeAction, transitionObject, transitionYieldInstruction);
         }
     }
 }

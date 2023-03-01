@@ -159,7 +159,7 @@ namespace SekaiTools.UI.BackGroundSettings
             if (dialogResult != DialogResult.OK) return;
             ImageData imageData = new ImageData(openFileDialog_BGImage.FileName);
             NowLoadingTypeA nowLoadingTypeA = window.OpenWindow<NowLoadingTypeA>(nowLoadingWindow);
-            nowLoadingTypeA.OnFinish += () => { BackGroundController.backGroundController.ChangeBackGround(imageData.valueArray[0], openFileDialog_BGImage.FileName); };
+            nowLoadingTypeA.OnFinish += () => { BackGroundController.backGroundController.ChangeBackGround(imageData.ValueArray[0], openFileDialog_BGImage.FileName); };
             nowLoadingTypeA.StartProcess(imageData.LoadFile(openFileDialog_BGImage.FileName));
         }
 

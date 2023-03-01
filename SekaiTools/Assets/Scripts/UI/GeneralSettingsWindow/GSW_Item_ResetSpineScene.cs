@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace SekaiTools.UI.GeneralSettingsWindow
 {
+
     public class GSW_Item_ResetSpineScene : GSW_Item
     {
         [Header("Components")]

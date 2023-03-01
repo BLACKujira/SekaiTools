@@ -12,62 +12,41 @@ namespace SekaiTools.UI.NicknameCountEditor
         public Window window;
         [Header("Components")]
         public NicknameCountEditor_SelectorArea selectorArea;
-        public ToggleGenerator toggleGenerator;
-        [Header("Settings")]
-        public IconSet iconSet;
+        public NicknameCountEditor_AmbiguityArea ambiguityArea;
         [Header("Message")]
         public MessageLayer.MessageLayerBase messageLayer;
 
-        [System.NonSerialized] public NicknameCountData countData;
-        [System.NonSerialized] public int currentCharacterId = 1;
+        NicknameCountData countData;
+        public NicknameCountData CountData => countData;
 
         private void Awake()
         {
-            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            DialogResult dialogResult = folderBrowserDialog.ShowDialog();
-            if (dialogResult != DialogResult.OK) window.Close();
-
-            countData = NicknameCountData.Load(folderBrowserDialog.SelectedPath);
             window.OnReShow.AddListener(() => Refresh());
-
-            Initialize();
         }
 
-        private void Initialize()
+        public void Initialize(NicknameCountData countData)
         {
-            InitializeToggles();
+            this.countData = countData;
             selectorArea.Initialize();
             Refresh();
         }
 
-        public void InitializeToggles()
-        {
-            toggleGenerator.Generate(26,
-                (Toggle toggle, int id) =>
-                {
-                    toggle.transform.GetChild(0).GetComponent<Image>().sprite = iconSet.icons[id + 1];
-                    toggle.GetComponent<Image>().color = ConstData.characters[id + 1].imageColor;
-                },
-                (bool value, int id) =>
-                {
-                    if (value)
-                    {
-                        currentCharacterId = id + 1;
-                        Refresh();
-                    }
-                });
-            toggleGenerator.toggles[0].isOn = true;
-        }
-
         public void Refresh()
         {
-            selectorArea.Refresh();
+            if(selectorArea.gameObject.activeSelf) selectorArea.Refresh();
+            if(ambiguityArea.gameObject.activeSelf) ambiguityArea.Refresh();
         }
 
         public void Save()
         {
-            countData.SaveChangedFiles();
-            messageLayer.ShowMessage("保存成功");
+            int count = countData.SaveChangedFiles();
+            messageLayer.ShowMessage($"保存成功\n{count}个文件已更改");
+        }
+
+        public void Close()
+        {
+            string message = $"{countData.ChangedFileCount}个文件已发生更改\n未保存的更改将丢失";
+            WindowController.ShowCancelOK("确定要退出吗", message, () => window.Close());
         }
     }
 }

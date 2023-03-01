@@ -11,6 +11,7 @@ using System.IO;
 
 namespace SekaiTools.UI.KizunaScenePlayerInitialize
 {
+    [System.Obsolete]
     public class KizunaScenePlayerInitialize : MonoBehaviour
     {
         public Window window;
@@ -101,7 +102,7 @@ namespace SekaiTools.UI.KizunaScenePlayerInitialize
             audioArea.Initialize(kizunaSceneData);
             if (kizunaSceneData == null) return;
 
-            modelArea.Initialize(kizunaSceneData.CountAppearCharacters());
+            modelArea.Initialize(kizunaSceneData.AppearCharacters);
         }
 
         private void Update()
@@ -113,7 +114,7 @@ namespace SekaiTools.UI.KizunaScenePlayerInitialize
         {
             if (openWindowPrefab.controlScript is KizunaSceneEditor.KizunaSceneEditor)
             {
-                KizunaSceneEditor.KizunaSceneEditor.KizunaSceneEditorSettings kizunaSceneEditorSettings = new KizunaSceneEditor.KizunaSceneEditor.KizunaSceneEditorSettings();
+                KizunaSceneEditor.KizunaSceneEditor.Settings kizunaSceneEditorSettings = new KizunaSceneEditor.KizunaSceneEditor.Settings();
                 kizunaSceneEditorSettings.imageData = graphicArea != null ? graphicArea.imageData : null;
                 kizunaSceneEditorSettings.kizunaSceneData = kizunaSceneData;
                 kizunaSceneEditorSettings.audioData = audioArea.audioData;
@@ -125,7 +126,7 @@ namespace SekaiTools.UI.KizunaScenePlayerInitialize
             }
             else
             {
-                KizunaScenePlayer.KizunaScenePlayer.KizunaScenePlayerSettings kizunaScenePlayerSettings = new KizunaScenePlayer.KizunaScenePlayer.KizunaScenePlayerSettings();
+                KizunaSceneEditor.KizunaSceneEditor.Settings kizunaScenePlayerSettings = new KizunaSceneEditor.KizunaSceneEditor.Settings();
                 kizunaScenePlayerSettings.imageData = graphicArea != null ? graphicArea.imageData : null;
                 kizunaScenePlayerSettings.kizunaSceneData = kizunaSceneData;
                 kizunaScenePlayerSettings.audioData = audioArea.audioData;

@@ -19,19 +19,18 @@ namespace SekaiTools.UI.GeneralSettingsWindow
             ConfigUIItem_Live2dModel configUIItem_Live2dModel = configUIItem as ConfigUIItem_Live2dModel;
             if (configUIItem_Live2dModel == null) throw new ItemTypeMismatchException();
 
-            Live2D.SekaiLive2DModel sekaiLive2DModel = configUIItem_Live2dModel.getValue();
-            nameText.text = sekaiLive2DModel == null ? "无" : sekaiLive2DModel.name;
+            L2DModelSelect.SelectedModelInfo selectedModelInfo = configUIItem_Live2dModel.getValue();
+            nameText.text = string.IsNullOrEmpty(selectedModelInfo.modelName) ? "无" : selectedModelInfo.modelName;
 
             selectButton.onClick.AddListener(() =>
             {
-                //L2DModelSelect l2DModelSelect = WindowController.windowController.currentWindow.OpenWindow<L2DModelSelect>(modelSelectWindow);
-                //l2DModelSelect.Generate(
-                //    (SekaiLive2DModel model) => 
-                //    {
-                //        configUIItem_Live2dModel.setValue(model);
-                //        nameText.text = sekaiLive2DModel == null ? "无" : model.name;
-                //        generalSettingsWindow.Refresh();
-                //    });
+                L2DModelSelect.L2DModelSelect l2DModelSelect
+                    = WindowController.windowController.currentWindow.OpenWindow<L2DModelSelect.L2DModelSelect>(modelSelectWindow);
+                l2DModelSelect.Initialize((modelInfo) =>
+                {
+                    configUIItem_Live2dModel.setValue(modelInfo);
+                    nameText.text = string.IsNullOrEmpty(modelInfo.modelName) ? "无" : modelInfo.modelName;
+                });
             });
         }
     }

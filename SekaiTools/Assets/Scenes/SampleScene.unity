@@ -682,7 +682,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f114a74bfc2e1de4e9113b42a2514f69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentWindow: {fileID: 1170864517}
+  currentWindow: {fileID: 1804942401}
   messageBoxWindow: {fileID: 1645610992376636991, guid: 4f1d0ee9d00b3b04c9bccc0dfb2e8a2e,
     type: 3}
   logWindow: {fileID: 4626514898389422335, guid: 6ca0a59c4df6acd4d9c812883e9e60ac,
@@ -690,6 +690,8 @@ MonoBehaviour:
   nowLoadingTypeAWindow: {fileID: 1894255238089403861, guid: 211679018377e574c82ad730df940ec6,
     type: 3}
   cancelOkBoxWindow: {fileID: 2002705402251771793, guid: ad51b541ef069ed428db73a314559e39,
+    type: 3}
+  masterRefCheckWindow: {fileID: 5659603972464791517, guid: b5423ed8752f6ed42ae2c821492b0875,
     type: 3}
 --- !u!4 &840890512
 Transform:
@@ -720,6 +722,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: BackGroundCamera
+      objectReference: {fileID: 0}
+    - target: {fileID: 6901134924134549057, guid: 0c422d29b1bf529449de312af8f9747b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7474056933448084106, guid: 0c422d29b1bf529449de312af8f9747b,
         type: 3}
@@ -778,18 +785,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0c422d29b1bf529449de312af8f9747b, type: 3}
---- !u!114 &1170864517 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5774948888657543405, guid: 743390dcab794a24283b93bf89552217,
-    type: 3}
-  m_PrefabInstance: {fileID: 5774948887800117947}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 42099bf0021e0984f9e335f29afda1c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1374975515
 GameObject:
   m_ObjectHideFlags: 0
@@ -930,9 +925,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcdefea4dd65b6c44807970df326fc85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character3ds_Inbuilt: {fileID: 4900000, guid: d243e30bd1524aa4ba83bcfd6e71869f,
-    type: 3}
-  events_Inbuilt: {fileID: 4900000, guid: bf49d71d1c8db734590ae197abf79b97, type: 3}
   defaultSpineModels: {fileID: 11400000, guid: 5d3165a63dbce704c8aa93ffaed49526, type: 2}
   nCSSceneSet: {fileID: 11400000, guid: 1cc086f3d23117845b0f6bde938c18a8, type: 2}
   transitionSet: {fileID: 11400000, guid: 36999fafe48e0924ea9ee270813c8476, type: 2}
@@ -958,6 +950,18 @@ Camera:
     type: 3}
   m_PrefabInstance: {fileID: 7900577972326993391}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1804942401 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5774948888657543405, guid: 743390dcab794a24283b93bf89552217,
+    type: 3}
+  m_PrefabInstance: {fileID: 5774948887800117947}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42099bf0021e0984f9e335f29afda1c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2073581428
 GameObject:
   m_ObjectHideFlags: 0

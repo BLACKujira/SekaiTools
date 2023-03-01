@@ -14,8 +14,10 @@ namespace SekaiTools.UI
         public Window logWindow;
         public Window nowLoadingTypeAWindow;
         public Window cancelOkBoxWindow;
+        public Window masterRefCheckWindow;
 
         public static WindowController windowController;
+        public static Window CurrentWindow => windowController.currentWindow;
 
         private void Awake()
         {
@@ -51,7 +53,12 @@ namespace SekaiTools.UI
             nowLoadingTypeA.StartProcess(KeepWaiting(keepWaiting));
             return nowLoadingTypeA;
         }
-
+        public static void ShowMasterRefCheck(string[] requireTableNames, Action onApply = null)
+        {
+            MasterRefCheck.MasterRefCheck masterRefCheck
+                = windowController.currentWindow.OpenWindow<MasterRefCheck.MasterRefCheck>(windowController.masterRefCheckWindow);
+            masterRefCheck.Initialize(requireTableNames, onApply);
+        }
         static IEnumerator KeepWaiting(Func<bool> keepWaiting)
         {
             while (keepWaiting())

@@ -24,7 +24,7 @@ namespace SekaiTools.UI.GeneralSettingsWindow
         int currentTabId = 0;
         List<GameObject> items = new List<GameObject>();
 
-        public void Initialize(ConfigUIItem[] configUIItems,Action onExit = null,string title = "Settings")
+        public void Initialize(ConfigUIItem[] configUIItems,Action onExit = null,string title = "设置")
         {
             titleText.text = title;
             if (onExit != null) window.OnClose.AddListener(() => { if (onExit != null) onExit(); });

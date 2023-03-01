@@ -42,7 +42,7 @@ namespace SekaiTools.UI.KizunaScenePlayerInitialize
 
         public void Initialize(KizunaSceneDataBase kizunaSceneData)
         {
-            audioDataPath.text = audioData?.savePath ?? "无音频资料";
+            audioDataPath.text = audioData?.SavePath ?? "无音频资料";
             if (kizunaSceneData != null && audioData != null)
             {
                 CutinSceneData.AudioMatchingCount audioMatchingCount = kizunaSceneData.CountMatching(audioData);

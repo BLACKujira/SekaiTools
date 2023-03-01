@@ -10,7 +10,7 @@ namespace SekaiTools.UI.NicknameCounterInitialize
 {
     public class NicknameCounterInitialize_SampleArea : MonoBehaviour
     {
-        public NicknameCounterInitialize nicknameCounterInitialize;
+        public NicknameCounterInitialize_Old nicknameCounterInitialize;
         [Header("Components")]
         public InputField inputFieldFolderPath;
         public Text textUnitStories;

@@ -43,7 +43,7 @@ namespace SekaiTools.UI.RadioInitialize
                     settings.masterEvents = EnvPath.GetTable<MasterEvent>("events");
                     settings.masterCards = EnvPath.GetTable<MasterCard>("cards");
 
-                    settings.nicknameCountData = NicknameCountData.Load(folder_nicknameCountData.SelectedPath);
+                    settings.nicknameCountData = NicknameCountData.Load_Classic(folder_nicknameCountData.SelectedPath);
                 }
 
                 return settings;

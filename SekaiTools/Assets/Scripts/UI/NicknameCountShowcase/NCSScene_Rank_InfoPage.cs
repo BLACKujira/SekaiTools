@@ -1,4 +1,5 @@
 ﻿using SekaiTools.Count;
+using SekaiTools.DecompiledClass;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ namespace SekaiTools.UI.NicknameCountShowcase
 {
     public class NCSScene_Rank_InfoPage : MonoBehaviour
     {
+        public NCSScene_Rank scene_Rank;
         [Header("Components")]
         public Image[] bgImageTalker;
         public Image[] bgImageChar;
@@ -22,7 +24,8 @@ namespace SekaiTools.UI.NicknameCountShowcase
         public Image imageEventIcon;
         [Header("Settings")]
         public IconSet iconSetCharacter;
-        public IconSet iconSetEvent;
+
+        public string requireEvIconKey = string.Empty;
 
         public void Initialize(NicknameCountData nicknameCountData, int talkerId)
         {
@@ -67,9 +70,39 @@ namespace SekaiTools.UI.NicknameCountShowcase
                 if (keyValuePair.Value > eventMost.Value) eventMost = keyValuePair;
             }
 
-            imageEventIcon.sprite = iconSetEvent.icons[eventMost.Key];
-            textInfoEvent.text = $@"在第 {eventMost.Key} 期活动 {GlobalData.globalData.events[eventMost.Key-1].name} 中，
+            MasterEvent ev = null;
+            foreach (var masterEvent in scene_Rank.player.events)
+            {
+                if (masterEvent.id == eventMost.Key)
+                {
+                    ev = masterEvent;
+                    break;
+                }
+            }
+
+            if (ev != null)
+            {
+                string imageKey = $"{ev.assetbundleName}_logo";
+                requireEvIconKey = imageKey;
+
+                if (scene_Rank.player.imageData.ContainsValue(imageKey))
+                {
+                    imageEventIcon.sprite = scene_Rank.player.imageData.GetValue(imageKey);
+                }
+                else
+                {
+                    scene_Rank.player.imageData.AppendAbstractValue(
+                        imageKey,
+                        $"{EnvPath.Assets}/event/{ev.assetbundleName}/logo_rip/logo.png");
+                }
+                textInfoEvent.text = $@"在第 {eventMost.Key} 期活动 {ev.name} 中，
 {ConstData.characters[talkerId].Name} 一共提到了 {ConstData.characters[nameId].Name} {eventMost.Value} 次。";
-    }
+
+            }
+            else
+            {
+                textInfoEvent.text = "活动信息获取失败\n请尝试将数据表更新到最新版本";
+            }
+        }
 }
 }

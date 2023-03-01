@@ -15,25 +15,21 @@ namespace SekaiTools.UI
             get { if (l2DAnimationSelectButton == null) l2DAnimationSelectButton = GetComponent<L2DAnimationSelectButton>();return l2DAnimationSelectButton; }
             set => l2DAnimationSelectButton = value; }
 
-        public void Initialize(Action<string> setString,Window inWindow)
+        public void Initialize(Action<string> setString)
         {
             L2DAnimationSelectButton.button.onClick.AddListener(() => 
             {
-                Window window = Instantiate(openWindow);
-                if (window.controlScript is Live2DMotionSelect.Live2DMotionSelect)
+                MonoBehaviour monoBehaviour = WindowController.CurrentWindow.OpenWindow(openWindow);
+                if (monoBehaviour is Live2DMotionSelect.Live2DMotionSelect motionSelect)
                 {
-                    Live2DMotionSelect.Live2DMotionSelect motionSelect = (Live2DMotionSelect.Live2DMotionSelect)window.controlScript;
-                    motionSelect.Initialize(L2DAnimationSelectButton.animationSet, (str) => { setString(str); window.Close(); });
+                    motionSelect.Initialize(L2DAnimationSelectButton.animationSet, (str) => { setString(str);  });
                     motionSelect.SetDefaultPage(null);
                 }
-                else
+                else if(monoBehaviour is Live2DFacialSelect.Live2DFacialSelect facialSelect)
                 {
-                    Live2DFacialSelect.Live2DFacialSelect facialSelect = (Live2DFacialSelect.Live2DFacialSelect)window.controlScript;
-                    facialSelect.Initialize(L2DAnimationSelectButton.animationSet, (str) => { setString(str); window.Close(); });
+                    facialSelect.Initialize(L2DAnimationSelectButton.animationSet, (str) => { setString(str);  });
                 }
                 //motionSelect.SetDefaultPage(button.animationName);//这个功能暂且有bug
-                window.Initialize(inWindow);
-                window.Show();
             });   
         }
     }

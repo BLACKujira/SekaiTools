@@ -133,6 +133,22 @@ namespace SekaiTools.UI.BackGround
             }
         }
 
+        public int GetPartLayer(BackGroundPart backGroundPart)
+        {
+            return Decorations.IndexOf(backGroundPart);
+        }
+
+        public int GetPartLayerOfType(string partTypeName)
+        {
+            for (int i = 0; i < Decorations.Count; i++)
+            {
+                BackGroundPart backGroundPart = Decorations[i];
+                if (backGroundPart.name.Equals(partTypeName))
+                    return i;
+            }
+            return -1;
+        }
+
         //用于序列化的类
         [System.Serializable]
         public class BackGroundSaveData

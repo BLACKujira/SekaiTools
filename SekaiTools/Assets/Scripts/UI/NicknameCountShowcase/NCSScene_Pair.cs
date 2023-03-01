@@ -8,8 +8,6 @@ namespace SekaiTools.UI.NicknameCountShowcase
     {
         public NCSScene_Pair_Item[] items = new NCSScene_Pair_Item[20];
 
-        public override ConfigUIItem[] configUIItems => throw new System.NotImplementedException();
-
         public override void Refresh()
         {
             List<SortItem> sortItems = new List<SortItem>();
@@ -28,6 +26,7 @@ namespace SekaiTools.UI.NicknameCountShowcase
             for (int i = 0; i < items.Length; i++)
             {
                 SortItem sortItem = sortItems[i];
+                sortItem.Sort();
                 items[i].SetData(sortItem.idA, sortItem.idB, sortItem.countA, sortItem.countB);
             }
         }
@@ -49,7 +48,14 @@ namespace SekaiTools.UI.NicknameCountShowcase
 
             public int total => countA + countB;
 
-
+            public void Sort()
+            {
+                if(countA<countB)
+                {
+                    (idA, idB) = (idB, idA);
+                    (countA, countB) = (countB, countA);
+                }
+            }
         }
     }
 }

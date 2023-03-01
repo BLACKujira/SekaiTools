@@ -1,6 +1,4 @@
 ﻿using SekaiTools.Count;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,20 +19,21 @@ namespace SekaiTools.UI.NCEWindow
         public Color defaultEdgeColor = new Color32(204, 238, 238, 255);
         public Color selectedBGColor = Color.white;
         public Color selectedEdgeColor = new Color32(67, 67, 101, 255);
+        public float selectedBGLerpT = 0.6f;
         public IconSet iconSet;
 
         RectTransform _rectTransform;
-        public RectTransform rectTransform { get{ if (!_rectTransform) _rectTransform = GetComponent<RectTransform>();return _rectTransform; } }
+        public RectTransform rectTransform { get { if (!_rectTransform) _rectTransform = GetComponent<RectTransform>(); return _rectTransform; } }
 
-        public void Initialize(BaseTalkData baseTalkData,NicknameCountMatrix nicknameCountMatrix,int talkerId,int nameId)
+        public void Initialize(BaseTalkData baseTalkData, NicknameCountMatrix nicknameCountMatrix, int talkerId, int nameId)
         {
-            NicknameCountGrid nicknameCountGrid = nicknameCountMatrix[talkerId,nameId];
+            NicknameCountGrid nicknameCountGrid = nicknameCountMatrix[talkerId, nameId];
 
             referenceIndex = baseTalkData.referenceIndex;
             iconImage.sprite = iconSet.icons[baseTalkData.characterId];
             nameLabel.text = baseTalkData.windowDisplayName;
             serifText.text = baseTalkData.serif;
-            selectedBGColor = ConstData.characters[nameId].imageColor;
+            selectedBGColor = Color.Lerp(ConstData.characters[nameId].imageColor, Color.white, selectedBGLerpT);
 
             targetToggle.onValueChanged.AddListener((bool value) =>
             {
@@ -48,7 +47,7 @@ namespace SekaiTools.UI.NCEWindow
 
             targetToggle.onValueChanged.AddListener((bool value) =>
             {
-                if(value)
+                if (value)
                 {
                     if (!nicknameCountGrid.matchedIndexes.Contains(referenceIndex))
                         nicknameCountGrid.matchedIndexes.Add(referenceIndex);

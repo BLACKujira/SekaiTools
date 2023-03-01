@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using SekaiTools;
 using DG.Tweening;
 using System;
+using SekaiTools.UI.L2DModelSelect;
 
 namespace SekaiTools.Live2D
 {
@@ -196,6 +197,16 @@ namespace SekaiTools.Live2D
             renderTextureL.Release();
             renderTextureR.Release();
             ResetAllModels();
+        }
+        private void OnEnable()
+        {
+            l2DCameraL.gameObject.SetActive(true);
+            l2DCameraR.gameObject.SetActive(true);
+        }
+        private void OnDisable()
+        {
+            l2DCameraL.gameObject.SetActive(false);
+            l2DCameraR.gameObject.SetActive(false);
         }
 
         public void ResetAllModels()

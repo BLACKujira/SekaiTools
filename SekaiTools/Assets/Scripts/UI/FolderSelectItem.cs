@@ -8,8 +8,6 @@ namespace SekaiTools.UI
 {
     public class FolderSelectItem : PathSelectItem
     {
-        public override event Action<string> onPathSelect;
-
         public override void SelectPath()
         {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
@@ -18,8 +16,7 @@ namespace SekaiTools.UI
 
             pathInputField.text = folderBrowserDialog.SelectedPath;
 
-            if (onPathSelect != null)
-                onPathSelect(SelectedPath);
+            onPathChange.Invoke(SelectedPath);
         }
     }
 }

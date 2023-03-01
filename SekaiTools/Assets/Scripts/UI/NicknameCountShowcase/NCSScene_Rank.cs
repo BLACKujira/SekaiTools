@@ -9,7 +9,7 @@ using DG.Tweening;
 
 namespace SekaiTools.UI.NicknameCountShowcase
 {
-    public class NCSScene_Rank : NCSScene
+    public class NCSScene_Rank : NCSScene, IImageFileReference
     {
         [Header("Components")]
         public NCSScene_Rank_RankPage rankPage;
@@ -43,7 +43,7 @@ namespace SekaiTools.UI.NicknameCountShowcase
                 new ConfigUIItem_ResetSpineScene("重设Spine场景","spine",ResetSpineScene)
             };
 
-        public override string information => $"角色 {ConstData.characters[talkerId].Name} , 持续时间 {holdTime.ToString("0.00")}";
+        public override string Information => $"角色 {ConstData.characters[talkerId].Name} , 持续时间 {holdTime.ToString("0.00")}";
 
         float[] graphicsPage1Alpha;
         float[] graphicsPage2Alpha;
@@ -69,6 +69,8 @@ namespace SekaiTools.UI.NicknameCountShowcase
             }
         }
 
+        public HashSet<string> RequireImageKeys => new HashSet<string>() { infoPage.requireEvIconKey };
+
         private void SetAlpha(float alpha, List<Graphic> graphics, float[] alphas)
         {
             for (int i = 0; i < graphics.Count; i++)
@@ -90,6 +92,7 @@ namespace SekaiTools.UI.NicknameCountShowcase
             Settings settings = JsonUtility.FromJson<Settings>(serialisedData);
             this.holdTime = settings.holdTime;
             this.talkerId = settings.talkerId;
+            infoPage.requireEvIconKey = settings.evImageKey;
             this.spineScene = settings.spineScene;
             if (bgpSpine == null) bgpSpine = BackGroundController.backGroundController.AddDecoration(bgpSpinePrefab, spineScene.spineLayerID);
         }
@@ -147,7 +150,7 @@ namespace SekaiTools.UI.NicknameCountShowcase
             spineController.ClearModel();
             spineController.LoadData(spineScene);
 
-            StartCoroutine(IPageChangeCoroutine());
+            if(gameObject.activeSelf) StartCoroutine(IPageChangeCoroutine());
         }
 
         public IEnumerator IPageChangeCoroutine()
@@ -219,12 +222,14 @@ namespace SekaiTools.UI.NicknameCountShowcase
         {
             public float holdTime;
             public int talkerId;
+            public string evImageKey;
             public SpineScene spineScene;
 
             public Settings(NCSScene_Rank nCSScene_Rank)
             {
                 holdTime = nCSScene_Rank.holdTime;
                 talkerId = nCSScene_Rank.talkerId;
+                evImageKey = nCSScene_Rank.infoPage.requireEvIconKey;
                 spineScene = nCSScene_Rank.spineScene;
             }
         }

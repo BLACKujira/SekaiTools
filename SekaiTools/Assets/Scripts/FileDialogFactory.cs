@@ -31,10 +31,12 @@ namespace SekaiTools
         public const string FILTER_GIF = "gif |*.gif";
         public const string FILTER_BGS = "背景设置 (*.bgs)|*.bgs|Others (*.*)|*.*";
         public const string FILTER_AUDIO = "Audio |*.wav;*.ogg;*.mp3|Others (*.*)|*.*";
-        public const string FILTER_NCS = "NicknameCountShowcase (*.ncs)|*.ncs|Others (*.*)|*.*";
+        public const string FILTER_NCS = "昵称统计展示 (*.ncs)|*.ncs|Others (*.*)|*.*";
         public const string FILTER_SS = "Spine场景 (*.ss)|*.ss|Others (*.*)|*.*";
         public const string FILTER_SAS = "Spine动画展示场景 (*.sas)|*.sas|Others (*.*)|*.*";
         public const string FILTER_SLS = "系统Live2D展示场景 (*.sls)|*.sls|Others (*.*)|*.*";
         public const string FILTER_TXT = ".txt|*.txt";
+        public const string FILTER_CPF = "组合分类存档 (*.cpf)|*.cpf|Others (*.*)|*.*";
+
     }
 }

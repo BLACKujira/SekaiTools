@@ -14,7 +14,7 @@ namespace SekaiTools.Message
     public static class IO
     {
         public const string STR_SAVECOMPLETE = "保存完成";
-
+        public const string STR_PLEASECREATEDATA = "请创建存档";
     }
 
     public static class Info

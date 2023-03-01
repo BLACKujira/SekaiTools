@@ -5,6 +5,10 @@ using System.IO;
 using System.Windows.Forms;
 using SekaiTools.DecompiledClass;
 using System;
+using System.Linq;
+using SekaiTools.SekaiViewerInterface;
+using SekaiTools.Count;
+using System.Text.RegularExpressions;
 
 namespace SekaiTools
 {
@@ -57,6 +61,11 @@ namespace SekaiTools
             return DateTimeOffset.FromUnixTimeMilliseconds(unixTime).DateTime;
         }
 
+        /// <summary>
+        /// 以东京时间计算
+        /// </summary>
+        /// <param name="unixTime"></param>
+        /// <returns></returns>
         public static DateTime UnixTimeMSToDateTimeTST(long unixTime)
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(unixTime);
@@ -92,6 +101,90 @@ namespace SekaiTools
                 || extension.Equals(".mp3"))
                 return true;
             return false;
+        }
+
+        public static bool IsImageFile(string fileName)
+        {
+            string extension = Path.GetExtension(fileName).ToLower();
+            if (extension.Equals(".png"))
+                return true;
+            return false;
+        }
+
+        public static Dictionary<string, string[]> GetFilesInSubFolder(string folderPath)
+        {
+            string[] directories = Directory.GetDirectories(folderPath).Select((dir) => Path.GetFileName(dir)).ToArray();
+            Dictionary<string, string[]> files = new Dictionary<string, string[]>();
+            foreach (var folder in directories)
+            {
+                files[folder] = Directory.GetFiles(Path.Combine(folderPath, folder)).Select((file) => Path.GetFileName(file)).ToArray();
+            }
+            return files;
+        }
+
+        public static string GetRelativePath(string relativeTo, string path)
+        {
+            relativeTo = Path.GetFullPath(relativeTo);
+            path = Path.GetFullPath(path);
+            if (!path.StartsWith(relativeTo)) throw new NotImplementedException();
+            return $".{path.Substring(relativeTo.Length,path.Length-relativeTo.Length)}";
+        }
+
+        public static string GetFullPath(string path, string basePath)
+        {
+            basePath = Path.GetFullPath(basePath);
+            path.Replace("\\\\", "\\");
+            path.Replace("/", "\\");
+            path.Replace("//", "\\");
+            string[] pathArray = path.Split('\\');
+            if (pathArray.Length <= 0 || !pathArray[0].Equals(".")) throw new NotImplementedException();
+            return $"{basePath}{path.Substring(1, path.Length - 1)}";
+        }
+
+        public static string ChangeFolder(string fromFolder,string toFolder,string path)
+        {
+            string relativePath = GetRelativePath(fromFolder, path);
+            return GetFullPath(relativePath, toFolder);
+        }
+
+        public static string[] GetAllFiles(string folder)
+        {
+            List<string> files = new List<string>();
+            GetAllFiles_SingleFolder(folder,files);
+            return files.ToArray();
+        }
+
+        static void GetAllFiles_SingleFolder(string folder,List<string> fileList)
+        {
+            string[] files = Directory.GetFiles(folder);
+            fileList.AddRange(files);
+            string[] folders = Directory.GetDirectories(folder);
+            foreach (var folderSub in folders)
+            {
+                GetAllFiles_SingleFolder(folderSub, fileList);
+            }
+        }
+
+        public static string GetUrlInSV(string fileInAssetFolder)
+        {
+            string relativePath = GetRelativePath(EnvPath.Assets, fileInAssetFolder);
+            return SekaiViewer.AssetUrl + relativePath.Substring(1,relativePath.Length-1);
+        }
+
+        public static int CountNicknameCountMatrices(this NicknameCountMatrix[] nicknameCountMatrices,int talkerId,int nameId)
+        {
+            return nicknameCountMatrices.Sum(ncs => ncs[talkerId, nameId].Times);
+        }
+
+        public static bool RegexCheck(string pattern)
+        {
+            if (string.IsNullOrEmpty(pattern)) return false;
+            try
+            {
+                new Regex(pattern);
+            }
+            catch { return false; }
+            return true;
         }
     }
 }

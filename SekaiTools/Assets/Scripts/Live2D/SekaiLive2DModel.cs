@@ -9,6 +9,7 @@ using Live2D.Cubism.Framework.Expression;
 using Live2D.Cubism.Framework.Pose;
 using Live2D.Cubism.Framework.MotionFade;
 using Live2D.Cubism.Core;
+using SekaiTools.UI.L2DModelSelect;
 
 namespace SekaiTools.Live2D
 {
@@ -89,6 +90,8 @@ namespace SekaiTools.Live2D
                 return _parameterMouthOpenY;
             }
         }
+
+        public SelectedModelInfo selectedModelInfo => new SelectedModelInfo(name, AnimationSet == null ? null: AnimationSet.name);
 
         private void Awake()
         {

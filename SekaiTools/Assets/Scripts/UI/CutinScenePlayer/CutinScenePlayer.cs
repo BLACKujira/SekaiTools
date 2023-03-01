@@ -32,7 +32,7 @@ namespace SekaiTools.UI.CutinScenePlayer
         /// 传入一个设置对象以初始化
         /// </summary>
         /// <param name="settings"></param>
-        public void Initialize(CutinScenePlayerSettings settings)
+        public void Initialize(Settings settings)
         {
             player.audioData = settings.audioData;
             player.cutinSceneData = settings.cutinSceneData;
@@ -43,7 +43,7 @@ namespace SekaiTools.UI.CutinScenePlayer
         /// <summary>
         /// 用于初始化
         /// </summary>
-        public class CutinScenePlayerSettings
+        public class Settings
         {
             public AudioData audioData;
             public CutinSceneData cutinSceneData;

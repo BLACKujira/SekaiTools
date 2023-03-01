@@ -23,24 +23,18 @@ namespace SekaiTools.UI.KizunaScenePlayer
             }
         }
 
-        public void Initialize(KizunaScenePlayerSettings settings)
+        public void Initialize(KizunaSceneEditor.KizunaSceneEditor.Settings settings)
         {
-            player.audioData = settings.audioData;
-            player.imageData = settings.imageData;
-            player.kizunaSceneData = settings.kizunaSceneData;
-            player.l2DController.live2DModels = settings.sekaiLive2DModels;
-            player.l2DController.ResetAllModels();
-            player.bGController.Initialize(settings.backGroundParts);
-            player.Initialize();
+            player.Initialize(settings);
         }
 
-        public class KizunaScenePlayerSettings
+        public void DestroyLive2DModels()
         {
-            public AudioData audioData;
-            public ImageData imageData;
-            public KizunaSceneDataBase kizunaSceneData;
-            public SekaiLive2DModel[] sekaiLive2DModels;
-            public BackGroundPart[] backGroundParts;
+            foreach (var live2DModel in player.l2DController.live2DModels)
+            {
+                if (live2DModel)
+                    Destroy(live2DModel.gameObject);
+            }
         }
     }
 }

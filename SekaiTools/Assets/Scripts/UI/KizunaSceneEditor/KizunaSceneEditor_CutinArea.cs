@@ -27,9 +27,10 @@ namespace SekaiTools.UI.KizunaSceneEditor
         public void OpenCutinSceneEditor()
         {
             CutinSceneEditor.CutinSceneEditor cutinSceneEditor = kizunaSceneEditor.window.OpenWindow<CutinSceneEditor.CutinSceneEditor>(editorWindow);
-            CutinSceneEditor.CutinSceneEditor.CutinSceneEditorSettings settings = new CutinSceneEditor.CutinSceneEditor.CutinSceneEditorSettings();
+            CutinSceneEditor.CutinSceneEditor.Settings settings = new CutinSceneEditor.CutinSceneEditor.Settings();
             settings.audioData = kizunaSceneEditor.audioData;
             settings.cutinSceneData = new Cutin.CutinSceneDataInKizunaData(kizunaSceneEditor.currentKizunaScene.cutinScenes, kizunaSceneEditor.kizunaSceneData);
+            settings.cutinSceneData.playerType = kizunaSceneEditor.kizunaSceneData.cutinPlayerType;
             settings.sekaiLive2DModels = kizunaSceneEditor.modelArea.l2DController.live2DModels;
             cutinSceneEditor.Initialize(settings);
             kizunaSceneEditor.modelArea.l2DController.HideModelAll();

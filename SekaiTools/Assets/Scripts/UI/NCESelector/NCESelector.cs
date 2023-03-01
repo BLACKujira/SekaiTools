@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using SekaiTools.Count;
+﻿using SekaiTools.Count;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace SekaiTools.UI.NCESelector
@@ -22,18 +22,50 @@ namespace SekaiTools.UI.NCESelector
         [Header("Prefab")]
         public Window nCESingleWindowPrefab;
         public Window nCEMutiWindowPrefab;
+        public Window nCEFullWindowPrefab;
+        public Window nCEAmbiguityWindowPrefab;
 
         [NonSerialized] public NicknameCountData countData;
 
-        public enum Mode { single,muti }
+        public enum Mode { single, muti, full, ambiguity }
         [NonSerialized] public Mode mode;
         [NonSerialized] public int talkerId;
         [NonSerialized] public int nameId;
+        [NonSerialized] public string ambiguityRegex;
         [NonSerialized] public StoryType currentStoryTypeTab = StoryType.UnitStory;
+        [NonSerialized] StoryDescriptionGetter storyDescriptionGetter;
 
         private void Awake()
         {
+            storyDescriptionGetter = new StoryDescriptionGetter();
             window.OnReShow.AddListener(() => Refresh());
+        }
+
+        /// <summary>
+        /// 初始化函数，进入全部剧情模式
+        /// </summary>
+        /// <param name="countData"></param>
+        /// <param name="characterId"></param>
+        public void Initialize(NicknameCountData countData)
+        {
+            mode = Mode.full;
+            this.countData = countData;
+            InitializeTab();
+            Refresh();
+        }
+
+        /// <summary>
+        /// 初始化函数，进入模糊昵称模式
+        /// </summary>
+        /// <param name="countData"></param>
+        /// <param name="characterId"></param>
+        public void Initialize(NicknameCountData countData, string ambiguityRegex)
+        {
+            mode = Mode.ambiguity;
+            this.countData = countData;
+            this.ambiguityRegex = ambiguityRegex;
+            InitializeTab();
+            Refresh();
         }
 
         /// <summary>
@@ -55,7 +87,7 @@ namespace SekaiTools.UI.NCESelector
         /// </summary>
         /// <param name="countData"></param>
         /// <param name="nameId"></param>
-        public void Initialize(NicknameCountData countData,int talkerId,int nameId)
+        public void Initialize(NicknameCountData countData, int talkerId, int nameId)
         {
             mode = Mode.single;
             this.talkerId = talkerId;
@@ -76,17 +108,20 @@ namespace SekaiTools.UI.NCESelector
                     screenedMatrices.Add(nicknameCountMatrix);
             }
 
+            screenedMatrices = new List<NicknameCountMatrix>(NicknameCountMatrix.Sort(screenedMatrices.ToArray()));
             buttonGenerator.Generate(screenedMatrices.Count,
                 (Button button, int id) =>
                 {
                     NCESelector_Item nCESelector_Item = button.GetComponent<NCESelector_Item>();
                     NicknameCountMatrix nicknameCountMatrix = screenedMatrices[id];
-                    Vector2Int[] countCharacter = nicknameCountMatrix.nicknameCountRows[talkerId].nicknameCountGrids[nameId].matchedIndexes.Count > 0?
-                        new Vector2Int[]{new Vector2Int(nameId, nicknameCountMatrix.nicknameCountRows[talkerId].nicknameCountGrids[nameId].matchedIndexes.Count)}
-                        :new Vector2Int[0];
+                    Vector2Int[] countCharacter = nicknameCountMatrix.nicknameCountRows[talkerId].nicknameCountGrids[nameId].matchedIndexes.Count > 0 ?
+                        new Vector2Int[] { new Vector2Int(nameId, nicknameCountMatrix.nicknameCountRows[talkerId].nicknameCountGrids[nameId].matchedIndexes.Count) }
+                        : new Vector2Int[0];
                     nCESelector_Item.Initialize(
                         nicknameCountMatrix.fileName,
                         nicknameCountMatrix.nicknameCountRows[talkerId].serifCount.Count,
+                        nicknameCountMatrix.storyType,
+                        storyDescriptionGetter,
                         countCharacter
                         );
                 },
@@ -94,7 +129,7 @@ namespace SekaiTools.UI.NCESelector
                 {
                     NicknameCountMatrix nicknameCountMatrix = screenedMatrices[id];
                     NCEWindow.NCESingle nCESingle = window.OpenWindow<NCEWindow.NCESingle>(nCESingleWindowPrefab);
-                    nCESingle.Initialize(nicknameCountMatrix, talkerId, nameId);
+                    nCESingle.Initialize(nicknameCountMatrix, talkerId, nameId, storyDescriptionGetter);
                 });
         }
 
@@ -109,6 +144,7 @@ namespace SekaiTools.UI.NCESelector
                     screenedMatrices.Add(nicknameCountMatrix);
             }
 
+            screenedMatrices = new List<NicknameCountMatrix>(NicknameCountMatrix.Sort(screenedMatrices.ToArray()));
             buttonGenerator.Generate(screenedMatrices.Count,
                 (Button button, int id) =>
                 {
@@ -117,6 +153,8 @@ namespace SekaiTools.UI.NCESelector
                     nCESelector_Item.Initialize(
                         nicknameCountMatrix.fileName,
                         nicknameCountMatrix.nicknameCountRows[talkerId].serifCount.Count,
+                        nicknameCountMatrix.storyType,
+                        storyDescriptionGetter,
                         new Vector2Int(nameId, nicknameCountMatrix.nicknameCountRows[talkerId].nicknameCountGrids[nameId].matchedIndexes.Count)
                         );
                 },
@@ -124,7 +162,7 @@ namespace SekaiTools.UI.NCESelector
                 {
                     NicknameCountMatrix nicknameCountMatrix = screenedMatrices[id];
                     NCEWindow.NCESingle nCESingle = window.OpenWindow<NCEWindow.NCESingle>(nCESingleWindowPrefab);
-                    nCESingle.Initialize(nicknameCountMatrix, talkerId, nameId);
+                    nCESingle.Initialize(nicknameCountMatrix, talkerId, nameId, storyDescriptionGetter);
                 });
         }
 
@@ -139,6 +177,7 @@ namespace SekaiTools.UI.NCESelector
                     screenedMatrices.Add(nicknameCountMatrix);
             }
 
+            screenedMatrices = new List<NicknameCountMatrix>(NicknameCountMatrix.Sort(screenedMatrices.ToArray()));
             buttonGenerator.Generate(screenedMatrices.Count,
                 (Button button, int id) =>
                 {
@@ -147,20 +186,87 @@ namespace SekaiTools.UI.NCESelector
                     nCESelector_Item.Initialize(
                         nicknameCountMatrix.fileName,
                         nicknameCountMatrix.nicknameCountRows[talkerId].serifCount.Count,
-                        nicknameCountMatrix.nicknameCountRows[talkerId].nameCountArray
+                        nicknameCountMatrix.storyType,
+                        storyDescriptionGetter,
+                        nicknameCountMatrix.nicknameCountRows[talkerId].NameCountArray
                         );
                 },
                 (int id) =>
                 {
+                    NicknameCountMatrix nicknameCountMatrix = screenedMatrices[id];
+                    NCEWindow.NCEMuti nCEMuti = window.OpenWindow<NCEWindow.NCEMuti>(nCEMutiWindowPrefab);
+                    nCEMuti.Initialize(nicknameCountMatrix, talkerId, storyDescriptionGetter);
+                });
+        }
 
+        public void Generate_Full(NicknameCountMatrix[] nicknameCountMatrices)
+        {
+            buttonGenerator.ClearButtons();
+            List<NicknameCountMatrix> screenedMatrices = new List<NicknameCountMatrix>();
+            screenedMatrices = new List<NicknameCountMatrix>(NicknameCountMatrix.Sort(nicknameCountMatrices.ToArray()));
+            buttonGenerator.Generate(screenedMatrices.Count,
+                (Button button, int id) =>
+                {
+                    NCESelector_Item nCESelector_Item = button.GetComponent<NCESelector_Item>();
+                    NicknameCountMatrix nicknameCountMatrix = screenedMatrices[id];
+                    int countAll = nicknameCountMatrix.nicknameCountRows
+                                            .Where(ncr => ncr != null)
+                                            .SelectMany(ncr => ncr.NameCountArray)
+                                            .Sum(v2i => v2i.y);
+                    nCESelector_Item.Initialize(
+                        nicknameCountMatrix.fileName,
+                        countAll,
+                        nicknameCountMatrix.storyType,
+                        storyDescriptionGetter,
+                        new Vector2Int[0]
+                        );
+                },
+                (int id) =>
+                {
+                    NicknameCountMatrix nicknameCountMatrix = screenedMatrices[id];
+                    NCEWindow.NCEMuti nCEMuti = window.OpenWindow<NCEWindow.NCEMuti>(nCEMutiWindowPrefab);
+                    nCEMuti.Initialize(nicknameCountMatrix, storyDescriptionGetter);
+                });
+        }
+
+        public void Generate_Ambiguity(NicknameCountMatrix[] nicknameCountMatrices)
+        {
+            buttonGenerator.ClearButtons();
+            List<NicknameCountMatrix> screenedMatrices = new List<NicknameCountMatrix>();
+
+            foreach (var nicknameCountMatrix in nicknameCountMatrices)
+            {
+                if (nicknameCountMatrix.GetAmbiguitySerifSet(ambiguityRegex)?.matchedIndexes.Count > 0)
+                    screenedMatrices.Add(nicknameCountMatrix);
+            }
+
+            screenedMatrices = new List<NicknameCountMatrix>(NicknameCountMatrix.Sort(screenedMatrices.ToArray()));
+            buttonGenerator.Generate(screenedMatrices.Count,
+                (Button button, int id) =>
+                {
+                    NCESelector_Item nCESelector_Item = button.GetComponent<NCESelector_Item>();
+                    NicknameCountMatrix nicknameCountMatrix = screenedMatrices[id];
+                    nCESelector_Item.Initialize(
+                        nicknameCountMatrix.fileName,
+                        nicknameCountMatrix.nicknameCountRows[talkerId].serifCount.Count,
+                        nicknameCountMatrix.storyType,
+                        storyDescriptionGetter,
+                        new Vector2Int(21, nicknameCountMatrix.GetAmbiguitySerifSet(ambiguityRegex).matchedIndexes.Count)
+                        );
+                },
+                (int id) =>
+                {
+                    NicknameCountMatrix nicknameCountMatrix = screenedMatrices[id];
+                    NCEWindow.NCEMuti nCEMuti = window.OpenWindow<NCEWindow.NCEMuti>(nCEAmbiguityWindowPrefab);
+                    nCEMuti.Initialize(nicknameCountMatrix, ambiguityRegex, storyDescriptionGetter);
                 });
         }
 
         public void Refresh()
         {
-            if(mode == Mode.single)
+            if (mode == Mode.single)
             {
-                if(toggleScreening.isOn)
+                if (toggleScreening.isOn)
                 {
                     switch (currentStoryTypeTab)
                     {
@@ -209,7 +315,7 @@ namespace SekaiTools.UI.NCESelector
                     }
                 }
             }
-            else
+            else if(mode == Mode.muti)
             {
                 switch (currentStoryTypeTab)
                 {
@@ -233,26 +339,83 @@ namespace SekaiTools.UI.NCESelector
                         break;
                 }
             }
+            else if(mode == Mode.ambiguity)
+            {
+                switch (currentStoryTypeTab)
+                {
+                    case StoryType.UnitStory:
+                        Generate_Ambiguity(countData.countMatrix_Unit.ToArray());
+                        break;
+                    case StoryType.EventStory:
+                        Generate_Ambiguity(countData.countMatrix_Event.ToArray());
+                        break;
+                    case StoryType.CardStory:
+                        Generate_Ambiguity(countData.countMatrix_Card.ToArray());
+                        break;
+                    case StoryType.MapTalk:
+                        Generate_Ambiguity(countData.countMatrix_Map.ToArray());
+                        break;
+                    case StoryType.LiveTalk:
+                        Generate_Ambiguity(countData.countMatrix_Live.ToArray());
+                        break;
+                    case StoryType.OtherStory:
+                        Generate_Ambiguity(countData.countMatrix_Other.ToArray());
+                        break;
+                }
+            }
+            else
+            {
+                switch (currentStoryTypeTab)
+                {
+                    case StoryType.UnitStory:
+                        Generate_Full(countData.countMatrix_Unit.ToArray());
+                        break;
+                    case StoryType.EventStory:
+                        Generate_Full(countData.countMatrix_Event.ToArray());
+                        break;
+                    case StoryType.CardStory:
+                        Generate_Full(countData.countMatrix_Card.ToArray());
+                        break;
+                    case StoryType.MapTalk:
+                        Generate_Full(countData.countMatrix_Map.ToArray());
+                        break;
+                    case StoryType.LiveTalk:
+                        Generate_Full(countData.countMatrix_Live.ToArray());
+                        break;
+                    case StoryType.OtherStory:
+                        Generate_Full(countData.countMatrix_Other.ToArray());
+                        break;
+                }
+            }
         }
 
         private void InitializeTab()
         {
-            toggle_Unit.onValueChanged.AddListener((bool value) =>{
-                if (value) { currentStoryTypeTab = StoryType.UnitStory;Refresh(); 
-            }});
-            toggle_Event.onValueChanged.AddListener((bool value) => {
+            toggle_Unit.onValueChanged.AddListener((bool value) =>
+            {
+                if (value)
+                {
+                    currentStoryTypeTab = StoryType.UnitStory; Refresh();
+                }
+            });
+            toggle_Event.onValueChanged.AddListener((bool value) =>
+            {
                 if (value) { currentStoryTypeTab = StoryType.EventStory; Refresh(); }
             });
-            toggle_Card.onValueChanged.AddListener((bool value) => {
+            toggle_Card.onValueChanged.AddListener((bool value) =>
+            {
                 if (value) { currentStoryTypeTab = StoryType.CardStory; Refresh(); }
             });
-            toggle_Map.onValueChanged.AddListener((bool value) => {
+            toggle_Map.onValueChanged.AddListener((bool value) =>
+            {
                 if (value) { currentStoryTypeTab = StoryType.MapTalk; Refresh(); }
             });
-            toggle_Live.onValueChanged.AddListener((bool value) => {
+            toggle_Live.onValueChanged.AddListener((bool value) =>
+            {
                 if (value) { currentStoryTypeTab = StoryType.LiveTalk; Refresh(); }
             });
-            toggle_Other.onValueChanged.AddListener((bool value) => {
+            toggle_Other.onValueChanged.AddListener((bool value) =>
+            {
                 if (value) { currentStoryTypeTab = StoryType.OtherStory; Refresh(); }
             });
             toggle_Unit.isOn = true;

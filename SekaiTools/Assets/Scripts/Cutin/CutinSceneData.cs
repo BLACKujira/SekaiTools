@@ -5,6 +5,7 @@ using SekaiTools;
 using System;
 using System.IO;
 using SekaiTools.Kizuna;
+using SekaiTools.UI.CoupleWithIndexSelector;
 
 namespace SekaiTools.Cutin
 {
@@ -14,6 +15,7 @@ namespace SekaiTools.Cutin
     [Serializable]
     public class CutinSceneData : ISaveData
     {
+        public string playerType = "default";
         public List<CutinScene> cutinScenes = new List<CutinScene>();
 
         public string SavePath { get; set; }
@@ -23,6 +25,7 @@ namespace SekaiTools.Cutin
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
+        [Obsolete]
         public static CutinSceneInfo IsCutinVoice(string name)
         {
             int charFirstID;
@@ -46,6 +49,7 @@ namespace SekaiTools.Cutin
         /// 使用cutinSceneInfos生成互动语音场景，音频文件的名称为标准化的名称
         /// </summary>
         /// <param name="cutinSceneInfos"></param>
+        [Obsolete]
         public CutinSceneData(params CutinSceneInfoBase[] cutinSceneInfos)
         {
             foreach (var cutinSceneInfo in cutinSceneInfos)
@@ -66,6 +70,26 @@ namespace SekaiTools.Cutin
                     cutinScene.talkData_First.talkVoice = StandardizeName(new CutinSceneInfo(cutinSceneInfo, CutinSceneInfo.ClipType.first));
                     cutinScene.talkData_Second.talkVoice = StandardizeName(new CutinSceneInfo(cutinSceneInfo, CutinSceneInfo.ClipType.second));
                     cutinScenes.Add(cutinScene);
+                }
+            }
+        }
+
+        public CutinSceneData(CoupleWithIndexStatus coupleWithIndexStatus)
+        {
+            for (int i = 0; i < coupleWithIndexStatus.Rows.Length; i++)
+            {
+                for (int j = 0; j < coupleWithIndexStatus.Rows[i].Items.Length; j++)
+                {
+                    SelectStatus[] selectStatuses = coupleWithIndexStatus.Rows[i].Items[j];
+                    if (selectStatuses == null) continue;
+                    for (int k = 0; k < selectStatuses.Length; k++)
+                    {
+                        if (selectStatuses[k] == SelectStatus.Checked)
+                        {
+                            CutinScene cutinScene = new CutinScene(i, j, k);
+                            cutinScenes.Add(cutinScene);
+                        }
+                    }
                 }
             }
         }
@@ -107,10 +131,11 @@ namespace SekaiTools.Cutin
         /// </summary>
         /// <param name="audioData"></param>
         /// <returns></returns>
+        [Obsolete]
         public AudioMatchingCount CountMatching(AudioData audioData)
         {
             List<string[]> names = new List<string[]>();
-            AudioClip[] valueArray = audioData.valueArray;
+            AudioClip[] valueArray = audioData.ValueArray;
             foreach (var audioClip in valueArray)
             {
                 if (IsCutinVoice(audioClip.name) != null)
@@ -233,7 +258,7 @@ namespace SekaiTools.Cutin
 
         public void StandardizeAudioData(AudioData audioData)
         {
-            AudioClip[] valueArray = audioData.valueArray;
+            AudioClip[] valueArray = audioData.ValueArray;
             foreach (var value in valueArray)
             {
                 CutinSceneInfo cutinSceneInfo = IsCutinVoice(value.name);
@@ -259,10 +284,9 @@ namespace SekaiTools.Cutin
             File.WriteAllText(SavePath, json);
         }
 
-        public CutinSceneData LoadData(string savePath)
+        public static CutinSceneData LoadData(string serializedData,string savePath)
         {
-            string json = File.ReadAllText(savePath);
-            CutinSceneData cutinSceneData = JsonUtility.FromJson<CutinSceneData>(json);
+            CutinSceneData cutinSceneData = JsonUtility.FromJson<CutinSceneData>(serializedData);
             cutinSceneData.SavePath = savePath;
             return cutinSceneData;
         }

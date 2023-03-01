@@ -8,8 +8,6 @@ namespace SekaiTools.UI.NicknameCountShowcase
     {
         public NCSScene_Kataomoi_Item[] items = new NCSScene_Kataomoi_Item[20];
 
-        public override ConfigUIItem[] configUIItems => throw new System.NotImplementedException();
-
         public override void Refresh()
         {
             float[,] percents = new float[27, 27];

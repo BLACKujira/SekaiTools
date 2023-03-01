@@ -398,7 +398,7 @@ namespace SekaiTools.UI.Radio
             {
                 AudioData audioData = new AudioData();
                 yield return audioData.LoadFile(vocalData.filePath);
-                audioClip = audioData.valueArray[0];
+                audioClip = audioData.ValueArray[0];
                 
                 _keepWaiting = false;
             }
