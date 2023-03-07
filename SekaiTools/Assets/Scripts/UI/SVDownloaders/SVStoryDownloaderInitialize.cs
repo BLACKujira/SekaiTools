@@ -4,7 +4,6 @@ using SekaiTools.SekaiViewerInterface;
 using SekaiTools.UI.Downloader;
 using SekaiTools.UI.GenericInitializationParts;
 using SekaiTools.UI.NicknameCounterInitialize;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,9 +20,15 @@ namespace SekaiTools.UI.SVDownloaders
         [Header("Prefab")]
         public Window downloaderPrefab;
 
+        public static HashSet<string> RequireMasterTables = new HashSet<string>()
+        {
+            "unitStories","eventStories","cardEpisodes","actionSets","virtualLives","specialStories"
+        };
+
         private void Awake()
         {
             gIP_SVStory.pathSelectItems[0].SelectedPath = EnvPath.Assets;
+            gIP_MasterRefUpdate.SetMasterRefUpdateItems(RequireMasterTables);
         }
 
         public void Apply()
@@ -39,7 +44,7 @@ namespace SekaiTools.UI.SVDownloaders
             string selectedPath = gIP_SVStory.pathSelectItems[0].SelectedPath;
 
             List<DownloadFileInfo> downloadFileInfos = new List<DownloadFileInfo>();
-            if(gIP_SVStoryType.Download_Unit) downloadFileInfos.AddRange(GetDownloadFile_Unit(selectedPath,fileStruct));
+            if (gIP_SVStoryType.Download_Unit) downloadFileInfos.AddRange(GetDownloadFile_Unit(selectedPath, fileStruct));
             if (gIP_SVStoryType.Download_Event) downloadFileInfos.AddRange(GetDownloadFile_Event(selectedPath, fileStruct));
             if (gIP_SVStoryType.Download_Card) downloadFileInfos.AddRange(GetDownloadFile_Card(selectedPath, fileStruct));
             if (gIP_SVStoryType.Download_Map) downloadFileInfos.AddRange(GetDownloadFile_Map(selectedPath, fileStruct));
@@ -67,6 +72,7 @@ namespace SekaiTools.UI.SVDownloaders
                 {
                     foreach (var masterUnitStoryEpisode in masterUnitStoryChapter.episodes)
                     {
+                        if (string.IsNullOrEmpty(masterUnitStoryChapter.assetbundleName)) continue;
                         string url = $"{SekaiViewer.AssetUrl}/scenario/unitstory/{masterUnitStoryChapter.assetbundleName}_rip/{masterUnitStoryEpisode.scenarioId}.asset";
                         string savepath = null;
                         switch (fileStruct)
@@ -95,6 +101,7 @@ namespace SekaiTools.UI.SVDownloaders
             {
                 foreach (var eventStoryEpisode in masterEventStory.eventStoryEpisodes)
                 {
+                    if (string.IsNullOrEmpty(masterEventStory.assetbundleName)) continue;
                     string url = $"{SekaiViewer.AssetUrl}/event_story/{masterEventStory.assetbundleName}/scenario_rip/{eventStoryEpisode.scenarioId}.asset";
                     string savepath = null;
                     switch (fileStruct)
@@ -120,6 +127,7 @@ namespace SekaiTools.UI.SVDownloaders
             List<DownloadFileInfo> downloadFileInfos = new List<DownloadFileInfo>();
             foreach (var masterCardEpisode in masterCardEpisodes)
             {
+                if (string.IsNullOrEmpty(masterCardEpisode.assetbundleName)) continue;
                 string url = $"{SekaiViewer.AssetUrl}/character/member/{masterCardEpisode.assetbundleName}_rip/{masterCardEpisode.scenarioId}.asset";
                 string savepath = null;
                 switch (fileStruct)
@@ -145,6 +153,8 @@ namespace SekaiTools.UI.SVDownloaders
             foreach (var masterActionSet in masterActionSets)
             {
                 if (masterActionSet.id <= 4) continue;
+                if (string.IsNullOrEmpty(masterActionSet.scenarioId)) continue;
+
                 string url = $"{SekaiViewer.AssetUrl}/scenario/actionset/group{masterActionSet.id / 100}_rip/{masterActionSet.scenarioId}.asset";
                 string savepath = null;
                 switch (fileStruct)
@@ -172,6 +182,8 @@ namespace SekaiTools.UI.SVDownloaders
                 foreach (var masterVirtualLiveSetlist in masterVirtualLive.virtualLiveSetlists)
                 {
                     if (masterVirtualLiveSetlist.VirtualLiveSetlistType != VirtualLiveSetlistType.mc) continue;
+                    if (string.IsNullOrEmpty(masterVirtualLiveSetlist.assetbundleName)) continue;
+
                     string url = $"{SekaiViewer.AssetUrl}/virtual_live/mc/scenario/{masterVirtualLiveSetlist.assetbundleName}_rip/{masterVirtualLiveSetlist.assetbundleName}.asset";
                     string savepath = null;
                     switch (fileStruct)
@@ -217,6 +229,8 @@ namespace SekaiTools.UI.SVDownloaders
             {
                 foreach (var masterSpecialStoryEpisode in masterSpecialStory.episodes)
                 {
+                    if (string.IsNullOrEmpty(masterSpecialStoryEpisode.assetbundleName)) continue;
+
                     string url = $"{SekaiViewer.AssetUrl}/scenario/special/{masterSpecialStoryEpisode.assetbundleName}_rip/{masterSpecialStoryEpisode.scenarioId}.asset";
                     string savepath = null;
                     switch (fileStruct)

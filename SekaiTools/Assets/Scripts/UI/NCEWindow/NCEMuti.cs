@@ -1,6 +1,8 @@
 ﻿using SekaiTools.Count;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Schema;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -82,14 +84,17 @@ namespace SekaiTools.UI.NCEWindow
             if (mode == Mode.muti) baseTalkDatas = nicknameCountMatrix.GetTalkDatas(talkerId);
             else baseTalkDatas = nicknameCountMatrix.GetTalkDatas();
 
-            HashSet<int> usedRefIdx = new HashSet<int>(
-                nicknameCountMatrix[talkerId].nicknameCountGrids
-                .SelectMany(ncg => ncg.matchedIndexes));
-
             if (toggleScreening.isOn)
             {
+                HashSet<int> ambiguityRefIdx = new HashSet<int>(nicknameCountMatrix.ambiguitySerifSets
+                    .SelectMany(set=>set.matchedIndexes));
+
                 if (mode == Mode.muti)
                 {
+                    HashSet<int> usedRefIdx = new HashSet<int>(
+                        nicknameCountMatrix[talkerId].nicknameCountGrids
+                        .SelectMany(ncg => ncg.matchedIndexes));
+                    usedRefIdx.UnionWith(ambiguityRefIdx);
                     baseTalkDatas = baseTalkDatas.Where((btd) => usedRefIdx.Contains(btd.referenceIndex)).ToArray();
                 }
 
@@ -99,6 +104,19 @@ namespace SekaiTools.UI.NCEWindow
                         .Where((btd) => nicknameCountMatrix
                             .GetAmbiguitySerifSet(ambiguityRegex)?.matchedIndexes
                             .Contains(btd.referenceIndex) ?? false)
+                        .ToArray();
+                }
+
+                if(mode == Mode.full)
+                {
+                    HashSet<int> usedRefIdx = new HashSet<int>(
+                        nicknameCountMatrix.nicknameCountRows
+                        .SelectMany(ncr=>ncr.nicknameCountGrids)
+                        .SelectMany(ncg => ncg.matchedIndexes));
+                    usedRefIdx.UnionWith(ambiguityRefIdx);
+                    baseTalkDatas = baseTalkDatas
+                        .Where((btd) => 
+                        usedRefIdx.Contains(btd.referenceIndex))
                         .ToArray();
                 }
             }
@@ -114,6 +132,16 @@ namespace SekaiTools.UI.NCEWindow
             verticalLayoutGroup.enabled = false;
             verticalLayoutGroup.enabled = true;
             RefreshCountNumber();
+            StartCoroutine(CoRefresh());
+        }
+
+        IEnumerator CoRefresh()
+        {
+            toggleScreening.interactable = false;
+            yield return 1;
+            yield return 1;
+            toggleScreening.interactable = true;
+            talkLogItems[0].RefreshLayout();
         }
 
         public void MarkAll()

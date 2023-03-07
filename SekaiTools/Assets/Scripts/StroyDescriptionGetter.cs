@@ -179,6 +179,7 @@ namespace SekaiTools
             {
                 foreach (var virtualLiveSetlist in masterVirtualLive.virtualLiveSetlists)
                 {
+                    if (virtualLiveSetlist == null || virtualLiveSetlist.assetbundleName == null) continue;
                     bool flag = false;
                     if (virtualLiveSetlist.assetbundleName.Equals(name))
                     {

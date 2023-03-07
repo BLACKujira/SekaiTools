@@ -93,8 +93,8 @@ namespace SekaiTools.UI.NCEWindow
 
         void Ambiguity()
         {
-            edgeImage.color = ambiguityBGColor;
-            bgImage.color = ambiguityEdgeColor;
+            edgeImage.color = ambiguityEdgeColor;
+            bgImage.color = ambiguityBGColor;
         }
 
         public void RefreshInfo()
@@ -159,6 +159,13 @@ namespace SekaiTools.UI.NCEWindow
                     addCharIds[i] = true;
             }
             MarkCharacterOverride(addCharIds);
+        }
+
+        public void RefreshLayout()
+        {
+            ContentSizeFitter contentSizeFitter = GetComponent<ContentSizeFitter>();
+            contentSizeFitter.enabled = false;
+            contentSizeFitter.enabled = true;
         }
     }
 }
