@@ -10,6 +10,7 @@ namespace SekaiTools.UI.NicknameCounterInitialize
         public StringListEditItem stringListEditItem;
         public Toggle tog_RemoveString;
 
+        public bool UseExcludeStrings => tog_RemoveString.isOn;
         List<string> excludeStrings = new List<string>(new string[] { "ー", "〜", "～" });
         public List<string> ExcludeStrings => excludeStrings;
 

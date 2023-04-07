@@ -16,6 +16,7 @@ namespace SekaiTools.UI.AssetDownloaderInitialize
         public InputField if_URLHead; 
         public LoadFileSelectItem lfsi_AssetList;
         public Dropdown dd_AssetListType;
+        public LoadFileSelectItem lfsi_Cookie;
 
         public void Initialize()
         {
@@ -70,6 +71,8 @@ namespace SekaiTools.UI.AssetDownloaderInitialize
                 errors.Add("URL起始字符串为空");
             if (string.IsNullOrEmpty(lfsi_AssetList.SelectedPath))
                 errors.Add("未选择数据表文件");
+            if (string.IsNullOrEmpty(lfsi_Cookie.SelectedPath))
+                errors.Add("未选择Cookie文件");
             return GenericInitializationCheck.GetErrorString("URL或数据表错误", errors);
         }
     }

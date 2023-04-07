@@ -31,12 +31,14 @@ namespace SekaiTools.UI.Downloader
         public string url;
         public string savePath;
         public string hash;
+        public string cookie;
 
-        public DownloadFileInfo(string url, string savePath, string hash = null)
+        public DownloadFileInfo(string url, string savePath, string hash = null, string cookie = null)
         {
             this.url = url;
             this.savePath = savePath;
             this.hash = hash;
+            this.cookie = cookie;
         }
     }
 
@@ -210,6 +212,10 @@ namespace SekaiTools.UI.Downloader
                     using (UnityWebRequest getRequest = UnityWebRequest.Get(downloadFileInfo.url))
                     {
                         getRequest.downloadHandler = new DownloadHandlerFile(tempFilePath, false);
+                        if(!string.IsNullOrEmpty(downloadFileInfo.cookie))
+                        {
+                            getRequest.SetRequestHeader("cookie", downloadFileInfo.cookie);
+                        }
                         currentGetRequest = getRequest;
                         getRequest.SendWebRequest();
                         messageArea.AddLine($"{fileName} ¿ªÊ¼ÏÂÔØ");

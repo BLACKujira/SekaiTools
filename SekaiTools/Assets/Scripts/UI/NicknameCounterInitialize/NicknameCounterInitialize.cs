@@ -68,6 +68,7 @@ namespace SekaiTools.UI.NicknameCounterInitialize
             settings.ambiguityNicknameSet = gIP_NicknameList.AmbiguityNicknameSet;
             settings.nicknameSetGlobal = gIP_NicknameList.NicknameSetGlobal;
             settings.nicknameSetCharacter = gIP_NicknameList.NicknameSets;
+            if(gIP_NicknameCounterRule.UseExcludeStrings) settings.excludeStrings = gIP_NicknameCounterRule.ExcludeStrings;
 
             NicknameCounter.NicknameCounter nicknameCounter = window.OpenWindow<NicknameCounter.NicknameCounter>(counterWindowPrefab);
             nicknameCounter.Initialize(settings);

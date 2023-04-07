@@ -80,6 +80,8 @@ namespace SekaiTools.UI.AssetDownloaderInitialize
             else
                 sizeStr = $"{totalSize / (1024 * 1024 * 1024):0.00} GB";
 
+            string cookie = File.ReadAllText(gIP_AssetList.lfsi_Cookie.SelectedPath);
+
             WindowController.ShowCancelOK($"即将下载{bundlesItems.Count}个文件", $"约{sizeStr}",
                 () =>
                 {
@@ -89,7 +91,7 @@ namespace SekaiTools.UI.AssetDownloaderInitialize
                         (bi) => new Downloader.DownloadFileInfo
                         (urlHead + bi.bundleName,
                         Path.Combine(savePath, bi.bundleName),
-                        bi.hash)).ToArray();
+                        bi.hash, cookie)).ToArray();
 
                     Downloader.Downloader.Settings settings = new Downloader.Downloader.Settings();
                     settings.retryTimes = gIP_DownloaderBase.retryTimes;

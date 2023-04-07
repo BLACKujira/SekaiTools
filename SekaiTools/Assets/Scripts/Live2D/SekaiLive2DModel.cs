@@ -123,7 +123,8 @@ namespace SekaiTools.Live2D
             _audioSource = gameObject.AddComponent<AudioSource>();
             _audioSource.playOnAwake = false;
 
-            gameObject.AddComponent<CubismMouthController>().BlendMode = CubismParameterBlendMode.Override;
+            _mouthController = gameObject.AddComponent<CubismMouthController>();
+            _mouthController.BlendMode = CubismParameterBlendMode.Override;
             CubismAudioMouthInput cubismAudioMouthInput = gameObject.AddComponent<CubismAudioMouthInput>();
             cubismAudioMouthInput.AudioInput = _audioSource;
             cubismAudioMouthInput.Smoothing = 1;
@@ -134,7 +135,9 @@ namespace SekaiTools.Live2D
             Transform parameters = gameObject.transform.GetChild(0);
             parameters.Find("ParamEyeROpen").gameObject.AddComponent<CubismEyeBlinkParameter>();
             parameters.Find("ParamEyeLOpen").gameObject.AddComponent<CubismEyeBlinkParameter>();
-            parameters.Find("ParamMouthOpenY").gameObject.AddComponent<CubismMouthParameter>();
+            GameObject ParamMouthOpenY = parameters.Find("ParamMouthOpenY").gameObject;
+            if(!ParamMouthOpenY.GetComponent<CubismMouthParameter>())
+                ParamMouthOpenY.AddComponent<CubismMouthParameter>();
             CubismHarmonicMotionParameter cubismHarmonicMotionParameter = parameters.Find("ParamBreath").gameObject.AddComponent<CubismHarmonicMotionParameter>();
             cubismHarmonicMotionParameter.Duration = 7;
 
@@ -198,6 +201,7 @@ namespace SekaiTools.Live2D
         CubismParameter _parameterEyeLOpen;
         CubismParameter _parameterEyeROpen;
         CubismParameter _parameterMouthOpenY;
+        CubismMouthController _mouthController;
         private void OnEnable()
         {
             ResetFacialParameter();
@@ -213,6 +217,7 @@ namespace SekaiTools.Live2D
             ParameterEyeLOpen.Value = 1;
             ParameterEyeROpen.Value = 1;
             ParameterMouthOpenY.Value = 0;
+            if(_mouthController) _mouthController.MouthOpening = 0;
         }
 
         public CubismParameter GetParameter(string name)

@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Threading;
-using SekaiTools.Count;
-using System.Text.RegularExpressions;
+﻿using SekaiTools.Count;
 using SekaiTools.UI.Downloader;
+using System.Collections.Generic;
 using System.IO;
-using SekaiTools.DecompiledClass;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
+using UnityEngine;
 
 namespace SekaiTools.UI.NicknameCounter
 {
@@ -21,6 +20,7 @@ namespace SekaiTools.UI.NicknameCounter
         [System.NonSerialized] public List<Regex>[,] regices = new List<Regex>[27, 27];
         [System.NonSerialized] public Regex[] ambiguityRegices;
         [System.NonSerialized] public List<List<bool>[,]> ifPassAmbiguityNickname;
+        [System.NonSerialized] List<string> excludeStrings;
         [System.NonSerialized] public string currentFileName = string.Empty;
         [System.NonSerialized] public Thread thread;
         [System.NonSerialized] public int numberOfDatas;
@@ -33,6 +33,7 @@ namespace SekaiTools.UI.NicknameCounter
             public AmbiguityNicknameSet ambiguityNicknameSet;
             public NicknameSet nicknameSetGlobal;
             public NicknameSet[] nicknameSetCharacter;
+            public List<string> excludeStrings;
         }
 
         public void Initialize(Settings settings)
@@ -45,14 +46,14 @@ namespace SekaiTools.UI.NicknameCounter
                     NicknameSet nicknameSet = settings.nicknameSetCharacter[i] + settings.nicknameSetGlobal;
                     foreach (var str in nicknameSet.nicknameItems[j].nickNames)
                     {
-                        regices[i,j].Add(new Regex(str));
+                        regices[i, j].Add(new Regex(str));
                     }
                 }
             }
 
             List<string> ambiguityRegices = settings.ambiguityNicknameSet.ambiguityRegices;
             this.ambiguityRegices = new Regex[ambiguityRegices.Count];
-            for (int i = 0; i < ambiguityRegices.Count; i++) 
+            for (int i = 0; i < ambiguityRegices.Count; i++)
             {
                 this.ambiguityRegices[i] = new Regex(ambiguityRegices[i]);
             }
@@ -66,7 +67,7 @@ namespace SekaiTools.UI.NicknameCounter
                     for (int j = 1; j < 27; j++)
                     {
                         List<bool> list = new List<bool>();
-                        foreach (var regex in regices[i,j])
+                        foreach (var regex in regices[i, j])
                         {
                             list.Add(ambiguityRegex.IsMatch(regex.ToString()));
                         }
@@ -76,8 +77,8 @@ namespace SekaiTools.UI.NicknameCounter
                 ifPassAmbiguityNickname.Add(passLists);
             }
 
-
             numberOfDatas = settings.rawMatrices.Length;
+            excludeStrings = settings.excludeStrings;
 
             countPreviewArea.Initialize();
 
@@ -87,6 +88,10 @@ namespace SekaiTools.UI.NicknameCounter
 
         public void Count(NicknameCountMatrix[] rawMatrices)
         {
+            //#region Temp01
+            //List<string> outputStrings = new List<string>();
+            //#endregion
+
             foreach (var countMatrix in rawMatrices)
             {
                 currentFileName = countMatrix.fileName;
@@ -100,8 +105,26 @@ namespace SekaiTools.UI.NicknameCounter
                         for (int j = 0; j < regices[talkData.characterId, i].Count; j++)
                         {
                             Regex regex = regices[talkData.characterId, i][j];
-                            if (regex.IsMatch(talkData.serif))
+
+                            string matchSerif = talkData.serif;
+                            if (excludeStrings != null)
                             {
+                                foreach (var excludeString in excludeStrings)
+                                {
+                                    matchSerif = matchSerif.Replace(excludeString, string.Empty);
+                                }
+                            }
+
+                            if (regex.IsMatch(matchSerif))
+                            {
+                                //#region Temp01
+                                //if (!regex.IsMatch(talkData.serif))
+                                //{
+                                //    string outStr = $"{countMatrix.fileName}:{talkData.windowDisplayName}:{talkData.serif}";
+                                //    outputStrings.Add(outStr);
+                                //}
+                                //#endregion
+
                                 List<int> matchedIndexes = countMatrix.nicknameCountRows[talkData.characterId].nicknameCountGrids[i].matchedIndexes;
                                 if (!matchedIndexes.Contains(talkData.referenceIndex))
                                 {
@@ -138,12 +161,17 @@ namespace SekaiTools.UI.NicknameCounter
                 countMatrix.SaveData();
                 ifUpdated = true;
             }
+
+            //#region Temp01
+            //File.WriteAllText(@"C:\\Users\\KUROKAWA_KUJIRA\\Desktop\\1\\out.txt", string.Join("\n\n", outputStrings));
+            //#endregion
+
             currentFileName = "完成";
         }
 
         private void Update()
         {
-            if(ifUpdated)
+            if (ifUpdated)
             {
                 ifUpdated = false;
                 Refresh();
