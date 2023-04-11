@@ -35,6 +35,7 @@ namespace SekaiTools.Count
                 return nicknameCountMatrices.ToArray();
             }
         }
+        public NicknameCountMatrix[] SortedNicknameCountMatrices => NicknameCountMatrix.Sort(NicknameCountMatrices);
         public int ChangedFileCount => NicknameCountMatrices.Where(ncm => ncm.ifChanged).Count();
 
         public void AddCountMatrix(StoryType storyType, NicknameCountMatrix nicknameCountMatrix)

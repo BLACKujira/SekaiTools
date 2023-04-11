@@ -16,6 +16,7 @@ namespace SekaiTools.UI.NicknameCounterInitialize
         public GIP_NicknameCounterSample gIP_NicknameCounterSample;
         public GIP_NicknameCounterRule gIP_NicknameCounterRule;
         public GIP_MasterRefUpdate gIP_MasterRefUpdate;
+        public GIP_ExtraFunc gIP_ExtraFunc;
         public GIP_PathSelect gIP_PathSelect;
         [Header("Prefab")]
         public Window counterWindowPrefab;
@@ -82,6 +83,10 @@ namespace SekaiTools.UI.NicknameCounterInitialize
             string saveFolder = gIP_PathSelect.pathSelectItems[0].SelectedPath;
 
             StoryPublishTimeGetter storyPublishTimeGetter = new StoryPublishTimeGetter();
+            if(gIP_ExtraFunc.UseAssetList)
+            {
+                storyPublishTimeGetter.TurnOnMapTalkPTPresume(gIP_ExtraFunc.BundleRoot);
+            }
 
             foreach (var file in gIP_NicknameCounterSample.UnitStoryFiles)
                 nicknameCountMatrices.Add(GetCountMatrix_Scenario(storyPublishTimeGetter, file, StoryType.UnitStory, sampleFolder, saveFolder));

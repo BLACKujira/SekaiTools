@@ -22,7 +22,6 @@ namespace SekaiTools.UI.AssetDownloaderInitialize
 
         private void Awake()
         {
-            gIP_AssetList.Initialize();
             gIP_SavePath.Initialize();
         }
 
@@ -43,7 +42,7 @@ namespace SekaiTools.UI.AssetDownloaderInitialize
             BundleRoot bundleRoot;
             //try
             {
-                bundleRoot = gIP_AssetList.GetBundleRoot();
+                bundleRoot = gIP_AssetList.assetListGetter.GetBundleRoot();
             }
             //catch(System.Exception ex)
             //{

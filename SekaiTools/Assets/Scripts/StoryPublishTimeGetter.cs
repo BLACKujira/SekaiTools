@@ -1,6 +1,7 @@
 ﻿using SekaiTools.DecompiledClass;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace SekaiTools
 {
@@ -15,6 +16,13 @@ namespace SekaiTools
         MasterSpecialSeason[] specialSeasons;
         MasterVirtualLive[] virtualLives;
         MasterSpecialStory[] specialStories;
+
+        BundleRoot bundleRoot = null;
+        Dictionary<string, int> bundleRootIndexDictionary = null;
+
+        Regex evIconBundleRegex = new Regex("(?<=event/)event_[a-z]+_\\d\\d\\d\\d(?=/icon)");
+
+        Dictionary<MasterActionSet, long> presumedPublishTime_Map = new Dictionary<MasterActionSet, long>();
 
         public static HashSet<string> RequireMasterTables => new HashSet<string>()
             {
@@ -34,6 +42,16 @@ namespace SekaiTools
             virtualLives = EnvPath.GetTable<MasterVirtualLive>("virtualLives");
             cards = EnvPath.GetTable<MasterCard>("cards");
             specialStories = EnvPath.GetTable<MasterSpecialStory>("specialStories");
+        }
+
+        public void TurnOnMapTalkPTPresume(BundleRoot bundleRoot)
+        {
+            this.bundleRoot = bundleRoot;
+            bundleRootIndexDictionary = new Dictionary<string, int>();
+            for (int i = 0; i < bundleRoot.bundles.Count; i++)
+            {
+                bundleRootIndexDictionary[bundleRoot.bundles[i].bundleName] = i;
+            }
         }
 
         public long GetStoryPublishTime(StoryType storyType, string name)
@@ -112,30 +130,42 @@ namespace SekaiTools
             return ev.startAt;
         }
 
-        public long GetStoryPublishTime_Map(string name)
+        long GetStoryPublishTime_Map(string name)
         {
+            if (string.IsNullOrEmpty(name)) return ConstData.GamePublishedAt;
+
+            long spTime = GetStoryPublishTime_Map_Special(name);
+            if (spTime!=ConstData.GamePublishedAt) return spTime;
+
             MasterActionSet actionSet = null;
-            foreach (var masterActionSet in actionSets)
+            foreach (var aset in actionSets)
             {
-                if (name.Equals(masterActionSet.scenarioId))
+                if (!string.IsNullOrEmpty(aset.scenarioId) && aset.scenarioId.Equals(name))
                 {
-                    actionSet = masterActionSet;
+                    actionSet = aset;
                     break;
                 }
             }
+
             if (actionSet == null) return ConstData.GamePublishedAt;
 
+            long startAt;
             if (actionSet.specialSeasonId != 0)
             {
-                return GetStoryPublishTime_Map_SpecialSeason(name, actionSet);
+                startAt = GetStoryPublishTime_Map_SpecialSeason(actionSet);
             }
             else
             {
-                return GetStoryPublishTime_Map_ReleaseCondition(name, actionSet);
+                startAt = GetStoryPublishTime_Map_ReleaseCondition(actionSet);
+                if (startAt == ConstData.GamePublishedAt && bundleRoot != null)
+                {
+                    startAt = GetStoryPublishTime_Map_Presume_BundleList(actionSet);
+                }
             }
+            return startAt;
         }
 
-        long GetStoryPublishTime_Map_SpecialSeason(string name, MasterActionSet actionSet)
+        long GetStoryPublishTime_Map_SpecialSeason(MasterActionSet actionSet)
         {
             MasterSpecialSeason specialSeason = null;
             foreach (var masterSpecialSeason in specialSeasons)
@@ -150,7 +180,7 @@ namespace SekaiTools
             return actionSet.archivePublishedAt < ConstData.GamePublishedAt ? ConstData.GamePublishedAt : actionSet.archivePublishedAt;
         }
 
-        long GetStoryPublishTime_Map_ReleaseCondition(string name, MasterActionSet actionSet)
+        long GetStoryPublishTime_Map_ReleaseCondition(MasterActionSet actionSet)
         {
             MasterReleaseCondition releaseCondition = null;
             long asPublishedAt = actionSet.archivePublishedAt < ConstData.GamePublishedAt ? ConstData.GamePublishedAt : actionSet.archivePublishedAt;
@@ -167,11 +197,17 @@ namespace SekaiTools
             MasterEventStory eventStory = null;
             foreach (var masterEventStory in eventStories)
             {
-                if (masterEventStory.id == releaseCondition.releaseConditionTypeId)
+                bool flag = false;
+                foreach (var eventStoryEpisode in masterEventStory.eventStoryEpisodes)
                 {
-                    eventStory = masterEventStory;
-                    break;
+                    if (eventStoryEpisode.id == releaseCondition.releaseConditionTypeId)
+                    {
+                        eventStory = masterEventStory;
+                        flag = true;
+                        break;
+                    }
                 }
+                if (flag) break;
             }
             if (eventStory == null) return asPublishedAt;
 
@@ -187,6 +223,39 @@ namespace SekaiTools
             if (ev == null) return asPublishedAt;
 
             return ev.startAt;
+        }
+
+        long GetStoryPublishTime_Map_Presume_BundleList(MasterActionSet actionSet)
+        {
+            string bundleName = $"sound/actionset/voice/{actionSet.scenarioId}";
+            if (!bundleRootIndexDictionary.ContainsKey(bundleName)) return ConstData.GamePublishedAt;
+
+            int index = bundleRootIndexDictionary[bundleName];
+            while (index > 0)
+            {
+                index--;
+                Match match = evIconBundleRegex.Match(bundleRoot.bundles[index].bundleName);
+                if (match.Success)
+                {
+                    foreach (var ev in events)
+                    {
+                        if (ev.assetbundleName.Equals(match.Value))
+                            return ev.startAt;
+                    }
+                    return ConstData.GamePublishedAt;
+                }
+            }
+
+            return ConstData.GamePublishedAt;
+        }
+
+        Regex af2022TalkRegex = new Regex("areatalk_aprilfool2022_\\d\\d\\d");
+        long GetStoryPublishTime_Map_Special(string name)
+        {
+            long startAt;
+            startAt = ConstData.GamePublishedAt;
+            if (af2022TalkRegex.IsMatch(name)) startAt = 1648738800000;
+            return startAt;
         }
 
         public long GetStoryPublishTime_Live(string name)

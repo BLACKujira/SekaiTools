@@ -333,7 +333,7 @@ namespace SekaiTools
             "minori","haruka","airi","shizuku",
             "kohane","an","akito","touya",
             "tsukasa","emu","nene","rui",
-            "kanade","mafuyu","ena","muzuki",
+            "kanade","mafuyu","ena","mizuki",
             "miku","rin","len","luka","meiko","kaito"
         };
         public static readonly string[] unitStoryTypes = 
