@@ -1,11 +1,15 @@
 ﻿using SekaiTools.Count;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace SekaiTools.UI.DynamicBarChart
 {
     public class DynamicBarChartCharacter : DynamicBarChart
     {
+        [Header("Settings")]
+        public HDRColorSet charHDRColorSet;
+
         int characterId = 1;
         public override string Information => $@"角色 {ConstData.characters[characterId].Name}";
 
@@ -21,7 +25,7 @@ namespace SekaiTools.UI.DynamicBarChart
             AbortAllItems();
 
             List<DataFrameCharacter> dataFrames = new List<DataFrameCharacter>();
-            NicknameCountMatrix[] sortedNicknameCountMatrices = countData.SortedNicknameCountMatrices;
+            NicknameCountMatrix[] sortedNicknameCountMatrices = countData.SortedNicknameCountMatrices.Take(1000).ToArray();
 
             StoryDescriptionGetter storyDescriptionGetter = new StoryDescriptionGetter();
 
@@ -30,13 +34,6 @@ namespace SekaiTools.UI.DynamicBarChart
             string currentEventGroup = null;
             foreach (var countMatrix in sortedNicknameCountMatrices)
             {
-                //DEBUG
-                if (countMatrix.storyType != StoryType.UnitStory && countMatrix.publishedAt == ConstData.GamePublishedAt)
-                {
-                    Debug.Log(storyDescriptionGetter.GetStroyDescription(countMatrix.storyType, countMatrix.fileName));
-                    continue;
-                }
-
                 //判断是否不存在台词
                 BaseTalkData[] baseTalkDatas = countMatrix.GetTalkDatas();
                 bool hasSerif = false;
@@ -81,8 +78,9 @@ namespace SekaiTools.UI.DynamicBarChart
             }
 
             this.dataFrames = dataFrames.ToArray();
-            progressBar.ClearItems();
+            progressBar.Clear();
             progressBar.Initialize(this.dataFrames);
+            progressBar.SetPortalColor(charHDRColorSet.colors[characterId]);
         }
     }
 }

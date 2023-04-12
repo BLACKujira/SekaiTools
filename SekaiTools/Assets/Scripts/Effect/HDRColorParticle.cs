@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SekaiTools.Effect
 {
@@ -9,11 +7,13 @@ namespace SekaiTools.Effect
         Color hDRColor { get; set; }
     }
 
-    public class HDRColorParticle : MonoBehaviour,IHDRColor
+    public class HDRColorParticle : MonoBehaviour, IHDRColor
     {
         public float lightOffset = 0;
 
         Material hDRColorMaterial;
+        public Material HDRColorMaterial => hDRColorMaterial;
+        public bool IfReady => HDRColorMaterial != null;
 
         public Color hDRColor
         {
@@ -21,8 +21,8 @@ namespace SekaiTools.Effect
             {
                 Color color = hDRColorMaterial.GetColor("hDRColor");
                 float h, s, v;
-                Color.RGBToHSV(color,out h,out s,out v);
-                return Color.HSVToRGB(h,s,v - lightOffset);
+                Color.RGBToHSV(color, out h, out s, out v);
+                return Color.HSVToRGB(h, s, v - lightOffset);
             }
 
             set
@@ -30,6 +30,14 @@ namespace SekaiTools.Effect
                 float h, s, v;
                 Color.RGBToHSV(value, out h, out s, out v);
                 hDRColorMaterial.SetColor("hDRColor", Color.HSVToRGB(h, s, v + lightOffset));
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (HDRColorMaterial != null)
+            {
+                Destroy(hDRColorMaterial);
             }
         }
 

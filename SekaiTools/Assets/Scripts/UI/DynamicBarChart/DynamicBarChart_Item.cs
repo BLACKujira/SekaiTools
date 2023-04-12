@@ -9,10 +9,14 @@ namespace SekaiTools.UI.DynamicBarChart
         [Header("Components")]
         public RectTransform barRectTransform;
         public Text txtNumber;
+        public HDRUIController headController;
         [Header("Settings")]
         public float barLength = 1475f;
         public float fadeTime = 0.5f;
         public float frameHoldTime = 0.25f;
+        public float particleMinEmission = 2;
+        public float particleMaxEmission = 20;
+        public float particleEmissionRate = 1;
 
         RectTransform rectTransform;
         public RectTransform RectTransform
@@ -24,6 +28,17 @@ namespace SekaiTools.UI.DynamicBarChart
                     rectTransform = GetComponent<RectTransform>();
                 }
                 return rectTransform;
+            }
+        }
+        DynamicBarChart_Item_Head dynamicBarChart_Item_Head;
+        public DynamicBarChart_Item_Head DynamicBarChart_Item_Head
+        {
+            get
+            {
+                if (headController == null || headController.InstantiateObject == null) return null;
+                if (dynamicBarChart_Item_Head == null)
+                    dynamicBarChart_Item_Head = headController.InstantiateObject.GetComponent<DynamicBarChart_Item_Head>();
+                return dynamicBarChart_Item_Head;
             }
         }
 
@@ -78,6 +93,13 @@ namespace SekaiTools.UI.DynamicBarChart
             targetLength = barLength * (dataFrame.data[key] / maxNumber);
             targetNumber = dataFrame.data[key];
             currentTime = 0;
+
+            float increase = targetNumber - lastTargetNumber;
+            if (DynamicBarChart_Item_Head != null)
+            {
+                DynamicBarChart_Item_Head.EmissionRate = Mathf.Min(particleMaxEmission,
+                    particleMinEmission + particleEmissionRate * increase);
+            }
         }
 
         public void FadeIn()

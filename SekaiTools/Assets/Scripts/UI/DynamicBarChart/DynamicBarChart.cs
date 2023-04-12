@@ -15,11 +15,14 @@ namespace SekaiTools.UI.DynamicBarChart
         public int maxItemNumber = 10;
         public float itemDistance = 80;
         public float frameHoldTime = 0.25f;
+        public Vector2 particleStartPosition = new Vector2(0, -1024);
+        public int particleDistance = 32;
         [Header("Prefab")]
         public DynamicBarChart_Item itemPrefab;
 
         protected List<ItemManager> items = new List<ItemManager>();
         protected DataFrame[] dataFrames;
+        protected Dictionary<int, DynamicBarChart_Item_Head> usedParticlePositions = new Dictionary<int, DynamicBarChart_Item_Head>();
 
         int UsedItems => items.Select(im => !im.item.IsFadingOut).Count();
 
@@ -124,6 +127,7 @@ namespace SekaiTools.UI.DynamicBarChart
                 if (itemManager != null && itemManager.item != null)
                     Destroy(itemManager.item.gameObject);
             }
+            items = new List<ItemManager>();
         }
 
         bool HasItem(string key)
@@ -149,6 +153,7 @@ namespace SekaiTools.UI.DynamicBarChart
                     yield return 1;
                 }
             }
+            progressBar.SetProgress(dataFrames.Length);
         }
 
         bool isPlaying = false;
@@ -186,9 +191,17 @@ namespace SekaiTools.UI.DynamicBarChart
             {
                 if (!HasItem(sortedStrings[i]))
                 {
+                    int particlePositionY = GetUnusedParticlePosition();
+                    itemPrefab.headController.instantiatePosition = new Vector2(particleStartPosition.x, particlePositionY);
+
                     DynamicBarChart_Item dynamicBarChart_Item = Instantiate(itemPrefab, targetRectTransform);
                     dynamicBarChart_Item.RectTransform.anchoredPosition =
                         new Vector2(dynamicBarChart_Item.RectTransform.anchoredPosition.x, -UsedItems * itemDistance);
+                    DynamicBarChart_Item_Head dynamicBarChart_Item_Head
+                        = dynamicBarChart_Item.headController.InstantiateObject.GetComponent<DynamicBarChart_Item_Head>();
+
+                    usedParticlePositions[particlePositionY] = dynamicBarChart_Item_Head;
+
                     items.Add(new ItemManager(sortedStrings[i], dynamicBarChart_Item, this));
                 }
             }
@@ -225,6 +238,27 @@ namespace SekaiTools.UI.DynamicBarChart
                 }
             }
 
+        }
+
+        int GetUnusedParticlePosition()
+        {
+            int[] clearedPositions = usedParticlePositions
+                .Where(kvp => kvp.Value == null)
+                .Select(kvp=>kvp.Key)
+                .ToArray();
+
+            foreach (var posY in clearedPositions)
+            {
+                usedParticlePositions.Remove(posY);
+            }
+
+            for (int i = (int)particleStartPosition.y; ; i += particleDistance)
+            {
+                if(!usedParticlePositions.ContainsKey(i))
+                {
+                    return i;
+                }
+            }
         }
     }
 }

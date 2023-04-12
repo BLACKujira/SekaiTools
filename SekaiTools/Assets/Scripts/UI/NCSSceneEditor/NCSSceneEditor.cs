@@ -20,6 +20,7 @@ namespace SekaiTools.UI.NCSSceneEditor
             this.scene = scene;
             scene.nCSScene.transform.SetParent(editAreaRectTransform);
             scene.nCSScene.rectTransform.anchoredPosition = Vector2.zero;
+            scene.nCSScene.rectTransform.localScale = Vector2.one;
             scene.nCSScene.gameObject.SetActive(true);
             scene.nCSScene.Refresh();
             window.OnClose.AddListener(() =>
