@@ -70,8 +70,8 @@ namespace SekaiTools.Count
         {
             List<StoryType> storyTypePriority = new List<StoryType>()
             {
-                StoryType.OtherStory,
                 StoryType.UnitStory,
+                StoryType.OtherStory,
                 StoryType.SystemVoice,
                 StoryType.EventStory,
                 StoryType.CardStory,
@@ -80,8 +80,9 @@ namespace SekaiTools.Count
             };
             return nicknameCountMatrices
                 .OrderBy(m => m.publishedAt)
+                .ThenBy(m => storyTypePriority.IndexOf(m.storyType))
                 .ThenBy(m => m.fileName)
-                .ThenBy(m => storyTypePriority.IndexOf(m.storyType)).ToArray();
+                .ToArray();
         }
 
         public int GetMatchedTimesOfAnyCharacter(int referenceIndex)

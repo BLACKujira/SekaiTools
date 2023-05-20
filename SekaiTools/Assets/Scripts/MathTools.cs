@@ -2,22 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace SekaiTools
 {
     public class MathTools : MonoBehaviour
     {
-        public static int[] Getrandomarray(int size)
+        public static int[] GetRandomArray(int size)
         {
             //使用洗牌算法返回一个乱序数组
-            System.Random rd = new System.Random();
             int[] arr = new int[size];
             int rdn, temp;
             for (int i = 0; i < size; i++)
                 arr[i] = i;
             for (int i = 0; i < size; i++)
             {
-                rdn = (int)rd.Next(0, size - 1 - i);
+                rdn = Random.Range(0, size - 1 - i);
                 temp = arr[rdn];
                 arr[rdn] = arr[size - 1 - i];
                 arr[size - 1 - i] = temp;

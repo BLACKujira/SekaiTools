@@ -76,6 +76,9 @@ namespace SekaiTools.UI.DynamicBarChart
             float endProgressR = distancePerDataFrame * dataFrames.Length - maskRectTransform.sizeDelta.x;
             float endProgressL = distancePerDataFrame * dataFrames.Length;
 
+            portalL.ResetPortal();
+            portalR.ResetPortal();
+
             progressEvents[endProgressR] = () => { portalR.BreakPortal(); lineEnd.TurnOn(); };
             progressEvents[endProgressL] = () => { portalL.BreakPortal(); lineEnd.TurnOff(); };
 

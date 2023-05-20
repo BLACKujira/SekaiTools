@@ -40,11 +40,15 @@ namespace SekaiTools.UI.SVDownloaders
 
             List<DownloadFileInfo> downloadFileInfos = new List<DownloadFileInfo>();
 
+            HashSet<int> selectedCharacters = new HashSet<int>(gIP_SVCard.SelectedCharacters);
+
             try
             {
                 MasterCard[] masterCards = EnvPath.GetTable<MasterCard>("cards");
                 foreach (var masterCard in masterCards)
                 {
+                    if (!selectedCharacters.Contains(masterCard.characterId)) continue;
+
                     DownloadFileInfo downloadFileInfo = new DownloadFileInfo(
                         $"{SekaiViewer.AssetUrl}/character/member/{masterCard.assetbundleName}_rip/card_normal{gIP_SVCard.format}",
                         $"{gIP_SVCard.folderSelectItem.SelectedPath}/{masterCard.assetbundleName}_rip/card_normal{gIP_SVCard.format}");

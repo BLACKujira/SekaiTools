@@ -39,6 +39,7 @@ namespace SekaiTools.UI.NicknameCountShowcase
             {
                 scene.nCSScene.Initialize(this);
                 scene.nCSScene.gameObject.SetActive(true);
+                scene.nCSScene.Refresh();
                 scene.nCSScene.gameObject.SetActive(false);
             }
         }

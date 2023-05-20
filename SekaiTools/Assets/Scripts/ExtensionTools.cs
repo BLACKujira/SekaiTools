@@ -186,5 +186,11 @@ namespace SekaiTools
             catch { return false; }
             return true;
         }
+
+        public static string GetColorHEX(Color32 color)
+        {
+            return $"{color.r:X2}{color.g:X2}{color.b:X2}";
+        }
+
     }
 }

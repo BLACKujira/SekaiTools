@@ -14,9 +14,10 @@ namespace SekaiTools.UI.DynamicBarChart
         [Header("Settings")]
         public int maxItemNumber = 10;
         public float itemDistance = 80;
-        public float frameHoldTime = 0.25f;
         public Vector2 particleStartPosition = new Vector2(0, -1024);
         public int particleDistance = 32;
+        public float startDelay = 3;
+        public float moveNextAfter = 2;
         [Header("Prefab")]
         public DynamicBarChart_Item itemPrefab;
 
@@ -24,10 +25,11 @@ namespace SekaiTools.UI.DynamicBarChart
         protected DataFrame[] dataFrames;
         protected Dictionary<int, DynamicBarChart_Item_Head> usedParticlePositions = new Dictionary<int, DynamicBarChart_Item_Head>();
 
+        protected float frameHoldTime = 0.25f;
         int UsedItems => items.Select(im => !im.item.IsFadingOut).Count();
 
         public HashSet<string> RequireImageKeys => requireImageKeys;
-        HashSet<string> requireImageKeys = new HashSet<string>();
+        protected HashSet<string> requireImageKeys = new HashSet<string>();
 
         public class ItemManager
         {
@@ -78,6 +80,11 @@ namespace SekaiTools.UI.DynamicBarChart
             }
         }
 
+        protected float GetHoldTime()
+        {
+            return startDelay + moveNextAfter + frameHoldTime * dataFrames.Length;
+        }
+
         public override void Initialize(NCSPlayerBase player)
         {
             base.Initialize(player);
@@ -110,12 +117,14 @@ namespace SekaiTools.UI.DynamicBarChart
         public class Settings
         {
             public float holdTime;
+            public float frameHoldTime;
             public string[] requireImageKeys;
 
             public Settings(DynamicBarChart dynamicBarChart)
             {
                 holdTime = dynamicBarChart.holdTime;
                 requireImageKeys = dynamicBarChart.requireImageKeys.ToArray();
+                frameHoldTime = dynamicBarChart.frameHoldTime;
             }
         }
 
@@ -142,6 +151,8 @@ namespace SekaiTools.UI.DynamicBarChart
 
         IEnumerator CoPlay()
         {
+            canMoveNext = false;
+            yield return new WaitForSeconds(startDelay);
             for (int i = 0; i < dataFrames.Length; i++)
             {
                 DataFrame dataFrame = dataFrames[i];
@@ -154,16 +165,27 @@ namespace SekaiTools.UI.DynamicBarChart
                 }
             }
             progressBar.SetProgress(dataFrames.Length);
+            yield return new WaitForSeconds(moveNextAfter);
+            canMoveNext = true;
         }
 
         bool isPlaying = false;
         Coroutine playCoroutine;
-        private void Update()
+        //private void Update()
+        //{
+        //    if (!isPlaying && Input.GetKeyDown(KeyCode.Space))
+        //    {
+        //        playCoroutine = StartCoroutine(CoPlay());
+        //        isPlaying = true;
+        //    }
+        //}
+
+        protected void Play()
         {
-            if (!isPlaying && Input.GetKeyDown(KeyCode.Space))
+            if (!isPlaying && gameObject.activeSelf)
             {
                 playCoroutine = StartCoroutine(CoPlay());
-                isPlaying = true;
+                isPlaying = false;
             }
         }
 
@@ -232,7 +254,7 @@ namespace SekaiTools.UI.DynamicBarChart
                 {
                     if (itemManager != null && itemManager.key.Equals(key))
                     {
-                        itemManager.item.UpdateData(dataFrame, key, maxNumber);
+                        itemManager.item.UpdateData(dataFrame, key, maxNumber,frameHoldTime);
                         if (!itemManager.item.IsFadingOut) itemManager.targetPositionY = -i * itemDistance;
                     }
                 }
@@ -244,7 +266,7 @@ namespace SekaiTools.UI.DynamicBarChart
         {
             int[] clearedPositions = usedParticlePositions
                 .Where(kvp => kvp.Value == null)
-                .Select(kvp=>kvp.Key)
+                .Select(kvp => kvp.Key)
                 .ToArray();
 
             foreach (var posY in clearedPositions)
@@ -254,7 +276,7 @@ namespace SekaiTools.UI.DynamicBarChart
 
             for (int i = (int)particleStartPosition.y; ; i += particleDistance)
             {
-                if(!usedParticlePositions.ContainsKey(i))
+                if (!usedParticlePositions.ContainsKey(i))
                 {
                     return i;
                 }

@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SekaiTools.UI.NicknameCountShowcase
 {
+
     public abstract class NCSScene : MonoBehaviour
     {
         public string itemName;
@@ -21,6 +22,10 @@ namespace SekaiTools.UI.NicknameCountShowcase
                 return _rectTransform;
             }
         }
+
+        //若此属性不为null，则等待至holdTime和此活动结束，在Refresh之后判断
+        protected bool canMoveNext = true;
+        public bool CanMoveNext => canMoveNext;
 
         public virtual string GetSaveData()
         {

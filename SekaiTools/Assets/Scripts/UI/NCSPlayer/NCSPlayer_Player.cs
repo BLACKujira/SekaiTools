@@ -42,6 +42,8 @@ namespace SekaiTools.UI.NCSPlayer
                 scene.nCSScene.rectTransform.anchoredPosition = Vector2.zero;
 
                 yield return new WaitForSeconds(scene.nCSScene.holdTime);
+                while (!scene.nCSScene.CanMoveNext) yield return 1;
+
                 #endregion
                 if(i< showcase.scenes.Count-1&&showcase.scenes[i+1].useTransition)
                 {

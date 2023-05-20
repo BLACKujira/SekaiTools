@@ -13,10 +13,11 @@ namespace SekaiTools.UI.DynamicBarChart
         [Header("Settings")]
         public float barLength = 1475f;
         public float fadeTime = 0.5f;
-        public float frameHoldTime = 0.25f;
         public float particleMinEmission = 2;
         public float particleMaxEmission = 20;
         public float particleEmissionRate = 1;
+
+        float frameHoldTime = 0.25f;
 
         RectTransform rectTransform;
         public RectTransform RectTransform
@@ -86,8 +87,10 @@ namespace SekaiTools.UI.DynamicBarChart
             return number.ToString("00.00");
         }
 
-        public virtual void UpdateData(DataFrame dataFrame, string key, float maxNumber)
+        public virtual void UpdateData(DataFrame dataFrame, string key, float maxNumber,float frameHoldTime)
         {
+            this.frameHoldTime = frameHoldTime;
+
             lastTargetLength = targetLength;
             lastTargetNumber = targetNumber;
             targetLength = barLength * (dataFrame.data[key] / maxNumber);

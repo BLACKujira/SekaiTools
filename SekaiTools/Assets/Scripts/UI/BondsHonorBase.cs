@@ -20,10 +20,12 @@ namespace SekaiTools.UI
         public Color ColorLeft { set => _ColorLeft.color = value; }
         public Color ColorRight { set => _ColorRight.color = value; }
         
-        public void SetCharacter(int idLeft, int idRight)
+        public void SetCharacter(int idLeft, int idRight, bool adaptVS = false)
         {
             ColorLeft = ConstData.characters[idLeft].imageColor;
             ColorRight = ConstData.characters[idRight].imageColor;
+
+            if(adaptVS) ConstData.ConvergeVirtualSingerToCharacter(ref idLeft, ref idRight);
             IconLeft = iconSet.icons[idLeft];
             IconRight = iconSet.icons[idRight];
         }

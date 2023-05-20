@@ -70,5 +70,12 @@ namespace SekaiTools.UI.NCEWindow
             edgeImage.color = defaultEdgeColor;
             bgImage.color = defaultBGColor;
         }
+
+        public void RefreshLayout()
+        {
+            ContentSizeFitter contentSizeFitter = GetComponent<ContentSizeFitter>();
+            contentSizeFitter.enabled = false;
+            contentSizeFitter.enabled = true;
+        }
     }
 }

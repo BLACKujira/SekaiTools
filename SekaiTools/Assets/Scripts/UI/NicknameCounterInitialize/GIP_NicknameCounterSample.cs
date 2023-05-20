@@ -24,22 +24,47 @@ namespace SekaiTools.UI.NicknameCounterInitialize
         public string Folder_PassSample => folder_PassSample.SelectedPath;
         public bool PassUnusedFile => tog_PassUnusedFile.isOn;
 
+        readonly string[] checkExtensions = new string[] { ".ncmsce", ".ncmcer" };
+
         bool IsSampleFile(string filePath)
         {
             string extension = Path.GetExtension(filePath).ToLower();
             return extension.Equals(".json") || extension.Equals(".asset");
         }
 
+        string[] RemoveExistingFile(string[] files)
+        {
+            List<string> outFiles = new List<string>();
+            foreach (string file in files) 
+            {
+                if(!IfExistingFile(file)) outFiles.Add(file);
+            }
+            return outFiles.ToArray();
+        }
+
+        bool IfExistingFile(string filePath)
+        {
+            string checkPath = ExtensionTools.ChangeFolder(Folder_Sample, Folder_PassSample, filePath);
+            foreach (var extension in checkExtensions)
+            {
+                string checkPathWithNewExtension = Path.ChangeExtension(checkPath, extension);
+                if(File.Exists(checkPathWithNewExtension)) return true;
+            }
+            return false;
+        }
+
         public string[] UnitStoryFiles
         {
             get
             {
+                string[] outFiles = null;
                 switch (fileStruct)
                 {
-                    case FileStruct.Server: return GetUnitStoryFiles_Server(Folder_Sample);
-                    case FileStruct.Classic: return GetStroyFiles_Classic(Folder_Sample,NicknameCountData.unitStoriesFolder);
-                    default: return null;
+                    case FileStruct.Server: outFiles = GetUnitStoryFiles_Server(Folder_Sample); break;
+                    case FileStruct.Classic: outFiles = GetStroyFiles_Classic(Folder_Sample,NicknameCountData.unitStoriesFolder); break;
                 }
+                if(PassExistingFile) outFiles = RemoveExistingFile(outFiles);
+                return outFiles;
             }
         }
         public string[] GetUnitStoryFiles_Server(string folder_Sample)
@@ -53,12 +78,14 @@ namespace SekaiTools.UI.NicknameCounterInitialize
         {
             get
             {
+                string[] outFiles = null;
                 switch (fileStruct)
                 {
-                    case FileStruct.Server: return GetEventStoryFiles_Server(Folder_Sample);
-                    case FileStruct.Classic: return GetStroyFiles_Classic(Folder_Sample, NicknameCountData.eventStoriesFolder);
-                    default: return null;
+                    case FileStruct.Server: outFiles = GetEventStoryFiles_Server(Folder_Sample); break;
+                    case FileStruct.Classic: outFiles = GetStroyFiles_Classic(Folder_Sample, NicknameCountData.eventStoriesFolder); break;
                 }
+                if(PassExistingFile) outFiles = RemoveExistingFile(outFiles);
+                return outFiles;
             }
         }
         public string[] GetEventStoryFiles_Server(string folder_Sample)
@@ -85,12 +112,14 @@ namespace SekaiTools.UI.NicknameCounterInitialize
         {
             get
             {
+                string[] outFiles = null;
                 switch (fileStruct)
                 {
-                    case FileStruct.Server: return GetCardStoryFiles_Server(Folder_Sample);
-                    case FileStruct.Classic: return GetStroyFiles_Classic(Folder_Sample, NicknameCountData.cardStoriesFolder);
-                    default: return null;
+                    case FileStruct.Server: outFiles = GetCardStoryFiles_Server(Folder_Sample); break;
+                    case FileStruct.Classic: outFiles = GetStroyFiles_Classic(Folder_Sample, NicknameCountData.cardStoriesFolder); break;
                 }
+                if(PassExistingFile) outFiles = RemoveExistingFile(outFiles);
+                return outFiles;
             }
         }
         public string[] GetCardStoryFiles_Server(string folder_Sample)
@@ -104,12 +133,14 @@ namespace SekaiTools.UI.NicknameCounterInitialize
         {
             get
             {
+                string[] outFiles = null;
                 switch (fileStruct)
                 {
-                    case FileStruct.Server: return GetMapTalkFiles_Server(Folder_Sample);
-                    case FileStruct.Classic: return GetStroyFiles_Classic(Folder_Sample, NicknameCountData.mapTalkFolder);
-                    default: return null;
+                    case FileStruct.Server: outFiles = GetMapTalkFiles_Server(Folder_Sample); break;
+                    case FileStruct.Classic: outFiles = GetStroyFiles_Classic(Folder_Sample, NicknameCountData.mapTalkFolder); break;
                 }
+                if(PassExistingFile) outFiles = RemoveExistingFile(outFiles);
+                return outFiles;
             }
         }
         public string[] GetMapTalkFiles_Server(string folder_Sample)
@@ -123,12 +154,14 @@ namespace SekaiTools.UI.NicknameCounterInitialize
         {
             get
             {
+                string[] outFiles = null;
                 switch (fileStruct)
                 {
-                    case FileStruct.Server: return GetLiveTalkFiles_Server(Folder_Sample);
-                    case FileStruct.Classic: return GetStroyFiles_Classic(Folder_Sample, NicknameCountData.liveTalkFolder);
-                    default: return null;
+                    case FileStruct.Server: outFiles = GetLiveTalkFiles_Server(Folder_Sample); break;
+                    case FileStruct.Classic: outFiles = GetStroyFiles_Classic(Folder_Sample, NicknameCountData.liveTalkFolder); break;
                 }
+                if(PassExistingFile) outFiles = RemoveExistingFile(outFiles);
+                return outFiles;
             }
         }
         public string[] GetLiveTalkFiles_Server(string folder_Sample)
@@ -142,12 +175,14 @@ namespace SekaiTools.UI.NicknameCounterInitialize
         {
             get
             {
+                string[] outFiles = null;
                 switch (fileStruct)
                 {
-                    case FileStruct.Server: return GetOtherStoryFiles_Server(Folder_Sample);
-                    case FileStruct.Classic: return GetStroyFiles_Classic(Folder_Sample, NicknameCountData.otherStoriesFolder);
-                    default: return null;
+                    case FileStruct.Server: outFiles = GetOtherStoryFiles_Server(Folder_Sample); break;
+                    case FileStruct.Classic: outFiles = GetStroyFiles_Classic(Folder_Sample, NicknameCountData.otherStoriesFolder); break;
                 }
+                if(PassExistingFile) outFiles = RemoveExistingFile(outFiles);
+                return outFiles;
             }
         }
         public string[] GetOtherStoryFiles_Server(string folder_Sample)

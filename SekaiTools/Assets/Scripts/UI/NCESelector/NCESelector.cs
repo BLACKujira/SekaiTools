@@ -19,6 +19,8 @@ namespace SekaiTools.UI.NCESelector
         public Toggle toggle_Other;
         public ButtonGenerator buttonGenerator;
         public Toggle toggleScreening;
+        public Toggle toggle_CheckCount;
+        public NCESelector_CheckCount checkCountArea;
         [Header("Prefab")]
         public Window nCESingleWindowPrefab;
         public Window nCEMutiWindowPrefab;
@@ -26,6 +28,7 @@ namespace SekaiTools.UI.NCESelector
         public Window nCEAmbiguityWindowPrefab;
 
         [NonSerialized] public NicknameCountData countData;
+        HashSet<NicknameCountMatrix> checkedMatrices = new HashSet<NicknameCountMatrix>();
 
         public enum Mode { single, muti, full, ambiguity }
         [NonSerialized] public Mode mode;
@@ -39,6 +42,25 @@ namespace SekaiTools.UI.NCESelector
         {
             storyDescriptionGetter = new StoryDescriptionGetter();
             window.OnReShow.AddListener(() => Refresh());
+            if (toggle_CheckCount)
+            {
+                toggle_CheckCount.onValueChanged.AddListener((value) =>
+                {
+                    if (value)
+                    {
+                        checkCountArea.Initialize(nameId);
+                        checkedMatrices = new HashSet<NicknameCountMatrix>();
+                        checkCountArea.SetData(0, countData[talkerId, nameId].Total);
+                    }
+                });
+                toggle_CheckCount.gameObject.SetActive(false);
+            }
+        }
+
+        void UpdateCheckCount()
+        {
+            int count = checkedMatrices.Sum((mat) => mat[talkerId, nameId].Times);
+            checkCountArea.SetData(count, countData[talkerId, nameId].Total);
         }
 
         /// <summary>
@@ -93,6 +115,7 @@ namespace SekaiTools.UI.NCESelector
             this.talkerId = talkerId;
             this.nameId = nameId;
             this.countData = countData;
+            toggle_CheckCount.gameObject.SetActive(true);
             InitializeTab();
             Refresh();
         }
@@ -122,12 +145,19 @@ namespace SekaiTools.UI.NCESelector
                         nicknameCountMatrix.nicknameCountRows[talkerId].serifCount.Count,
                         nicknameCountMatrix.storyType,
                         storyDescriptionGetter,
-                        countCharacter
-                        );
+                        countCharacter,
+                        checkedMatrices.Contains(nicknameCountMatrix));
                 },
                 (int id) =>
                 {
                     NicknameCountMatrix nicknameCountMatrix = screenedMatrices[id];
+
+                    if (toggle_CheckCount.isOn)
+                    {
+                        checkedMatrices.Add(nicknameCountMatrix);
+                        UpdateCheckCount();
+                    }
+
                     NCEWindow.NCESingle nCESingle = window.OpenWindow<NCEWindow.NCESingle>(nCESingleWindowPrefab);
                     nCESingle.Initialize(nicknameCountMatrix, talkerId, nameId, storyDescriptionGetter);
                 });
@@ -155,13 +185,22 @@ namespace SekaiTools.UI.NCESelector
                         nicknameCountMatrix.nicknameCountRows[talkerId].serifCount.Count,
                         nicknameCountMatrix.storyType,
                         storyDescriptionGetter,
-                        new Vector2Int(nameId, nicknameCountMatrix.nicknameCountRows[talkerId].nicknameCountGrids[nameId].matchedIndexes.Count)
-                        );
+                        new Vector2Int[]
+                        {
+                            new Vector2Int(nameId, nicknameCountMatrix.nicknameCountRows[talkerId].nicknameCountGrids[nameId].matchedIndexes.Count)
+                        }
+                        , checkedMatrices.Contains(nicknameCountMatrix));
                 },
                 (int id) =>
                 {
                     NicknameCountMatrix nicknameCountMatrix = screenedMatrices[id];
+                    if (toggle_CheckCount.isOn)
+                    {
+                        checkedMatrices.Add(nicknameCountMatrix);
+                    }
+
                     NCEWindow.NCESingle nCESingle = window.OpenWindow<NCEWindow.NCESingle>(nCESingleWindowPrefab);
+                    nCESingle.window.OnClose.AddListener(() => UpdateCheckCount());
                     nCESingle.Initialize(nicknameCountMatrix, talkerId, nameId, storyDescriptionGetter);
                 });
         }
@@ -251,7 +290,10 @@ namespace SekaiTools.UI.NCESelector
                         nicknameCountMatrix.nicknameCountRows[talkerId].serifCount.Count,
                         nicknameCountMatrix.storyType,
                         storyDescriptionGetter,
-                        new Vector2Int(21, nicknameCountMatrix.GetAmbiguitySerifSet(ambiguityRegex).matchedIndexes.Count)
+                        new Vector2Int[]
+                        {
+                            new Vector2Int(21, nicknameCountMatrix.GetAmbiguitySerifSet(ambiguityRegex).matchedIndexes.Count)
+                        }
                         );
                 },
                 (int id) =>
@@ -315,7 +357,7 @@ namespace SekaiTools.UI.NCESelector
                     }
                 }
             }
-            else if(mode == Mode.muti)
+            else if (mode == Mode.muti)
             {
                 switch (currentStoryTypeTab)
                 {
@@ -339,7 +381,7 @@ namespace SekaiTools.UI.NCESelector
                         break;
                 }
             }
-            else if(mode == Mode.ambiguity)
+            else if (mode == Mode.ambiguity)
             {
                 switch (currentStoryTypeTab)
                 {

@@ -42,8 +42,12 @@ namespace SekaiTools.UI
             } 
         }
 
-        private void Awake()
+        bool initialized = false;
+        public bool Initialized => initialized;
+
+        public void Initialize()
         {
+            if(initialized) return;
             instantiateObject = Instantiate(instantiateObjectPrefab, instantiatePosition, Quaternion.identity, instantiateParent);
             Vector3 instantiatePositionCam = (Vector3)instantiatePosition;
             instantiatePositionCam.z = cameraPositionZ;
@@ -53,6 +57,12 @@ namespace SekaiTools.UI
             instantiateCamera.targetTexture = renderTexture;
             RawImage.texture = renderTexture;
             instantiateCamera.orthographicSize = cameraSize;
+            initialized = true;
+        }
+
+        private void Awake()
+        {
+            Initialize();
         }
 
         private void OnDestroy()
@@ -63,6 +73,18 @@ namespace SekaiTools.UI
                 Destroy(instantiateCamera.gameObject);
             if (renderTexture != null)
                 Destroy(renderTexture);
+        }
+
+        private void OnEnable()
+        {
+            instantiateObject.SetActive(true);
+            instantiateCamera.gameObject.SetActive(true);
+        }
+
+        private void OnDisable()
+        {
+            instantiateObject.SetActive(false);
+            instantiateCamera.gameObject.SetActive(false);
         }
     }
 }

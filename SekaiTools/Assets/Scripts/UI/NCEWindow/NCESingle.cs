@@ -65,6 +65,16 @@ namespace SekaiTools.UI.NCEWindow
             verticalLayoutGroup.enabled = true;
 
             RefreshCountNumber();
+            StartCoroutine(CoRefresh());
+        }
+
+        IEnumerator CoRefresh()
+        {
+            toggleScreening.interactable = false;
+            yield return 1;
+            yield return 1;
+            toggleScreening.interactable = true;
+            talkLogItems[0].RefreshLayout();
         }
     }
 }

@@ -33,7 +33,7 @@ namespace SekaiTools.UI.CharIDMaskSelect
         {
             foreach (var toggle in toggles)
             {
-                toggle.isOn = false;
+                if (toggle) toggle.isOn = false;
             }
 
             foreach (var id in initValue)
@@ -114,7 +114,7 @@ namespace SekaiTools.UI.CharIDMaskSelect
                 {
                     int id = i;
                     Toggle toggle = toggles[id];
-                    if (toggle.isOn) selectIds.Add(id);
+                    if (toggle && toggle.isOn) selectIds.Add(id);
                 }
                 onApply_Int(selectIds.ToArray());
             }

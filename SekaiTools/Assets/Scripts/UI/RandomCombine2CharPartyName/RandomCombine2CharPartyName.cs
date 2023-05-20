@@ -167,7 +167,7 @@ namespace SekaiTools.UI.RandomCombine2CharPartyName
         {
             List<HashSet<int>> canUseGroups = new  List<HashSet<int>>(
                 this.canUseGroups.Select(cis => cis.Key.charIds));
-            int[] rdmArray = MathTools.Getrandomarray(canUseGroups.Count);
+            int[] rdmArray = MathTools.GetRandomArray(canUseGroups.Count);
             canUseGroups = new List<HashSet<int>>(rdmArray.Select(id => canUseGroups[id]));
 
             HashSet<int> usedCharId = new HashSet<int>();

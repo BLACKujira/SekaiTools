@@ -1,20 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using SekaiTools.Count;
-using UnityEngine.UI;
+﻿using SekaiTools.Count;
+using SekaiTools.DecompiledClass;
 using SekaiTools.StringConverter;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using SekaiTools.DecompiledClass;
-using System.Threading;
-using System;
-using DG.Tweening;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace SekaiTools.UI.Radio
 {
 
-    public class Radio_SerifQueryLayer : Radio_OptionalLayer , IReturnableWindow
+    public class Radio_SerifQueryLayer : Radio_OptionalLayer, IReturnableWindow
     {
         [Header("Components")]
         public RadioReturnableWindowController returnableWindowController;
@@ -435,7 +433,7 @@ namespace SekaiTools.UI.Radio
                     foreach (var virtualLiveSetlist in masterVirtualLive.virtualLiveSetlists)
                     {
                         bool flag = false;
-                        if (virtualLiveSetlist.assetbundleName.Equals(countMatrix.fileName))
+                        if (virtualLiveSetlist != null && virtualLiveSetlist.assetbundleName != null && virtualLiveSetlist.assetbundleName.Equals(countMatrix.fileName))
                         {
                             virtualLive = masterVirtualLive;
                             flag = true;
@@ -509,7 +507,7 @@ namespace SekaiTools.UI.Radio
             targetRectTransform.anchoredPosition = new Vector2(targetRectTransform.anchoredPosition.x, 0);
         }
 
-        public void Play(string userName,Action onComplete)
+        public void Play(string userName, Action onComplete)
         {
             SenderUserName = userName;
             StartCoroutine(IPlay(onComplete));

@@ -6,9 +6,11 @@ namespace SekaiTools.UI.NCESelector
 {
     public class NCESelector_Item : MonoBehaviour
     {
+        [Header("Components")]
         public Text labelFileName;
         public Text countAll;
         public TextWithBG[] countCharacter;
+        public Image checkedMark;
 
 
         [System.Serializable]
@@ -24,7 +26,7 @@ namespace SekaiTools.UI.NCESelector
         /// <param name="fileName"></param>
         /// <param name="countAll"></param>
         /// <param name="countCharacter"></param>
-        public void Initialize(string fileName, int countAll, StoryType storyType, StoryDescriptionGetter storyDescriptionGetter, params Vector2Int[] countCharacter)
+        public void Initialize(string fileName, int countAll, StoryType storyType, StoryDescriptionGetter storyDescriptionGetter, Vector2Int[] countCharacter,bool ifChecked = false)
         {
             List<Vector2Int> vector2Ints = new List<Vector2Int>(countCharacter);
             vector2Ints.Sort((x, y) => x.y.CompareTo(y.y));
@@ -39,6 +41,9 @@ namespace SekaiTools.UI.NCESelector
                 this.countCharacter[currentId].text.text = vector2Ints[i].y.ToString();
                 this.countCharacter[currentId].bg.color = ConstData.characters[vector2Ints[i].x].imageColor;
             }
+
+            if (countCharacter.Length == 1) checkedMark.color = ConstData.characters[countCharacter[0].x].imageColor;
+            checkedMark.gameObject.SetActive(ifChecked);
         }
 
         public void Initialize(string fileName, int countAll, params Vector2Int[] countCharacter)
