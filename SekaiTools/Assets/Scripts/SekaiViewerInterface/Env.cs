@@ -6,6 +6,8 @@ namespace SekaiTools.SekaiViewerInterface
 {
     public static class Env
     {
+        public static string SEKAI_VIEWER = "https://sekai.best";
+
         public static string VITE_ASSET_DOMAIN_WW="https://sekai-res.dnaroma.eu/file";
         //public static string REACT_APP_ASSET_DOMAIN_WW ="https://storage.sekai.best";
         public static string VITE_ASSET_DOMAIN_MINIO = "https://storage.sekai.best";

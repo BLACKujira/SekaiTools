@@ -6,6 +6,7 @@ namespace SekaiTools.DecompiledClass
     public class MasterCardEpisode
     {
         public int id;
+        public int seq;
         public int cardId;
         public string title;
         public string scenarioId;
