@@ -184,6 +184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controlScript: {fileID: 8881960617041104389}
+  mainCameraRender: 0
   parentWindowEffect: 1
   parentWindowRaycast: 1
   OnClose:
@@ -456,8 +457,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: SekaiTools.UI.SVCardDownloaderInitialize.SVCardDownloaderInitialize,
+      - m_Target: {fileID: 8881960617041104389}
+        m_TargetAssemblyTypeName: SekaiTools.UI.RstABDownloaderInitialize.RstABDownloaderInitialize,
           Assembly-CSharp
         m_MethodName: Apply
         m_Mode: 1
