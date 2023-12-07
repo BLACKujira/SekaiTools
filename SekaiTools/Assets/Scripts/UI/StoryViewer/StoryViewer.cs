@@ -28,6 +28,9 @@ namespace SekaiTools.UI.StoryViewer
         public void Initialize(StoryManager storyManager)
         {
             this.storyManager = storyManager;
+            if (lblStoryName != null) lblStoryName.text = storyManager.description;
+            if (lblPublishedAt != null) lblPublishedAt.text = $"剧情开始时间 {storyManager.PublishedAt}";
+            Refresh();
         }
 
         public void Refresh()

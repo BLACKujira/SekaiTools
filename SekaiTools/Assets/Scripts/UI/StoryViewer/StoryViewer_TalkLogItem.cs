@@ -27,7 +27,14 @@ namespace SekaiTools.UI.StoryViewer
         public void Initialize(BaseTalkData baseTalkData, bool highLight)
         {
             referenceIndex = baseTalkData.referenceIndex;
-            iconImage.sprite = iconSet.icons[baseTalkData.characterId];
+            if (baseTalkData.characterId >= 1 && baseTalkData.characterId <= 56)
+            {
+                iconImage.sprite = iconSet.icons[baseTalkData.characterId];
+            }
+            else
+            {
+                iconImage.sprite = iconSet.icons[0];
+            }
             nameLabel.text = baseTalkData.windowDisplayName;
             serifText.text = baseTalkData.serif;
 

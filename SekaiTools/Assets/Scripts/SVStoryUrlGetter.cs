@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.Collections.LowLevel.Unsafe;
+using UnityEngine;
 using static SekaiTools.ConstData;
 
 namespace SekaiTools
@@ -16,6 +17,7 @@ namespace SekaiTools
     public class SVStoryUrlGetter
     {
         const string STORY_READER = "storyreader";
+        public bool silence = true;
 
         MasterCardEpisode[] cardEpisodes;
         MasterCard[] cards;
@@ -37,6 +39,12 @@ namespace SekaiTools
             masterVirtualLives = EnvPath.GetTable<MasterVirtualLive>("virtualLives");
         }
 
+        public void LogError(string message)
+        {
+            if (silence) Debug.Log(message);
+            else WindowController.ShowMessage("错误", message);
+        }
+
         public string GetUrl(StoryType storyType, string fileName)
         {
             switch(storyType)
@@ -49,7 +57,7 @@ namespace SekaiTools
                 case StoryType.OtherStory: return GetUrl_OtherStory(fileName);
             }
 
-            WindowController.ShowMessage("错误", fileName + ": 未知的剧情类型");
+            if(!silence) LogError(fileName + ": 未知的剧情类型");
             return null;
         }
 
@@ -58,7 +66,7 @@ namespace SekaiTools
             UnitStoryInfo unitStoryInfo = ConstData.IsUnitStory(fileName);
             if(unitStoryInfo == null)
             {
-                WindowController.ShowMessage("错误", fileName + ": 不是一个有效的组合剧情文件名");
+                if (!silence) LogError(fileName + ": 不是一个有效的组合剧情文件名");
                 return null;
             }
 
@@ -79,7 +87,7 @@ namespace SekaiTools
 
             if(string.IsNullOrEmpty(unitStr))
             {
-                WindowController.ShowMessage("错误", fileName + ": 不存在的组合名称");
+                if (!silence) LogError(fileName + ": 不存在的组合名称");
                 return null;
             }
 
@@ -91,7 +99,7 @@ namespace SekaiTools
             EventStoryInfo eventStoryInfo = ConstData.IsEventStory(fileName);
             if(eventStoryInfo == null)
             {
-                WindowController.ShowMessage("错误", fileName + ": 不是一个有效的活动剧情文件名");
+                if (!silence) LogError(fileName + ": 不是一个有效的活动剧情文件名");
                 return null;
             }
 
@@ -103,17 +111,17 @@ namespace SekaiTools
             CardStoryInfo cardStoryInfo = ConstData.IsCardStory(fileName);
             if(cardStoryInfo == null)
             {
-                WindowController.ShowMessage("错误", fileName + ": 不是一个有效的卡片剧情文件名");
+                if (!silence) LogError(fileName + ": 不是一个有效的卡片剧情文件名");
                 return null;
             }
 
             MasterCard masterCard = cards
-                .Where(c => c.assetbundleName.Equals(fileName))
+                .Where(c => c.assetbundleName.Equals(cardStoryInfo.AssetbundleName))
                 .FirstOrDefault();
 
             if(masterCard == null)
             {
-                WindowController.ShowMessage("错误", fileName + ": 不存在的卡片");
+                if (!silence) LogError(fileName + ": 不存在的卡片");
                 return null;
             }
 
@@ -123,7 +131,7 @@ namespace SekaiTools
 
             if(masterCardEpisode == null)
             {
-                WindowController.ShowMessage("错误", fileName + ": 不存在的卡片剧情");
+                if (!silence) LogError(fileName + ": 不存在的卡片剧情");
                 return null;
             }
 
@@ -138,7 +146,7 @@ namespace SekaiTools
         
             if(masterActionSet == null)
             {
-                WindowController.ShowMessage("错误", fileName + ": 不存在的地图剧情");
+                if (!silence) LogError(fileName + ": 不存在的地图剧情");
                 return null;
             }
 
@@ -154,7 +162,7 @@ namespace SekaiTools
 
             if(live.vl == null || live.vls == null)
             {
-                WindowController.ShowMessage("错误", fileName + ": 不存在的虚拟LIVE");
+                if (!silence) LogError(fileName + ": 不存在的虚拟LIVE");
                 return null;
             }
 
@@ -170,7 +178,7 @@ namespace SekaiTools
 
             if(episode.ss == null || episode.sse == null)
             {
-                WindowController.ShowMessage("错误", fileName + ": 不存在的特殊剧情");
+                if (!silence) LogError(fileName + ": 不存在的特殊剧情");
                 return null;
             }
 

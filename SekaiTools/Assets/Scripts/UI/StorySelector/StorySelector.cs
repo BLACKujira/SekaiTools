@@ -31,9 +31,9 @@ namespace SekaiTools.UI.StorySelector
             get
             {
                 HashSet<string> hashSet = new HashSet<string>();
-                hashSet.Union(StoryDescriptionGetter.RequireMasterTables);
-                hashSet.Union(SVStoryUrlGetter.RequireMasterTables);
-                hashSet.Union(StoryPublishTimeGetter.RequireMasterTables);
+                hashSet.UnionWith(StoryDescriptionGetter.RequireMasterTables);
+                hashSet.UnionWith(SVStoryUrlGetter.RequireMasterTables);
+                hashSet.UnionWith(StoryPublishTimeGetter.RequireMasterTables);
                 return hashSet.ToArray();
             }
         }
@@ -49,7 +49,10 @@ namespace SekaiTools.UI.StorySelector
 
             foreach (var story in stories)
             {
-                story.InitInfo(storyDescriptionGetter,storyPublishTimeGetter, svStoryUrlGetter);
+                if (!story.Initialized)
+                {
+                    story.InitInfo(storyDescriptionGetter, storyPublishTimeGetter, svStoryUrlGetter);
+                }
                 this.stories[story.storyType].Add(story);
             }
 
@@ -89,6 +92,8 @@ namespace SekaiTools.UI.StorySelector
                 currentStoryType = StoryType.OtherStory;
                 Refresh();
             });
+
+            Refresh();
         }
 
         private void Refresh()
