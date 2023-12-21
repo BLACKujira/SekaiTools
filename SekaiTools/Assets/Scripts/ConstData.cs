@@ -260,7 +260,7 @@ namespace SekaiTools
             string[] nameArray = name.Split('_');
             if (nameArray.Length < 3) return null;
             if (!nameArray[0].Equals("event")) return null;
-            if (nameArray[1].Length != 2) return null;
+            if (nameArray[1].Length < 2) return null;
             if (nameArray[2].Length != 2) return null;
             int eventId, chapter;
             if (!int.TryParse(nameArray[1], out eventId)) return null;
