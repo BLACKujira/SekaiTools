@@ -16,7 +16,6 @@ namespace SekaiTools.UI
         [Header("Prefab")]
         public Window storySelectorPrefab;
 
-
         public void SetData(MobInfoViewer mobInfoViewer, MobInfo mobInfo)
         {
             this.mobInfoViewer = mobInfoViewer;
@@ -36,6 +35,12 @@ namespace SekaiTools.UI
             List<StoryManager> storyManagers = mobInfoViewer.MobInfoCounter.GetStories(mobInfo.characterId);
             StorySelector_StoryViewer storySelector_StoryViewer = mobInfoViewer.window.OpenWindow<StorySelector.StorySelector_StoryViewer>(storySelectorPrefab);
             storySelector_StoryViewer.Initialize(storyManagers);
+        }
+
+        public void ViewCostumeTypes()
+        {
+            string costumeTypes = string.Join(" ", mobInfo.costumeTypes);
+            WindowController.ShowMessage("此角色的Live2D模型", costumeTypes);
         }
     }
 }

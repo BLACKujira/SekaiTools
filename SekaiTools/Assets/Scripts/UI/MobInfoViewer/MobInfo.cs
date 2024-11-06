@@ -8,6 +8,7 @@ namespace SekaiTools.UI
         public HashSet<int> character2dIds = new HashSet<int>();
         public HashSet<string> assetNames = new HashSet<string>();
         public Dictionary<string, int> nicknames = new Dictionary<string, int>();
+        public HashSet<string> costumeTypes = new HashSet<string>();
         public Dictionary<string, HashSet<int>> serifs = new Dictionary<string, HashSet<int>>();
 
         public MobInfo(int characterId)

@@ -92,6 +92,7 @@ namespace SekaiTools.UI
                 StoryManager_Scenario storyManager = new StoryManager_Scenario(t.path, t.storyType, scenarioSceneData);
                 stories.Add(storyManager);
                 CountNicknames_ScenarioSceneData(storyManager);
+                AddInfo_CostumeType(storyManager);
             }
         }
 
@@ -131,6 +132,22 @@ namespace SekaiTools.UI
                 }
 
                 mobInfo.AddSerif(storyManager.fileName, idx); // 记录台词
+            }
+        }
+
+        void AddInfo_CostumeType(StoryManager_Scenario storyManager)
+        {
+            foreach (var scenarioCharacterResourceSet in storyManager.storyData.AppearCharacters)
+            {
+                if(character2DDic.ContainsKey(scenarioCharacterResourceSet.Character2dId) &&
+                    mobInfos.ContainsKey(character2DDic[scenarioCharacterResourceSet.Character2dId].characterId))
+                {
+                    MobInfo mobInfo = mobInfos[character2DDic[scenarioCharacterResourceSet.Character2dId].characterId];
+                    if (!mobInfo.costumeTypes.Contains(scenarioCharacterResourceSet.CostumeType))
+                    {
+                        mobInfo.costumeTypes.Add(scenarioCharacterResourceSet.CostumeType);
+                    }
+                }
             }
         }
 

@@ -133,10 +133,10 @@ namespace SekaiTools.Live2D
             CubismHarmonicMotionController cubismHarmonicMotionController = gameObject.AddComponent<CubismHarmonicMotionController>();
 
             Transform parameters = gameObject.transform.GetChild(0);
-            parameters.Find("ParamEyeROpen").gameObject.AddComponent<CubismEyeBlinkParameter>();
-            parameters.Find("ParamEyeLOpen").gameObject.AddComponent<CubismEyeBlinkParameter>();
-            GameObject ParamMouthOpenY = parameters.Find("ParamMouthOpenY").gameObject;
-            if(!ParamMouthOpenY.GetComponent<CubismMouthParameter>())
+            parameters.Find("ParamEyeROpen")?.gameObject.AddComponent<CubismEyeBlinkParameter>();
+            parameters.Find("ParamEyeLOpen")?.gameObject.AddComponent<CubismEyeBlinkParameter>();
+            GameObject ParamMouthOpenY = parameters.Find("ParamMouthOpenY")?.gameObject;
+            if(ParamMouthOpenY && !ParamMouthOpenY.GetComponent<CubismMouthParameter>())
                 ParamMouthOpenY.AddComponent<CubismMouthParameter>();
             CubismHarmonicMotionParameter cubismHarmonicMotionParameter = parameters.Find("ParamBreath").gameObject.AddComponent<CubismHarmonicMotionParameter>();
             cubismHarmonicMotionParameter.Duration = 7;
@@ -214,9 +214,9 @@ namespace SekaiTools.Live2D
 
         public void ResetFacialParameter()
         {
-            ParameterEyeLOpen.Value = 1;
-            ParameterEyeROpen.Value = 1;
-            ParameterMouthOpenY.Value = 0;
+            if(ParameterEyeLOpen) ParameterEyeLOpen.Value = 1;
+            if(ParameterEyeROpen) ParameterEyeROpen.Value = 1;
+            if(ParameterMouthOpenY) ParameterMouthOpenY.Value = 0;
             if(_mouthController) _mouthController.MouthOpening = 0;
         }
 
