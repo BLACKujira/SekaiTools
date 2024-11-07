@@ -90,7 +90,7 @@ namespace SekaiTools.SekaiViewerInterface.Utils
                         switch (serverRegion)
                         {
                             case ServerRegion.jp:
-                                return Env.VITE_ASSET_DOMAIN_MINIO + "/sekai-assets";
+                                return Env.VITE_ASSET_DOMAIN_MINIO + "/sekai-jp-assets";
                             case ServerRegion.tw:
                                 return Env.VITE_ASSET_DOMAIN_MINIO + "/sekai-tc-assets";
                             case ServerRegion.cn:
